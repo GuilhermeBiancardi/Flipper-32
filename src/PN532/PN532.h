@@ -8,19 +8,27 @@ public:
 
     PN532Manager(uint8_t  IRQPin, uint8_t RESET): PN532(IRQPin, RESET) {}
 
+    /**
+     * Função de inicialização do programa.
+     * Configura as configurações iniciais do hardware, como a inicialização do leitor NFC e impressão de informações da placa.
+     */
     void Setup() {
-
         // Para Leonardo/Micro/Zero
         // while (!Serial) delay(10);
 
-        // Inicia o Leitor
+        // Inicia o leitor NFC
         PN532.begin();
 
-        // Imprime dados da placa
+        // Imprime informações da placa
         HardwareInfos();
-
     }
 
+    /**
+     * Função principal do loop do programa.
+     * Realiza a escrita e leitura de dados em uma Tag NFC, utilizando autenticação com chaves A e B.
+     * Verifica a conexão com a Tag NFC, autentica o setor desejado e realiza operações de escrita e leitura.
+     * É recomendado verificar se a Tag foi reconhecida e se o UID tem o tamanho correto antes de prosseguir com as operações.
+     */
     void Loop() {
 
         // 16 Bytes (caracteres) por bloco
@@ -52,6 +60,11 @@ public:
 
     }
 
+    /**
+     * Função para imprimir informações da placa PN532, incluindo o firmware.
+     * Verifica se o leitor PN532 foi reconhecido corretamente e imprime as informações de versão do firmware.
+     * Caso o leitor não seja encontrado, o programa entra em um loop infinito.
+     */
     void HardwareInfos() {
 
         // Armazena dados de versão se o leitor for reconhecido.
@@ -68,6 +81,12 @@ public:
 
     }
 
+    /**
+     * Função para escrever dados em um bloco de uma tag MIFARE Classic com 4 bytes de tamanho.
+     * Verifica se o bloco informado não é reservado para a Key do Setor e, caso não seja, escreve os dados no bloco.
+     * @param block Número do bloco onde os dados serão escritos.
+     * @param data Array de 17 bytes contendo os dados a serem escritos na tag. O tamanho deve ser de 17 bytes, sendo o último byte reservado para o caractere nulo (terminador de string).
+     */
     void WriteTag4Bytes(int block, uint8_t data[17]) {
 
         // Armazena dados da conexão
@@ -89,6 +108,10 @@ public:
 
     }
 
+    /**
+     * Função para ler dados de um bloco de uma tag MIFARE Classic com 4 bytes de tamanho.
+     * @param block Número do bloco que contém os dados a serem lidos.
+     */
     void ReadTag4Bytes(int block) {
 
         // Armazena dados da conexão
@@ -97,7 +120,7 @@ public:
         // Armazena os dados lidos.
         uint8_t data[16];
 
-        // Tenta ler o conteúdo do bloco 4
+        // Tenta ler o conteúdo do bloco informado
         connection = PN532.mifareclassic_ReadDataBlock(block, data);
 
         if (connection) {
@@ -105,7 +128,7 @@ public:
             Serial.println("Dados contidos no bloco informado:");
             PN532.PrintHexChar(data, 16);
             Serial.println("");
-            // Espero um pouco antes de ler o bloco novamente
+            // Espera um pouco antes de ler o bloco novamente
             delay(1000);
 
         } else {
@@ -114,6 +137,10 @@ public:
 
     }
 
+    /**
+     * Função para ler dados de uma página de uma tag Mifare Ultralight com 7 bytes de UID.
+     * @param page Número da página que contém os dados a serem lidos.
+     */
     void ReadTag7Bytes(int page) {
 
         // Armazena dados da conexão
@@ -123,7 +150,7 @@ public:
 
             Serial.println("Tag Mifare Ultralight (7 byte UID)");
 
-            // Tenta ler a página 4
+            // Tenta ler a página informada
             Serial.println("Lendo página.");
             uint8_t data[32];
             connection = PN532.mifareultralight_ReadPage(page, data);
@@ -133,7 +160,7 @@ public:
                 // Dados sendo lidos
                 PN532.PrintHexChar(data, page);
                 Serial.println("");
-                // Espero um pouco antes de ler a página novamente
+                // Espera um pouco antes de ler a página novamente
                 delay(1000);
 
             } else {
@@ -144,6 +171,10 @@ public:
 
     }
 
+    /**
+     * Função para fazer o dump de informações de uma tag Mifare Classic com 4 bytes de UID.
+     * @param key Ponteiro para a chave de autenticação a ser usada para ler os blocos da tag.
+     */
     void TagDumpInfo4Bytes(uint8_t* key) {
 
         // Armazena dados da conexão
@@ -160,7 +191,7 @@ public:
 
         for (currentblock = 0; currentblock < 64; currentblock++) {
 
-            // Check if this is a new block so that we can reauthenticate
+            // Verifica se este é um novo bloco para que possamos reautenticar
             if (PN532.mifareclassic_IsFirstBlock(currentblock)) {
                 authenticated = false;
             }
@@ -168,7 +199,7 @@ public:
             // Se o setor não tiver sido autenticado, faz isso primeiro
             if (!authenticated) {
 
-                // Starting of a new sector ... try to to authenticate
+                // Início de um novo setor ... tenta autenticar
                 Serial.print("----------------------- Setor ");
                 Serial.print(currentblock / 4, DEC);
                 Serial.println("------------------------");
@@ -181,14 +212,14 @@ public:
                 if (connection) {
                     authenticated = true;
                 } else {
-                    Serial.println("Erro na authenticação.");
+                    Serial.println("Erro na autenticação.");
                 }
             }
 
             // Se não estiver autenticado, pula o bloco
             if (!authenticated) {
 
-                Serial.print("Block ");
+                Serial.print("Bloco ");
                 Serial.print(currentblock, DEC);
                 Serial.println(" não foi possível autenticar.");
 
@@ -199,7 +230,7 @@ public:
 
                 if (connection) {
 
-                    Serial.print("Block ");
+                    Serial.print("Bloco ");
                     Serial.print(currentblock, DEC);
 
                     if (currentblock < 10) {
@@ -211,9 +242,9 @@ public:
                     PN532.PrintHexChar(data, 16);
 
                 } else {
-                    Serial.print("Block ");
+                    Serial.print("Bloco ");
                     Serial.print(currentblock, DEC);
-                    Serial.println("  não foi possível ler o bloco.");
+                    Serial.println(" não foi possível ler o bloco.");
                 }
 
             }
@@ -222,8 +253,9 @@ public:
 
     }
 
+
 private:
-    
+
     Adafruit_PN532 PN532;
 
     // Buffer para armazenar o UID retornado da Tag
@@ -232,6 +264,11 @@ private:
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
     uint8_t uidLength;
 
+    /**
+     * Função para procurar e identificar uma tag ISO14443A usando o leitor PN532.
+     *
+     * @return True se uma tag foi encontrada, False caso contrário.
+     */
     bool TagConnection() {
 
         // Armazena dados da conexão
@@ -261,6 +298,14 @@ private:
 
     }
 
+    /**
+     * Função para autenticar um bloco em uma tag Mifare Classic usando o leitor PN532.
+     *
+     * @param block O número do bloco a ser autenticado.
+     * @param keyType O tipo de chave a ser utilizada para autenticação (0 para KeyA, 1 para KeyB).
+     * @param key O array de 6 bytes contendo a chave a ser utilizada para autenticação.
+     * @return True se a autenticação foi bem-sucedida, False caso contrário.
+     */
     bool BlockConnection(int block, int keyType, uint8_t* key) {
 
         // Armazena dados da conexão
@@ -278,7 +323,7 @@ private:
                 Serial.println("Tentando autenticar o bloco informado com a chave padrão KeyB.");
             }
 
-            // Tenta autenticar o setor do bloco informado com a KeyA
+            // Tenta autenticar o setor do bloco informado com a KeyA ou KeyB
             connection = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, keyType, key);
 
             if (connection) {
@@ -294,6 +339,7 @@ private:
         }
 
     }
+
 
     // Ignora os blocos que contém as chaves de acesso e as informações do fabricante.
     bool IgnoreReservedBlocks(int AtualBlock) {
