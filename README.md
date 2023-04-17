@@ -4,7 +4,9 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
 1. **Tarefas relacionadas a ESP32**
 
-        Plataforma Utilizada, ESP32 Wroom Dev Kit 38 Pinos: ![ESP32 Wroom Dev Kit](https://http2.mlstatic.com/D_NQ_NP_923346-MLB43359398569_092020-O.jpg)
+        Plataforma Utilizada, ESP32 Wroom Dev Kit 38 Pinos:
+
+     ![ESP32 Wroom Dev Kit](https://http2.mlstatic.com/D_NQ_NP_923346-MLB43359398569_092020-O.jpg)
 
    - [x] Criar SoftAP para conexão direta via WiFi
    - [x] Salvar dados customizaveis do SoftAP
@@ -14,7 +16,9 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
 2. **Tarefas relacionadas a NFC 13.56Mhz**
 
-        Módulo utilizado, PN532: ![PN532](https://soldered.com/productdata/2023/01/dsc_5091_1-1024x683-1.jpg)
+        Módulo utilizado, PN532: 
+
+     ![PN532](https://soldered.com/productdata/2023/01/dsc_5091_1-1024x683-1.jpg)
 
    - [x] Disponibilizar funções em forma de Classe
    - [x] Leitura da Tag
@@ -29,7 +33,9 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
 3. **Tarefas relacionadas ao SDCard**
 
-        Módulo utilizado, Micro SD Card: ![Micro SD Card](https://www.institutodigital.com.br/wp-content/uploads/2020/08/modulo-leitor-cartao-micro-sd-3.jpg)
+        Módulo utilizado, Micro SD Card: 
+
+     ![Micro SD Card](https://www.institutodigital.com.br/wp-content/uploads/2020/08/modulo-leitor-cartao-micro-sd-3.jpg)
 
    - [x] Criação de Arquivos
    - [x] Escrita de Arquivos
@@ -43,7 +49,9 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    
 4. **Tarefas relacionadas ao Infra Vermelho**
 
-        Peças utilizadas, Led Emissor e Receptor Tl1838 Vs1838 38khz: ![Leds Infra Vermelho](https://cf.shopee.com.br/file/9df3b03281de181d8d3c050fa51ba083)
+        Peças utilizadas, Led Emissor e Receptor Tl1838 Vs1838 38khz: 
+
+     ![Leds Infra Vermelho](https://cf.shopee.com.br/file/9df3b03281de181d8d3c050fa51ba083)
 
    - [ ] Captar Sinais
    - [ ] Emitir Sinais
