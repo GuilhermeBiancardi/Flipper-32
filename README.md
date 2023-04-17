@@ -59,12 +59,13 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
      ![Leds Infra Vermelho](https://cf.shopee.com.br/file/9df3b03281de181d8d3c050fa51ba083)
 
-   - [ ] Captar Sinais
-   - [ ] Emitir Sinais
+   - [X] Captar Sinais
+   - [X] Emitir Sinais
+   - [ ] Clonar Sinais
    - [ ] Integração como o módulo SDCard
      - [ ] Salvar Sinais capturados
    - [ ] Integração com a UI do Sistema
-   - [ ] Disponibilizar funções em forma de Classe
+   - [X] Disponibilizar funções em forma de Classe
   
   
 5. **Tarefas relacionadas a UI do Sistema**
