@@ -4,7 +4,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
 0. **Tarefas Gerais**
    
-   - [ ] Criar esquemático das ligações.
+   - [ ] Criar esquemático com as ligações.
    - [ ] Desenvolver GERBER da placa de circuito impresso
    - [ ] Desenvolver modelo 3D da case do Projeto
 
