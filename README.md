@@ -2,6 +2,12 @@
 
 Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidades de um Flipper Zero para a plataforma ESP32. 
 
+0. **Tarefas Gerais**
+   
+   - [ ] Criar esquemático das ligações.
+   - [ ] Desenvolver GERBER da placa de circuito impresso
+   - [ ] Desenvolver modelo 3D da case do Projeto
+
 1. **Tarefas relacionadas a ESP32**
 
         Plataforma Utilizada, ESP32 Wroom Dev Kit 38 Pinos:
