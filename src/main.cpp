@@ -12,7 +12,7 @@ SDCardManager SDCard(5);
 PN532Manager PN532(21, 22);
 
 #include "InfraRed/InfraRed.h"
-InfraRed IR;
+InfraRedManager IR;
 
 #include "WebService/WebService.h"
 

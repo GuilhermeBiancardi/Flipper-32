@@ -31,11 +31,11 @@
 #define STR(x) STR_HELPER(x)
 #endif
 
-class InfraRed {
+class InfraRedManager {
 
 public:
 
-    InfraRed() {}
+    InfraRedManager() {}
 
     void Setup() {
 
@@ -63,7 +63,7 @@ public:
         if (IrReceiver.decode()) {
 
             // Mostra um pequeno sumário descritivo do sinal IR recebido
-            IrReceiver.printIRResultShort(&Serial);
+            // IrReceiver.printIRResultShort(&Serial);
 
             // Escreve um exemplo de código de envio do sinal lido
             // IrReceiver.printIRSendUsage(&Serial);
@@ -171,7 +171,7 @@ public:
             }
         }
 
-        // Exemplo de uso com o SDCard
+        // Exemplo de uso com o SDCard (FUNCIONAL)
         // if (StatusIR == 0) {
         //     if (ReceiveSinal()) {
         //         StatusIR = 1;
