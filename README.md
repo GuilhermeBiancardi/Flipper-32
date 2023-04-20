@@ -59,13 +59,13 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
      ![Leds Infra Vermelho](https://cf.shopee.com.br/file/9df3b03281de181d8d3c050fa51ba083)
 
-   - [X] Captar Sinais
-   - [X] Emitir Sinais
-   - [ ] Clonar Sinais
-   - [ ] Integração como o módulo SDCard
-     - [ ] Salvar Sinais capturados
-   - [ ] Integração com a UI do Sistema
-   - [X] Disponibilizar funções em forma de Classe
+   - [x] Captar Sinais
+   - [x] Emitir Sinais
+   - [x] Clonar Sinais
+   - [x] Integração como o módulo SDCard
+     - [x] Salvar Sinais capturados
+   - [x] Integração com a UI do Sistema
+   - [x] Disponibilizar funções em forma de Classe
   
   
 5. **Tarefas relacionadas a UI do Sistema**
@@ -74,5 +74,5 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Tela de Configuração do SoftAP
    - [x] Tela de Configuração do WiFi
    - [ ] Tela NFC
-   - [ ] Tela Infra Vermelho
+   - [x] Tela Infra Vermelho
    - [ ] Migrar UI do Sistema do código para o SDCard. (Isso vai possibilitar desenvolver intervaces melhores sem comprometer o armazenamento limitado da ESP32, porém vai exigir que o dispositivo montado tenha um cartão Micro SD).

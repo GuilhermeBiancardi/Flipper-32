@@ -11,8 +11,10 @@ public:
      *
      * @return Nenhum.
      */
-    EEPROMManager(int size) {
-        EEPROM.begin(size);
+    EEPROMManager() {}
+
+    void Setup() {
+        EEPROM.begin(4096);
     }
 
     /**
@@ -63,14 +65,14 @@ public:
         String readStr = "";
         char readByte;
         int readAddress = address;
+
         do {
             readByte = EEPROM.read(readAddress);
-            if ((readByte != (char)NULL && readByte != (char)0xFF)) {
-                readStr += readByte;
-            }
+            readStr += readByte;
             readAddress++;
-        } while ((readAddress < (address + sizeAdress)));
-        // readStr = readStr.substring(0, readStr.length() - 1);
+        } while ((readByte != (char)0xFF) && (readAddress < (address + 1000)));
+
+        readStr = readStr.substring(0, readStr.length() - 1);
         return readStr;
     }
 

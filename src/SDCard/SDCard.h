@@ -27,69 +27,101 @@ public:
     }
 
     /**
-     * Cria e Escreve um texto em um arquivo no cartão SD.
+     * Cria um arquivo no cartão SD.
      *
-     * Caso o arquivo já exista seu conteúdo será reduzido
-     * para 0 e o texto informado será gravado.
+     * Caso o arquivo já exista essa função retornará false.
      *
      * @param file O nome do arquivo a ser escrito.
      * @param text O texto a ser escrito no arquivo.
-     * @return true se a escrita foi bem-sucedida, false caso contrário.
+     * @param delete_data Se true, caso o arquivo já exista, seu conteúdo é deletado.
+     * @return true se a criação foi bem-sucedida, false caso contrário.
      *
      */
-    bool Write(const char* file, const char* text) {
+    bool FileCreate(const char* file, bool delete_data = false) {
+
         // Converte o nome do arquivo para inserir a barra / no inicio.
         char* FileName = SDCardFolderName(file);
 
-        // Abre o arquivo no modo de escrita.
-        SDCardFile = SD.open(FileName, FILE_WRITE);
+        // Checa se o Arquivo já existe.
+        if (!CheckExists(file)) {
 
-        if (SDCardFile) {
-            // Escreve o texto no arquivo.
-            SDCardFile.println(text);
+            // Abre o arquivo no modo de escrita.
+            SDCardFile = SD.open(FileName, FILE_WRITE);
 
-            // Fecha o arquivo.
-            SDCardFile.close();
+            if (SDCardFile) {
 
-            // Retorna true para indicar que a escrita foi bem-sucedida.
-            return true;
+                // Fecha o arquivo.
+                SDCardFile.close();
+
+                // Retorna true para indicar que a escrita foi bem-sucedida.
+                return true;
+            } else {
+                // Retorna false caso não seja possível abrir o arquivo.
+                return false;
+            }
+
         } else {
-            // Retorna false caso não seja possível abrir o arquivo.
+
+            if (delete_data) {
+                // Abre o arquivo no modo de escrita e zera seu conteúdo.
+                SDCardFile = SD.open(FileName, FILE_WRITE);
+                if (SDCardFile) {
+                    SDCardFile.print("");
+                    SDCardFile.close();
+                }
+            }
+
+            // Retorna false arquivo já existe.
             return false;
         }
+
     }
 
     /**
      * Escreve um texto em um arquivo no cartão SD.
      *
-     * Caso o arquivo já exista seu conteúdo será gravado
-     * no final do arquivo.
-     *
      * @param file O nome do arquivo a ser escrito.
      * @param text O texto a ser escrito no arquivo.
+     * @param mode Informe true para inserir o texto e pular uma linha no final.
      * @return bool Retorn true se a escrita foi bem-sucedida, false caso contrário.
      *
      */
-    bool Append(const char* file, const char* text) {
-        // Converte o nome do arquivo para inserir a barra / no inicio.
-        char* FileName = SDCardFolderName(file);
+    bool FileWrite(const char* file, const char* text, bool line_break = false) {
 
-        // Abre o arquivo no modo de escrita.
-        SDCardFile = SD.open(FileName, FILE_APPEND);
+        // Checa se o Arquivo já existe.
+        if (CheckExists(file)) {
 
-        if (SDCardFile) {
-            // Escreve o texto no arquivo.
-            SDCardFile.println(text);
+            // Converte o nome do arquivo para inserir a barra / no inicio.
+            char* FileName = SDCardFolderName(file);
 
-            // Fecha o arquivo.
-            SDCardFile.close();
+            // Abre o arquivo no modo de escrita.
+            SDCardFile = SD.open(FileName, FILE_APPEND);
 
-            // Retorna true para indicar que a escrita foi bem-sucedida.
-            return true;
+            if (SDCardFile) {
+
+                if (!line_break) {
+                    // Escreve o texto no arquivo.
+                    SDCardFile.print(text);
+                } else {
+                    // Escreve o texto no arquivo.
+                    SDCardFile.println(text);
+                }
+
+                // Fecha o arquivo.
+                SDCardFile.close();
+
+                // Retorna true para indicar que a escrita foi bem-sucedida.
+                return true;
+            } else {
+                // Retorna false caso não seja possível abrir o arquivo.
+                return false;
+            }
+
         } else {
             // Retorna false caso não seja possível abrir o arquivo.
             return false;
         }
+
     }
 
     /**
@@ -100,26 +132,39 @@ public:
      * vazia caso o arquivo não seja encontrado ou não possa ser lido.
      *
      */
-    String Read(const char* file) {
-        // Converte o nome do arquivo para inserir a barra / no inicio.
-        char* FileName = SDCardFolderName(file);
+    String FileRead(const char* file) {
 
-        String text; // Variável para armazenar o conteúdo do arquivo.
+        String text;
 
-        // Abre o arquivo no cartão SD para leitura.
-        SDCardFile = SD.open(FileName);
+        // Checa se o Arquivo já existe.
+        if (CheckExists(file)) {
 
-        if (SDCardFile) {
-            // Lê o conteúdo do arquivo linha por linha e adiciona à variável 'text'.
-            while (SDCardFile.available()) {
-                text += (char)SDCardFile.read();
+            // Converte o nome do arquivo para inserir a barra / no inicio.
+            char* FileName = SDCardFolderName(file);
+
+            // Abre o arquivo no cartão SD para leitura.
+            SDCardFile = SD.open(FileName);
+
+            if (SDCardFile) {
+
+                // Lê o conteúdo do arquivo linha por linha e adiciona à variável 'text'.
+                while (SDCardFile.available()) {
+                    text += (char) SDCardFile.read();
+                }
+
+                // Remove os espaços no começo e final da string
+                text.trim();
+
+                // Fecha o arquivo após a leitura.
+                SDCardFile.close();
+
             }
 
-            // Fecha o arquivo após a leitura.
-            SDCardFile.close();
         }
 
-        return text; // Retorna o conteúdo do arquivo lido, ou uma string vazia se o arquivo não for encontrado ou não puder ser lido.
+        // Retorna o conteúdo do arquivo lido, ou uma string vazia se o arquivo não for encontrado ou não puder ser lido.
+        return text;
+
     }
 
     /**
@@ -143,22 +188,32 @@ public:
      * @return bool Retorna true se o arquivo ou diretório foi removido com sucesso, false caso contrário.
      *
      */
-    bool Remove(const char* path) {
-        // Converte o nome do arquivo para inserir a barra / no inicio.
-        char* PathName = SDCardFolderName(path);
+    bool Delete(const char* path) {
 
-        // Abre o arquivo ou diretório no cartão SD.
-        SDCardFile = SD.open(PathName);
+        // Checa se o Arquivo já existe.
+        if (CheckExists(path)) {
 
-        // Verifica se é um diretório.
-        if (SDCardFile.isDirectory()) {
-            // Remove o diretório e seu conteúdo utilizando a função SD.rmdir.
-            RemoveDirectory(PathName, (String)PathName);
-            return SD.rmdir(PathName);
+            // Converte o nome do arquivo para inserir a barra / no inicio.
+            char* PathName = SDCardFolderName(path);
+
+            // Abre o arquivo ou diretório no cartão SD.
+            SDCardFile = SD.open(PathName);
+
+            // Verifica se é um diretório.
+            if (SDCardFile.isDirectory()) {
+                // Remove o diretório e seu conteúdo utilizando a função SD.rmdir.
+                RemoveDirectory(PathName, (String)PathName);
+                return SD.rmdir(PathName);
+            } else {
+                // Remove o arquivo utilizando a função SD.remove.
+                return SD.remove(PathName);
+            }
+
         } else {
-            // Remove o arquivo utilizando a função SD.remove.
-            return SD.remove(PathName);
+            // Retorna false caso não seja possível abrir o arquivo.
+            return false;
         }
+
     }
 
     /**

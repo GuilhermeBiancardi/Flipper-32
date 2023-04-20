@@ -1,6 +1,6 @@
 #include <WiFi.h>
 
-char load_html[] PROGMEM = R"rawliteral(
+char load_ir_html[] PROGMEM = R"rawliteral(
 
 <!DOCTYPE HTML>
 <html>
@@ -20,19 +20,24 @@ char load_html[] PROGMEM = R"rawliteral(
 		</style>
 	</head>
 	<body>
-		<h2>Aguarde...</h2>
-        <h5>Após a conclusão do processo o dispositivo será reiniciado.</h5>
+		<h2>Esperando Sinal Infra Vermelho...</h2>
+        <h5>Após o sinal ser lido você será redirecionado.</h5>
+        
         <script>
 
-            setTimeout(function () {
+            var interval = setInterval(function() {
                 var xhttp = new XMLHttpRequest();
-                xhttp.open("GET", "/reload", true);
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        if(this.responseText != "" && this.responseText == "1") {
+                            clearInterval(interval);
+                            window.location = "/IR";
+                        }
+                    }
+                };
+                xhttp.open("GET", "/IRSTATUS", true);
                 xhttp.send();
-            }, 5000 ) ;
-
-            setTimeout(function () {
-                window.location = "/";
-            }, 7000 );
+            }, 500);
         
         </script>
 	</body>

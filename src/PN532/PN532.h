@@ -20,7 +20,7 @@ public:
         PN532.begin();
 
         // Imprime informações da placa
-        HardwareInfos();
+        // HardwareInfos();
     }
 
     /**
