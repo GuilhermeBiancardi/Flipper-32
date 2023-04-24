@@ -30,6 +30,7 @@ void setup(void) {
 }
 
 void loop(void) {
+    WebServiceLoop();
     if (SystemMode == 1) {
         IR.Loop();
     } else if (SystemMode == 2) {

@@ -57,7 +57,8 @@ public:
     *
     * Comando IR fica armazenado em: IrReceiver.decodedIRData.command
     * Endereço do comando fica armazenado em: IrReceiver.decodedIRData.address
-    * 32 bit Raw Data fica armazenado em: IrReceiver.decodedIRData.decodedRawData
+    * Data: IrReceiver.decodedIRData.decodedRawData
+    * Número de Bits: IrReceiver.decodedIRData.numberOfBits
     */
     bool ReceiveSinal() {
         if (IrReceiver.decode()) {
@@ -76,20 +77,13 @@ public:
             } else {
 
                 // Salva o comando recebido pelo sinal infra vermelho
-                sCommand = IrReceiver.decodedIRData.command;
+                // sCommand = IrReceiver.decodedIRData.command;
+
                 // Salva o endereço recebido pelo sinal infra vermelho
-                sAddress = IrReceiver.decodedIRData.address;
+                // sAddress = IrReceiver.decodedIRData.address;
+
                 // Salva o rawData decodificado recebido pelo sinal infra vermelho
                 sRawData = IrReceiver.decodedIRData.decodedRawData;
-
-                // Salva os valores do rawData
-                for (int i = 0; i < IrReceiver.decodedIRData.rawDataPtr->rawlen; i++) {
-                    sRawBuf[i] = IrReceiver.decodedIRData.rawDataPtr->rawbuf[i];
-                    StrRawBuf += String(sRawBuf[i]);
-                    if (i < (IrReceiver.decodedIRData.rawDataPtr->rawlen - 1)) {
-                        StrRawBuf += " ";
-                    }
-                }
 
             }
 
@@ -106,24 +100,11 @@ public:
     /**
      * Função que envia um comando utilizando o formato NEC do protocolo infravermelho.
      *
-     * @param sAddress O endereço do dispositivo de destino (8 bits).
-     * @param sCommand O comando a ser enviado (8 bits).
+     * @param sRawData O RawData a ser enviado.
      * @param sRepeats O número de repetições do sinal a ser enviado.
      */
-    void SendCommand(uint8_t sAddress, uint8_t sCommand, uint8_t sRepeats) {
-        IrSender.sendNEC(sAddress, sCommand, sRepeats);
-        IrReceiver.restartAfterSend();
-    }
-
-    /**
-     * Função que envia dados brutos de infravermelho utilizando o formato RAW do protocolo infravermelho.
-     *
-     * @param rawData Um ponteiro constante para o array de dados brutos de infravermelho a ser enviado.
-     * @note Certifique-se de que o tamanho do array de dados brutos está correto e corresponde ao formato RAW esperado pela biblioteca.
-     * @note A forma como o tamanho do array é obtido pode não ser precisa, já que `rawData` é um ponteiro e não um array. Certifique-se de passar o tamanho do array corretamente ou usar uma forma alternativa de determinar o tamanho do array.
-     */
-    void SendRawData(const uint16_t* rawData) {
-        IrSender.sendRaw(rawData, sizeof(rawData) / sizeof(rawData[0]), NEC_KHZ);
+    void SendNecRawData(uint32_t sRawData, int_fast8_t sRepeats) {
+        IrSender.sendNECRaw(sRawData, sRepeats);
         IrReceiver.restartAfterSend();
     }
 
@@ -136,7 +117,7 @@ public:
     bool SaveData(const char* path) {
         if (SDCard.FileCreate(path)) {
             // Escreve os dados no arquivo
-            SDCard.FileWrite(path, StrRawBuf.c_str());
+            SDCard.FileWrite(path, String(sRawData).c_str());
             return true;
         } else {
             return false;
@@ -144,7 +125,7 @@ public:
     }
 
     const String GetRawData() {
-        return StrRawBuf;
+        return String(sRawData);
     }
 
     int GetStatus() {
@@ -153,14 +134,13 @@ public:
 
     void ResetIR() {
         StatusIR = 0;
-        StrRawBuf = "";
+        sRawData = 0;
         IrReceiver.resume();
     }
 
     void EmulateSinal(const char* path) {
         ReadData(path);
-        const uint16_t* sRawBufInMemory = reinterpret_cast<const uint16_t*>(sRawBuf);
-        SendRawData(sRawBufInMemory);
+        SendNecRawData(sRawData, sRepeats);
     }
 
     void Loop() {
@@ -171,64 +151,20 @@ public:
             }
         }
 
-        // Exemplo de uso com o SDCard (FUNCIONAL)
-        // if (StatusIR == 0) {
-        //     if (ReceiveSinal()) {
-        //         StatusIR = 1;
-        //     }
-        // } else if (StatusIR == 1) {
-        //     if (SaveData("DataCapture.txt")) {
-        //         StatusIR = 2;
-        //     }
-        //     StatusIR = 2;
-        // } else if (StatusIR == 2) {
-        //     ReadData("DataCapture.txt");
-        //     StatusIR = 3;
-        // } else if (StatusIR == 3) {
-        //     delay(2000);
-        //     const uint16_t* sRawBufInMemory = reinterpret_cast<const uint16_t*>(sRawBuf);
-        //     SendRawData(sRawBufInMemory);
-        // }
-
     }
 
 private:
 
+    // uint16_t sAddress;
+    // uint16_t sCommand;
+    
     int StatusIR = 0;
-    unsigned int sRawBuf[RAW_BUFFER_LENGTH];
-    String StrRawBuf;
-
     uint32_t sRawData;
-    uint16_t sAddress;
-    uint16_t sCommand;
-    uint16_t sRepeats = 0;
-
-    void ExplodeString(const char* s, const char* delim, std::vector<unsigned int>& result) {
-        const char* start = s;
-        const char* end = s;
-        int delimLen = strlen(delim);
-        while (*end) {
-            if (strncmp(end, delim, delimLen) == 0) {
-                if (end > start) {
-                    unsigned int num = 0;
-                    sscanf(start, "%u", &num);
-                    result.push_back(num);
-                }
-                start = end + delimLen;
-            }
-            ++end;
-        }
-        if (end > start) {
-            unsigned int num = 0;
-            sscanf(start, "%u", &num);
-            result.push_back(num);
-        }
-    }
+    uint16_t sRepeats = 5;
 
     void ReadData(const char* path) {
-        std::vector<unsigned int> Dados;
-        ExplodeString(SDCard.FileRead(path).c_str(), " ", Dados);
-        std::copy(Dados.begin(), Dados.end(), sRawBuf);
+        String ReadData = SDCard.FileRead(path);
+        sRawData = ReadData.toInt();
     }
 
 };

@@ -61,33 +61,25 @@ char ir_html[] PROGMEM = R"rawliteral(
 	<body>
 
 		<h2>Configurações do <span id="name-hardware">PlugWifi</span></h2>
-		<form id="save-file" action="/IRSAVE" method="GET">
             
-            <fieldset>
-                <legend>Dados Infra Vermelho:</legend>
-                <h5>Nome do Arquivo:</h5>
-                <small>Nome do arquivo que armazenará os dados recebidos.</small>
-                <input type="text" id="ir_nome" class="form-control" name="ir_nome" value=""/>
-                <br>
-                <h5>Dados Capturados:</h5>
-                <small>Ultimo Sinal Infra Vermelho Capturado.</small>
-                <textarea id="ir_code" class="form-control" name="ir_code" rows="10" disabled></textarea>
-            </fieldset>
-            
+        <fieldset>
+            <legend>Dados Infra Vermelho:</legend>
+            <h5>Nome do Arquivo:</h5>
+            <small>Nome do arquivo que armazenará os dados recebidos.</small>
+            <input type="text" id="ir_nome" class="form-control" name="ir_nome" value=""/>
             <br>
-            
-			<button>Salvar Arquivo</button>
-
-		</form>
-
+            <h5>Dados Capturados:</h5>
+            <small>Ultimo Sinal Infra Vermelho Capturado.</small>
+            <textarea id="ir_code" class="form-control" name="ir_code" rows="10"></textarea>
+        </fieldset>
+        
         <br>
+        
+        <button id="save-file">Salvar Arquivo</button>
 
         <button id="emular-sinal">Emular Sinal</button>
 
-        <form action="/LOADIR" method="GET">
-            <br>
-			<button>Capturar Sinal</button>
-		</form>
+        <button id="capturar-sinal">Capturar Sinal</button>
 
         <form action="/IR" method="GET">
             <br>
@@ -101,10 +93,22 @@ char ir_html[] PROGMEM = R"rawliteral(
 
         <script>
 
-            document.getElementById("save-file").addEventListener('submit', function(e) {
+            document.getElementById("save-file").addEventListener('click', function(e) {
                 if(document.getElementById("ir_nome").value.length < 1) {
                     alert("O nome do Arquivo precisa ter no mínimo 1 carctere.");
                     e.preventDefault();    
+                } else {
+                    var nome = document.getElementById("ir_nome").value;
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.status == 200) {
+                            if(this.responseText != "") {
+                                alert(this.responseText);
+                            }
+                        }
+                    };
+                    xhttp.open("GET", "/IRSAVE?ir_nome=" + nome, true);
+                    xhttp.send();
                 }
             });
 
@@ -126,16 +130,21 @@ char ir_html[] PROGMEM = R"rawliteral(
                 }
             });
 
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    if(this.responseText != "") {
-                        document.getElementById("ir_code").value = this.responseText;
-                    }
-                }
-            };
-            xhttp.open("GET", "/IRDATA", true);
-            xhttp.send();
+            document.getElementById("capturar-sinal").addEventListener('click', function(e) {
+                var interval = setInterval(function() {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            if(this.responseText != "" && this.responseText != 0) {
+                                clearInterval(interval);
+                                document.getElementById("ir_code").value = this.responseText;
+                            }
+                        }
+                    };
+                    xhttp.open("GET", "/IRDATA", true);
+                    xhttp.send();
+                }, 500);
+            });
         
         </script>
 	</body>

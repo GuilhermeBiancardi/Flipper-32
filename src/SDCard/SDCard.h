@@ -1,6 +1,5 @@
 #include <SPI.h>
 #include <SD.h>
-
 class SDCardManager {
 public:
 
@@ -17,7 +16,7 @@ public:
      */
     void Setup() {
         // Inicializa o cartão SD utilizando o pino CS especificado (CSPin).
-        if (SD.begin(CSPin)) {
+        if (SD.begin(CSPin, SPI, 4000000U, "/sd", 15U)) {
             Serial.println("SD Card pronto para uso.");
         } else {
             // Exibe uma mensagem de erro caso a inicialização do cartão SD falhe.
