@@ -69,7 +69,9 @@ void WebServiceSetup() {
                 Serial.println(filename);
 
                 AsyncWebServerResponse* response = request->beginResponse(SD, "/" + filename, "");
+                response->addHeader("Cache-Control", "max-age=3600");
                 request->send(response);
+                
             } else {
                 request->send_P(404, "text/plain", "File not Found!");
             }
@@ -80,7 +82,7 @@ void WebServiceSetup() {
     server.on("/", HTTP_GET,
         [](AsyncWebServerRequest* request) {
 
-            String filename = "System/App/index.html";
+            String filename = "System/App/cache.html";
             String html;
 
             html = SDCard.FileRead(filename.c_str());
