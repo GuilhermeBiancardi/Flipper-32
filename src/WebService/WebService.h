@@ -71,7 +71,7 @@ void WebServiceSetup() {
                 AsyncWebServerResponse* response = request->beginResponse(SD, "/" + filename, "");
                 response->addHeader("Cache-Control", "max-age=3600");
                 request->send(response);
-                
+
             } else {
                 request->send_P(404, "text/plain", "File not Found!");
             }
@@ -232,6 +232,16 @@ void WebServiceSetup() {
     server.on("/CONFIG", HTTP_GET,
         [](AsyncWebServerRequest* request) {
             request->send_P(200, "text/html", config_html);
+        }
+    );
+
+    // --------- NFC -----------
+
+
+    server.on("/NFC_GET_UID", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            SystemMode = 2;
+            request->send_P(200, "text/plain", PN532.GetUID().c_str());
         }
     );
 

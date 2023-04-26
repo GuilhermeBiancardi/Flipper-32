@@ -45,11 +45,11 @@ public:
             // Verifica se o UID tem 4 bytes e verifica se o setor do bloco informado foi autenticado
             if (BlockConnection(4, 0, KeyA)) {
                 // Escreve dados no bloco 4
-                WriteTag4Bytes(4, data);
+                // WriteTag4Bytes(4, data);
                 // Lê os dados do Bloco 4
-                ReadTag4Bytes(4);
+                // ReadTag4Bytes(4);
                 // Lê todos os dados disponíveis
-                TagDumpInfo4Bytes(KeyB);
+                // TagDumpInfo4Bytes(KeyB);
             } else {
                 // UID 7 bytes
                 ReadTag7Bytes(4);
@@ -253,6 +253,14 @@ public:
 
     }
 
+    String GetUID() {
+        return StringUID;
+    }
+
+    void SetUID(String uid) {
+        StringUID = uid;
+    }
+
 
 private:
 
@@ -260,6 +268,9 @@ private:
 
     // Buffer para armazenar o UID retornado da Tag
     uint8_t uid[7] = { 0, 0, 0, 0, 0, 0, 0 };
+
+    // Buffer para armazenar o UID retornado da Tag
+    String StringUID = "";
 
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
     uint8_t uidLength;
@@ -287,6 +298,12 @@ private:
             Serial.print("-- Valor da UID: ");
             PN532.PrintHex(uid, uidLength);
             Serial.println("");
+
+            StringUID = "";
+
+            for (uint8_t i = 0; i < uidLength; i++) {
+                StringUID += String(uid[i], HEX); // Convertendo byte para hexadecimal e concatenando no objeto String
+            }
 
             return true;
 
