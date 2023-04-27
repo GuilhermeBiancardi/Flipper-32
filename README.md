@@ -18,7 +18,9 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Salvar dados customizaveis do SoftAP
    - [x] Salvar dados customizaveis do WiFi
    - [ ] Disponibilizar funções em forma de Classe
-   - [ ] Obter as Telas diretamente do SDCard
+   - [x] Obter as Telas diretamente do SDCard
+   -  - [x] Resolver problema que reinicia a ESP ao carregar muitos arquivos.
+   - [x] Criar websocket para comunicação em tempo real com o webservice.
 
 2. **Tarefas relacionadas a NFC 13.56Mhz**
 
@@ -34,8 +36,9 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [ ] Integração com o módulo SDCard
      - [ ] Salvar uma lista de Keys conhecidas
      - [ ] Salvar Tags lidas
-   - [ ] Integração com a UI do Sistema
+   - [x] Integração com a UI do Sistema
    - [ ] Bruteforce de Keys
+   - [x] Importar dados da Tag em JSON
 
 3. **Tarefas relacionadas ao SDCard**
 
@@ -50,8 +53,8 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Criação de Diretórios
    - [x] Remoção de Diretórios
    - [x] Listagem de Diretórios
-   - [ ] Criar uma pasta padrão do sistema
-   - [ ] Integração com a UI do Sistema
+   - [x] Criar uma pasta padrão do sistema
+   - [x] Integração com a UI do Sistema
    
 4. **Tarefas relacionadas ao Infra Vermelho**
 
@@ -69,10 +72,12 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
   
   
 5. **Tarefas relacionadas a UI do Sistema**
-   - [ ] Tela Inicial
-   - [x] Tela de Loading
-   - [x] Tela de Configuração do SoftAP
-   - [x] Tela de Configuração do WiFi
+   - [x] Criar UI moderna
+   - [ ] Remover UI antiga do código
+   - [x] Tela Inicial
+   - [x] Tela de Loading (Cache)
+   - [ ] Tela de Configuração do SoftAP
+   - [ ] Tela de Configuração do WiFi
    - [ ] Tela NFC
-   - [x] Tela Infra Vermelho
-   - [ ] Migrar UI do Sistema do código para o SDCard. (Isso vai possibilitar desenvolver intervaces melhores sem comprometer o armazenamento limitado da ESP32, porém vai exigir que o dispositivo montado tenha um cartão Micro SD).
+   - [ ] Tela Infra Vermelho
+   - [x] Migrar UI do Sistema do código para o SDCard. (Isso vai possibilitar desenvolver intervaces melhores sem comprometer o armazenamento limitado da ESP32, porém vai exigir que o dispositivo montado tenha um cartão Micro SD).
