@@ -20,8 +20,20 @@ String password = "";
 String passhard = "";
 
 AsyncWebServer server(80);
+AsyncWebSocket ws("/socket");
 
 boolean connectWifi();
+
+void handleWebSocket(AsyncWebSocket* server, AsyncWebSocketClient* client, AwsEventType type, void* arg, uint8_t* data, size_t len) {
+    if (type == WS_EVT_CONNECT) {
+        Serial.println("WebSocket client connected");
+    } else if (type == WS_EVT_DISCONNECT) {
+        Serial.println("WebSocket client disconnected");
+    } else if (type == WS_EVT_DATA) {
+        Serial.print("Received data from client: ");
+        Serial.write(data, len);
+    }
+}
 
 void WebServiceSetup() {
 
@@ -44,10 +56,6 @@ void WebServiceSetup() {
 
     WiFi.softAP(ssid.c_str(), pass.c_str());
 
-    // server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-    //     request->send_P(200, "text/html", index_html);
-    // });
-
     /**
      * Toda requisição não registrada passa por aqui, se o arquivo requisitado
      * exisir no SD Card ele é carregado.
@@ -58,7 +66,12 @@ void WebServiceSetup() {
             // Obtém o caminho da URL solicitada
             String path = request->url();
 
-            Serial.println(path);
+            int lastIndex = path.lastIndexOf(".");
+            String extension = path.substring(lastIndex + 1);
+
+            Serial.print(path);
+            Serial.print(" - ");
+            Serial.println(extension);
 
             // Monta o caminho completo do arquivo no cartão SD
             String filename = "System/App" + path;
@@ -69,7 +82,11 @@ void WebServiceSetup() {
                 Serial.println(filename);
 
                 AsyncWebServerResponse* response = request->beginResponse(SD, "/" + filename, "");
-                response->addHeader("Cache-Control", "max-age=3600");
+                
+                if(extension != "html") {
+                    response->addHeader("Cache-Control", "max-age=3600");
+                }
+
                 request->send(response);
 
             } else {
@@ -91,159 +108,168 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/RESET", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            InternalMemory.Clear(4096);
-            request->send_P(200, "text/html", load_config_html);
-        }
-    );
+    // server.on("/RESET", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         InternalMemory.Clear(4096);
+    //         request->send_P(200, "text/html", load_config_html);
+    //     }
+    // );
 
-    server.on("/GET", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
+    // server.on("/GET", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
 
-            // GET input value on <ESP_IP>/GET?input=<inputValue>
-            if (request->hasParam(PARAM_INPUT_1)) {
-                hardware = request->getParam(PARAM_INPUT_1)->value();
-            }
+    //         // GET input value on <ESP_IP>/GET?input=<inputValue>
+    //         if (request->hasParam(PARAM_INPUT_1)) {
+    //             hardware = request->getParam(PARAM_INPUT_1)->value();
+    //         }
 
-            if (request->hasParam(PARAM_INPUT_2)) {
-                wifissid = request->getParam(PARAM_INPUT_2)->value();
-            }
+    //         if (request->hasParam(PARAM_INPUT_2)) {
+    //             wifissid = request->getParam(PARAM_INPUT_2)->value();
+    //         }
 
-            if (request->hasParam(PARAM_INPUT_3)) {
-                password = request->getParam(PARAM_INPUT_3)->value();
-            }
+    //         if (request->hasParam(PARAM_INPUT_3)) {
+    //             password = request->getParam(PARAM_INPUT_3)->value();
+    //         }
 
-            if (request->hasParam(PARAM_INPUT_4)) {
-                passhard = request->getParam(PARAM_INPUT_4)->value();
-            }
+    //         if (request->hasParam(PARAM_INPUT_4)) {
+    //             passhard = request->getParam(PARAM_INPUT_4)->value();
+    //         }
 
-            InternalMemory.WriteStr(0, hardware);
-            InternalMemory.WriteStr(100, wifissid);
-            InternalMemory.WriteStr(200, password);
-            InternalMemory.WriteStr(300, passhard);
+    //         InternalMemory.WriteStr(0, hardware);
+    //         InternalMemory.WriteStr(100, wifissid);
+    //         InternalMemory.WriteStr(200, password);
+    //         InternalMemory.WriteStr(300, passhard);
 
-            request->send_P(200, "text/html", load_config_html);
+    //         request->send_P(200, "text/html", load_config_html);
 
-        }
-    );
+    //     }
+    // );
 
-    server.on("/RESTART", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/html", load_config_html);
-        }
-    );
+    // server.on("/RESTART", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/html", load_config_html);
+    //     }
+    // );
 
-    server.on("/hardware", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/plain", String(hardware).c_str());
-        }
-    );
+    // server.on("/hardware", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/plain", String(hardware).c_str());
+    //     }
+    // );
 
-    server.on("/ssid", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/plain", String(wifissid).c_str());
-        }
-    );
+    // server.on("/ssid", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/plain", String(wifissid).c_str());
+    //     }
+    // );
 
-    server.on("/password", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/plain", String(password).c_str());
-        }
-    );
+    // server.on("/password", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/plain", String(password).c_str());
+    //     }
+    // );
 
-    server.on("/passhard", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/plain", String(passhard).c_str());
-        }
-    );
+    // server.on("/passhard", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/plain", String(passhard).c_str());
+    //     }
+    // );
 
-    server.on("/ip", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/plain", WiFi.localIP().toString().c_str());
-        }
-    );
+    // server.on("/ip", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/plain", WiFi.localIP().toString().c_str());
+    //     }
+    // );
 
-    server.on("/reload", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/html", "<script>window.location = '/';</script>");
-            ESP.restart();
-        }
-    );
+    // server.on("/reload", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/html", "<script>window.location = '/';</script>");
+    //         ESP.restart();
+    //     }
+    // );
 
-    // --------- IR -----------
+    // // --------- IR -----------
 
-    server.on("/IR", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/html", ir_html);
-            SystemMode = 1;
-        }
-    );
+    // server.on("/IR", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/html", ir_html);
+    //         SystemMode = 1;
+    //     }
+    // );
 
-    server.on("/IRSAVE", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
+    // server.on("/IRSAVE", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
 
-            String FileName;
-            String IRData;
+    //         String FileName;
+    //         String IRData;
 
-            if (request->hasParam("ir_nome")) {
-                FileName = request->getParam("ir_nome")->value();
-            }
+    //         if (request->hasParam("ir_nome")) {
+    //             FileName = request->getParam("ir_nome")->value();
+    //         }
 
-            if (request->hasParam("ir_code")) {
-                IRData = request->getParam("ir_code")->value();
-            }
+    //         if (request->hasParam("ir_code")) {
+    //             IRData = request->getParam("ir_code")->value();
+    //         }
 
-            IR.SaveData(FileName.c_str());
+    //         IR.SaveData(FileName.c_str());
 
-            IR.ResetIR();
+    //         IR.ResetIR();
 
-            request->send_P(200, "text/plain", "success");
-            // request->send_P(200, "text/html", ir_html);
+    //         request->send_P(200, "text/plain", "success");
+    //         // request->send_P(200, "text/html", ir_html);
 
-        }
-    );
+    //     }
+    // );
 
-    server.on("/IRGET", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
+    // server.on("/IRGET", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
 
-            String FileName;
+    //         String FileName;
 
-            if (request->hasParam("ir_nome")) {
-                FileName = request->getParam("ir_nome")->value();
-            }
+    //         if (request->hasParam("ir_nome")) {
+    //             FileName = request->getParam("ir_nome")->value();
+    //         }
 
-            IR.EmulateSinal(FileName.c_str());
+    //         IR.EmulateSinal(FileName.c_str());
 
-            request->send_P(200, "text/plain", "success");
+    //         request->send_P(200, "text/plain", "success");
 
-        }
-    );
+    //     }
+    // );
 
-    server.on("/IRDATA", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            IR.ResetIR();
-            request->send_P(200, "text/plain", String(IR.GetRawData()).c_str());
-        }
-    );
+    // server.on("/IRDATA", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         IR.ResetIR();
+    //         request->send_P(200, "text/plain", String(IR.GetRawData()).c_str());
+    //     }
+    // );
 
     // --------- CONFIG -----------
 
-    server.on("/CONFIG", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            request->send_P(200, "text/html", config_html);
-        }
-    );
+    // server.on("/CONFIG", HTTP_GET,
+    //     [](AsyncWebServerRequest* request) {
+    //         request->send_P(200, "text/html", config_html);
+    //     }
+    // );
 
     // --------- NFC -----------
 
-
-    server.on("/NFC_GET_UID", HTTP_GET,
+    server.on("/NFC_ON", HTTP_GET,
         [](AsyncWebServerRequest* request) {
             SystemMode = 2;
-            request->send_P(200, "text/plain", PN532.GetUID().c_str());
+            request->send_P(200, "text/plain", "ok");
         }
     );
+
+    server.on("/NFC_OFF", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            SystemMode = 0;
+            request->send_P(200, "text/plain", "ok");
+        }
+    );
+
+    ws.onEvent(handleWebSocket);
+    server.addHandler(&ws);
 
     server.begin();
 
@@ -260,6 +286,15 @@ void WebServiceLoop() {
     // Serial.println(wifissid);
     // Serial.println(password);
     // delay(500);
+
+    if(SystemMode == 2) {
+        String json = PN532.GetJSON();
+        if(json != "") {
+            ws.textAll(json);
+            PN532.SetJSON("");
+            delay(5000);
+        }
+    }
 
 }
 

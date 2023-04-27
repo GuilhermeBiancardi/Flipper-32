@@ -44,6 +44,7 @@ public:
         if (TagConnection()) {
             // Verifica se o UID tem 4 bytes e verifica se o setor do bloco informado foi autenticado
             if (BlockConnection(4, 0, KeyA)) {
+                CardToJson();
                 // Escreve dados no bloco 4
                 // WriteTag4Bytes(4, data);
                 // Lê os dados do Bloco 4
@@ -55,8 +56,6 @@ public:
                 ReadTag7Bytes(4);
             }
         }
-
-        delay(2000);
 
     }
 
@@ -253,12 +252,78 @@ public:
 
     }
 
-    String GetUID() {
-        return StringUID;
+    void CardToJson() {
+        uint8_t success = PN532.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+        if (success) {
+            
+            String json = "{\"type\":\"NFC_TAG_4K\",\"uid\":\"" + byteToHexString(uid, uidLength) + "\",";
+            
+            for (int i = 0; i < 16; i++) {
+                uint8_t key[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+                uint8_t block = (i * 4);
+                uint8_t data[16];
+
+                json += "\"sector_" + String(i) + "\":{";
+
+                success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 0, key);
+                if (success) {
+                    success = PN532.mifareclassic_ReadDataBlock(block, data);
+                    if (success) {
+                        String sectorKey = byteToHexString(key, sizeof(key));
+                        String sectorData = byteToHexString(data, sizeof(data));
+                        json += "\"key_a\":\"" + sectorKey + "\",";
+                    }
+                } else {
+                    json += "\"key_a\":\"\\0\\0\\0\\0\\0\\0\",";
+                }
+
+                success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 1, key);
+                if (success) {
+                    success = PN532.mifareclassic_ReadDataBlock(block, data);
+                    if (success) {
+                        String sectorKey = byteToHexString(key, sizeof(key));
+                        String sectorData = byteToHexString(data, sizeof(data));
+                        json += "\"key_b\":\"" + sectorKey + "\",";
+                    }
+                } else {
+                    json += "\"key_b\":\"\\0\\0\\0\\0\\0\\0\",";
+                }
+
+                for (int j = 0; j < 4; j++) {
+                    block = ((i * 4) + j);
+                    if(!IgnoreReservedBlocks(block)) {
+                        success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 0, key);
+                        if (success) {
+                            success = PN532.mifareclassic_ReadDataBlock(block, data);
+                            if (success) {
+                                String sectorKey = byteToHexString(key, sizeof(key));
+                                String sectorData = byteToHexString(data, sizeof(data));
+                                json += "\"block_" + String(block) + "\":{\"data\":\"" + sectorData + "\"},";
+                            }
+                        }
+                    } else {
+                        json += "\"block_" + String(block) + "\":{\"data\":\"ffffffffffff\"},";
+                    }
+                }
+
+                json.remove(json.length() - 1); // remove a última vírgula
+                json += "},";
+
+            }
+
+            json.remove(json.length() - 1); // remove a última vírgula
+            json += "}";
+            jsonString = json;
+
+        }
     }
 
-    void SetUID(String uid) {
-        StringUID = uid;
+    String GetJSON() {
+        return jsonString;
+    }
+
+    void SetJSON(String uid) {
+        jsonString = uid;
     }
 
 
@@ -269,11 +334,22 @@ private:
     // Buffer para armazenar o UID retornado da Tag
     uint8_t uid[7] = { 0, 0, 0, 0, 0, 0, 0 };
 
-    // Buffer para armazenar o UID retornado da Tag
-    String StringUID = "";
-
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
     uint8_t uidLength;
+
+    // Todos os dados do cartão em json
+    String jsonString;
+
+    /**
+     * Função que converte um conjunto bytes para HEX para String
+    */
+    String byteToHexString(uint8_t* data, size_t length) {
+        String result = "";
+        for (size_t i = 0; i < length; i++) {
+            result += String(data[i] < 0x10 ? "0" : "") + String(data[i], HEX);
+        }
+        return result;
+    }
 
     /**
      * Função para procurar e identificar uma tag ISO14443A usando o leitor PN532.
@@ -298,12 +374,6 @@ private:
             Serial.print("-- Valor da UID: ");
             PN532.PrintHex(uid, uidLength);
             Serial.println("");
-
-            StringUID = "";
-
-            for (uint8_t i = 0; i < uidLength; i++) {
-                StringUID += String(uid[i], HEX); // Convertendo byte para hexadecimal e concatenando no objeto String
-            }
 
             return true;
 
