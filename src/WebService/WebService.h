@@ -84,7 +84,8 @@ void WebServiceSetup() {
                 AsyncWebServerResponse* response = request->beginResponse(SD, "/" + filename, "");
                 
                 if(extension != "html") {
-                    response->addHeader("Cache-Control", "max-age=3600");
+                    // Adiciona o conteúdo da requisição no cache por 1 ano
+                    response->addHeader("Cache-Control", "max-age=31536000");
                 }
 
                 request->send(response);
