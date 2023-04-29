@@ -1,5 +1,11 @@
 #include <Arduino.h>
 
+/**
+ * 0 = Standby
+ * 1 = IR
+ * 2 = NFC Read
+ * 3 = NFC Write
+*/
 int SystemMode = 0;
 
 #include "EEPROM/EEPROM.h"
@@ -33,7 +39,7 @@ void loop(void) {
     WebServiceLoop();
     if (SystemMode == 1) {
         IR.Loop();
-    } else if (SystemMode == 2) {
+    } else if (SystemMode == 2 || SystemMode == 3) {
         PN532.Loop();
     }
 }

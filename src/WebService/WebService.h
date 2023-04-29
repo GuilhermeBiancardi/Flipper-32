@@ -88,7 +88,12 @@ void WebServiceSetup() {
                     response->addHeader("Cache-Control", "max-age=31536000");
                 }
 
-                request->send(response);
+                if(extension != "map") {
+                    request->send(response);
+                } else {
+                    request->send_P(404, "text/plain", "File not Found!");
+                }
+
 
             } else {
                 request->send_P(404, "text/plain", "File not Found!");
@@ -255,23 +260,60 @@ void WebServiceSetup() {
 
     // --------- NFC -----------
 
-    server.on("/NFC_ON", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            SystemMode = 2;
-            request->send_P(200, "text/plain", "ok");
-        }
-    );
-
-    server.on("/NFC_OFF", HTTP_GET,
+    server.on("/SYSTEM_OFF", HTTP_GET,
         [](AsyncWebServerRequest* request) {
             SystemMode = 0;
             request->send_P(200, "text/plain", "ok");
         }
     );
 
+    server.on("/NFC_READ_ON", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            SystemMode = 2;
+            request->send_P(200, "text/plain", "ok");
+        }
+    );
+
+    server.on("/NFC_WRITE_ON", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            SystemMode = 3;
+            request->send_P(200, "text/plain", "ok");
+        }
+    );
+
+    server.on("/NFC_WRITE", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+
+            int block;
+            int type;
+            String key = "";
+            String data = "";
+
+            if (request->hasParam("block")) {
+                block = request->getParam("block")->value().toInt();
+            }
+
+            if (request->hasParam("type")) {
+                type = request->getParam("type")->value().toInt();
+            }
+
+            if (request->hasParam("key")) {
+                key = request->getParam("key")->value();
+            }
+
+            if (request->hasParam("data")) {
+                data = request->getParam("data")->value();
+            }
+
+            int status = PN532.StartWriteData(data, block, type, key);
+            String response = "{\"status\": \"" + String(status) + "\", \"mensage\": \"" + PN532.GetMensage() + "\"}";
+
+            request->send_P(200, "text/plain", response.c_str());
+        }
+    );
+
     ws.onEvent(handleWebSocket);
     server.addHandler(&ws);
-
     server.begin();
 
 }
@@ -293,7 +335,6 @@ void WebServiceLoop() {
         if(json != "") {
             ws.textAll(json);
             PN532.SetJSON("");
-            delay(5000);
         }
     }
 

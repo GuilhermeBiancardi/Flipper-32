@@ -1,7 +1,6 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <Adafruit_PN532.h>
-
 class PN532Manager {
 
 public:
@@ -31,31 +30,26 @@ public:
      */
     void Loop() {
 
-        // 16 Bytes (caracteres) por bloco
-        uint8_t data[17] = { "@GuilhermeAw.com" };
-
-        // KeyA chave padrão
-        uint8_t KeyA[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-
-        // KeyB chave padrão
-        uint8_t KeyB[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-
-        // Verifica se a Tag foi reconhecida.
-        if (TagConnection()) {
-            // Verifica se o UID tem 4 bytes e verifica se o setor do bloco informado foi autenticado
-            if (BlockConnection(4, 0, KeyA)) {
+        // Modo Leitura
+        if (SystemMode == 2) {
+            // Verifica se a Tag foi reconhecida.
+            if (TagConnection()) {
                 CardToJson();
-                // Escreve dados no bloco 4
-                // WriteTag4Bytes(4, data);
-                // Lê os dados do Bloco 4
-                // ReadTag4Bytes(4);
-                // Lê todos os dados disponíveis
-                // TagDumpInfo4Bytes(KeyB);
-            } else {
-                // UID 7 bytes
-                ReadTag7Bytes(4);
             }
         }
+
+        // Verifica se o UID tem 4 bytes e verifica se o setor do bloco informado foi autenticado
+        // if (BlockConnection(4, 0, KeyA)) {
+        //     // Escreve dados no bloco 4
+        //     WriteTag4Bytes(4, data);
+        //     // Lê os dados do Bloco 4
+        //     ReadTag4Bytes(4);
+        //     // Lê todos os dados disponíveis
+        //     TagDumpInfo4Bytes(KeyB);
+        // } else {
+        //     // UID 7 bytes
+        //     ReadTag7Bytes(4);
+        // }
 
     }
 
@@ -77,33 +71,6 @@ public:
         Serial.print("Found chip PN5"); Serial.println((versiondata >> 24) & 0xFF, HEX);
         Serial.print("Firmware ver. "); Serial.print((versiondata >> 16) & 0xFF, DEC);
         Serial.print('.'); Serial.println((versiondata >> 8) & 0xFF, DEC);
-
-    }
-
-    /**
-     * Função para escrever dados em um bloco de uma tag MIFARE Classic com 4 bytes de tamanho.
-     * Verifica se o bloco informado não é reservado para a Key do Setor e, caso não seja, escreve os dados no bloco.
-     * @param block Número do bloco onde os dados serão escritos.
-     * @param data Array de 17 bytes contendo os dados a serem escritos na tag. O tamanho deve ser de 17 bytes, sendo o último byte reservado para o caractere nulo (terminador de string).
-     */
-    void WriteTag4Bytes(int block, uint8_t data[17]) {
-
-        // Armazena dados da conexão
-        uint8_t connection;
-
-        if (!IgnoreReservedBlocks(block)) {
-
-            connection = PN532.mifareclassic_WriteDataBlock(4, data);
-
-            if (connection) {
-                Serial.println("Dados armazenados no bloco informado.");
-            } else {
-                Serial.println("Ooops ... Não foi possível escrever no bloco.");
-            }
-
-        } else {
-            Serial.println("O bloco informado é reservado para a Key do Setor.");
-        }
 
     }
 
@@ -255,9 +222,9 @@ public:
     void CardToJson() {
         uint8_t success = PN532.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
         if (success) {
-            
+
             String json = "{\"type\":\"NFC_TAG_4K\",\"uid\":\"" + byteToHexString(uid, uidLength) + "\",";
-            
+
             for (int i = 0; i < 16; i++) {
                 uint8_t key[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
                 uint8_t block = (i * 4);
@@ -291,7 +258,7 @@ public:
 
                 for (int j = 0; j < 4; j++) {
                     block = ((i * 4) + j);
-                    if(!IgnoreReservedBlocks(block)) {
+                    if (!IgnoreReservedBlocks(block)) {
                         success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 0, key);
                         if (success) {
                             success = PN532.mifareclassic_ReadDataBlock(block, data);
@@ -326,10 +293,58 @@ public:
         jsonString = uid;
     }
 
+    String GetMensage() {
+        return mensageProcess;
+    }
+
+    bool StartWriteData(String string, int block, int keyType, String key) {
+
+        if (SystemMode == 3) {
+
+            // Converte os dados via String para Char
+            char charArray[string.length() + 1];
+            string.toCharArray(charArray, string.length() + 1);
+            for (int i = 0; i < string.length(); i++) {
+                data[i] = (uint8_t)charArray[i];
+            }
+
+            // Converte a key HEX em Byte
+            for (int i = 0; i < 6; i++) {
+                char c1 = key.charAt(i * 2);
+                char c2 = key.charAt(i * 2 + 1);
+                int n1 = c1 >= 'A' ? c1 - 'A' + 10 : c1 - '0';
+                int n2 = c2 >= 'A' ? c2 - 'A' + 10 : c2 - '0';
+                KeySector[i] = (n1 << 4) | n2;
+            }
+
+            if (BlockConnection(block, keyType, KeySector)) {
+                if (WriteTag4Bytes(block, data)) {
+                    return true;
+                    mensageProcess = "Os dados foram gravados com sucesso!";
+                } else {
+                    return false;
+                    mensageProcess = "Houve um problema ao gravar os dados.";
+                }
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+            mensageProcess = "A função de escrita foi chamada, mas o modo escrita não está ativo.";
+        }
+
+    }
 
 private:
 
     Adafruit_PN532 PN532;
+
+    // Mensagem de Erro/Sucesso
+    String mensageProcess = "";
+
+    // Todos os dados do cartão em json
+    String jsonString;
 
     // Buffer para armazenar o UID retornado da Tag
     uint8_t uid[7] = { 0, 0, 0, 0, 0, 0, 0 };
@@ -337,8 +352,11 @@ private:
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
     uint8_t uidLength;
 
-    // Todos os dados do cartão em json
-    String jsonString;
+    // 16 Bytes (caracteres) por bloco
+    uint8_t data[17];
+
+    // KeyA chave padrão
+    uint8_t KeySector[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
     /**
      * Função que converte um conjunto bytes para HEX para String
@@ -369,11 +387,11 @@ private:
         if (connection) {
 
             // Imprime informações da Tag encontrada.
-            Serial.println("Encontrado Tag ISO14443A");
-            Serial.print("-- Tamanho da UID: "); Serial.print(uidLength, DEC); Serial.println(" bytes");
-            Serial.print("-- Valor da UID: ");
-            PN532.PrintHex(uid, uidLength);
-            Serial.println("");
+            // Serial.println("Encontrado Tag ISO14443A");
+            // Serial.print("-- Tamanho da UID: "); Serial.print(uidLength, DEC); Serial.println(" bytes");
+            // Serial.print("-- Valor da UID: ");
+            // PN532.PrintHex(uid, uidLength);
+            // Serial.println("");
 
             return true;
 
@@ -400,24 +418,26 @@ private:
 
         if (uidLength == 4) {
 
-            Serial.println("Tag Mifare Classic (4 byte UID)");
+            // Serial.println("Tag Mifare Classic (4 byte UID)");
 
-            if (keyType == 0) {
-                Serial.println("Tentando autenticar o bloco informado com a chave padrão KeyA.");
-            }
+            // if (keyType == 0) {
+            //     Serial.println("Tentando autenticar o bloco informado com a chave padrão KeyA.");
+            // }
 
-            if (keyType == 1) {
-                Serial.println("Tentando autenticar o bloco informado com a chave padrão KeyB.");
-            }
+            // if (keyType == 1) {
+            //     Serial.println("Tentando autenticar o bloco informado com a chave padrão KeyB.");
+            // }
 
             // Tenta autenticar o setor do bloco informado com a KeyA ou KeyB
             connection = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, keyType, key);
 
             if (connection) {
-                Serial.println("Bloco autenticado.");
+                // Serial.println("Bloco autenticado.");
+                mensageProcess = "O bloco foi autenticado.";
                 return true;
             } else {
-                Serial.println("Erro na autenticação.");
+                // Serial.println("Erro na autenticação.");
+                mensageProcess = "Chave de acesso incorreta!";
                 return false;
             }
 
@@ -427,6 +447,35 @@ private:
 
     }
 
+    /**
+     * Função para escrever dados em um bloco de uma tag MIFARE Classic com 4 bytes de tamanho.
+     * Verifica se o bloco informado não é reservado para a Key do Setor e, caso não seja, escreve os dados no bloco.
+     * @param block Número do bloco onde os dados serão escritos.
+     * @param data Array de 17 bytes contendo os dados a serem escritos na tag. O tamanho deve ser de 17 bytes, sendo o último byte reservado para o caractere nulo (terminador de string).
+     */
+    bool WriteTag4Bytes(int block, uint8_t data[17]) {
+
+        // Armazena dados da conexão
+        uint8_t connection;
+
+        if (!IgnoreReservedBlocks(block)) {
+
+            connection = PN532.mifareclassic_WriteDataBlock(block, data);
+
+            if (connection) {
+                mensageProcess = "Dados armazenados com sucesso!";
+                return true;
+            } else {
+                mensageProcess = "Houve um problema com a conexão do bloco.";
+                return false;
+            }
+
+        } else {
+            mensageProcess = "O bloco informado é reservado para a Chave do Setor.";
+            return false;
+        }
+
+    }
 
     // Ignora os blocos que contém as chaves de acesso e as informações do fabricante.
     bool IgnoreReservedBlocks(int AtualBlock) {
