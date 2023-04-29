@@ -435,7 +435,7 @@ private:
                 return true;
             } else {
                 // Serial.println("Erro na autenticação.");
-                mensageProcess = "Chave de acesso incorreta!";
+                mensageProcess = "Nenhuma Tag encontrada ou a chave de acesso está incorreta!";
                 return false;
             }
 
