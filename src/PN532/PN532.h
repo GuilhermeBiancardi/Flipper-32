@@ -301,6 +301,12 @@ public:
 
         if (SystemMode == 3) {
 
+            // 16 Bytes (caracteres) por bloco
+            uint8_t data[17];
+
+            // KeyA chave padrão
+            uint8_t KeySector[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+
             // Converte os dados via String para Char
             char charArray[string.length() + 1];
             string.toCharArray(charArray, string.length() + 1);
@@ -320,18 +326,16 @@ public:
             if (BlockConnection(block, keyType, KeySector)) {
                 if (WriteTag4Bytes(block, data)) {
                     return true;
-                    mensageProcess = "Os dados foram gravados com sucesso!";
                 } else {
                     return false;
-                    mensageProcess = "Houve um problema ao gravar os dados.";
                 }
             } else {
                 return false;
             }
 
         } else {
-            return false;
             mensageProcess = "A função de escrita foi chamada, mas o modo escrita não está ativo.";
+            return false;
         }
 
     }
@@ -351,12 +355,6 @@ private:
 
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
     uint8_t uidLength;
-
-    // 16 Bytes (caracteres) por bloco
-    uint8_t data[17];
-
-    // KeyA chave padrão
-    uint8_t KeySector[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
     /**
      * Função que converte um conjunto bytes para HEX para String
