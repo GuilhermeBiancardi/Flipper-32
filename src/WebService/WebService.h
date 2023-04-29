@@ -276,13 +276,8 @@ void WebServiceSetup() {
 
     server.on("/NFC_WRITE_ON", HTTP_GET,
         [](AsyncWebServerRequest* request) {
+            
             SystemMode = 3;
-            request->send_P(200, "text/plain", "ok");
-        }
-    );
-
-    server.on("/NFC_WRITE", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
 
             int block;
             int type;
