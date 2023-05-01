@@ -4,8 +4,8 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
       ATENÇÃO: O desenvolvimento da UI está sendo feita em paralelo a este projeto, por enquanto ela não
       fará parte deste projeto por motivos de praticidade do desenvolvimento. Após o termino a mesma 
-      será alocada em uma pasta nesse projeto com o nome SDCard. O andamento do desenvolvimento da UI 
-      está contido no final dessa página.
+      será alocada em uma pasta na raiz desse projeto com o nome SDCard. O andamento do desenvolvimento
+      da UI está descriminada no final dessa página.
 
 1. **Tarefas Gerais**
    
