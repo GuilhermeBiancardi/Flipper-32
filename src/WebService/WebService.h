@@ -258,8 +258,6 @@ void WebServiceSetup() {
     //     }
     // );
 
-    // --------- NFC -----------
-
     server.on("/SYSTEM_OFF", HTTP_GET,
         [](AsyncWebServerRequest* request) {
             SystemMode = 0;
@@ -267,9 +265,19 @@ void WebServiceSetup() {
         }
     );
 
+    // --------- NFC -----------
+
+    server.on("/NFC_LIST_DIR", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            String json = SDCard.ListDirectory("/System/NFC");
+            request->send_P(200, "text/plain", json.c_str());
+        }
+    );
+
     server.on("/NFC_READ_ON", HTTP_GET,
         [](AsyncWebServerRequest* request) {
             SystemMode = 2;
+            PN532.SetJSON("");
             request->send_P(200, "text/plain", "ok");
         }
     );
@@ -300,8 +308,7 @@ void WebServiceSetup() {
                 data = request->getParam("data")->value();
             }
 
-            int status = PN532.StartWriteData(data, block, type, key);
-            String response = "{\"status\": \"" + String(status) + "\", \"mensage\": \"" + PN532.GetMensage() + "\"}";
+            String response = PN532.StartWriteData(data, block, type, key);
 
             request->send_P(200, "text/plain", response.c_str());
         }

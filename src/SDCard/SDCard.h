@@ -270,16 +270,26 @@ public:
      * @param tabSize O tamanho da tabulação para a formatação da saída.
      *
      */
-    void ListDirectory(const char* directory, int tabSize) {
+    String ListDirectory(const char* directory) {
+
+        // Armazenará o json que conterá a árvore de pastas e arquivos do diretório informado.
+        String json = "{\"status\": \"1\", \"mensage\": \"Listagem concluída.\", \"root\": [";
+
         // Abre o diretório no cartão SD.
         File ListDirectoryHome;
         ListDirectoryHome = SD.open(directory);
 
-        // Imprime uma nova linha para separar a saída anterior, se houver.
-        Serial.println("");
+        if(ListDirectoryHome) {
+            // Chama a função List para listar o conteúdo do diretório, passando o tamanho da tabulação como parâmetro.
+            json += List(ListDirectoryHome);
+            json.remove(json.length() - 1);
+            json += "]}";
+        } else {
+            json = "{\"status\": \"0\", \"mensage\": \"Erro ao listar a pasta NFC, verifique se ela existe ou se está liberada para leitura.\"}";
+        }
 
-        // Chama a função List para listar o conteúdo do diretório, passando o tamanho da tabulação como parâmetro.
-        List(ListDirectoryHome, tabSize);
+        return json;
+
     }
 
 
@@ -287,8 +297,12 @@ private:
 
     // Pino CS
     int CSPin;
+
     // Instancia da Classe File
     File SDCardFile;
+
+    // Armazena toda a árvore de diretórios da pasta NFC
+    // String jsonListDirectory = "";
 
     /**
      * Função para formatar o nome de um diretório no cartão SD incluindo uma / no início.
@@ -392,32 +406,49 @@ private:
      * @param tabSize O tamanho da tabulação para a impressão da listagem.
      *
      */
-    void List(File directory, int tabSize) {
+    String List(File directory) {
+        String json = "";
         while (true) {
             File entry = directory.openNextFile();
             if (!entry) {
                 break;
             }
-            for (uint8_t i = 0; i < tabSize; i++) {
-                if (!entry.isDirectory()) {
-                    Serial.print("|--- ");
-                } else {
-                    Serial.print("|    ");
-                }
-            }
             if (entry.isDirectory()) {
-                Serial.print("| ");
-                Serial.print(entry.name());
-                Serial.println("/");
-                List(entry, tabSize + 1);
+                json += "{\"text\": \"" + String(entry.name()) + "\", \"icon\": \"bi bi-folder\", \"nodes\": [";
+                json += List(entry);
+                if (json.endsWith(",")) {
+                    json.remove(json.length() - 1);
+                }
+                json += "]},";
             } else {
-                Serial.print(entry.name());
-                Serial.print(" Size: ");
-                Serial.println(entry.size(), DEC);
+                json += "{\"text\": \"" + String(entry.name()) + "\", \"icon\": \"bi bi-filetype-json\"},";
             }
             entry.close();
         }
+        return json;
     }
+
+    // String List(File directory) {
+    //     String json = "";
+    //     while (true) {
+    //         File entry = directory.openNextFile();
+    //         if (!entry) {
+    //             break;
+    //         }
+    //         if (entry.isDirectory()) {
+    //             json += "\"" + String(entry.name()) + "\": {\"files\": {";
+    //             json += List(entry);
+    //             if (json.endsWith(",")) {
+    //                 json.remove(json.length() - 1);
+    //             }
+    //             json += "}},";
+    //         } else {
+    //             json += "\"" + String(entry.name()) + "\": {\"size\": \"" + entry.size() + "\"},";
+    //         }
+    //         entry.close();
+    //     }
+    //     return json;
+    // }
 
 };
 

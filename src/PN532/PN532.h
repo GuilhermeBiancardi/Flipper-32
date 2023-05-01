@@ -293,16 +293,12 @@ public:
         jsonString = uid;
     }
 
-    String GetMensage() {
-        return mensageProcess;
-    }
-
-    bool StartWriteData(String string, int block, int keyType, String key) {
+    String StartWriteData(String string, int block, int keyType, String key) {
 
         if (SystemMode == 3) {
 
             // 16 Bytes (caracteres) por bloco
-            uint8_t data[17];
+            uint8_t data[17] = { "" };
 
             // KeyA chave padrão
             uint8_t KeySector[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
@@ -325,17 +321,17 @@ public:
 
             if (BlockConnection(block, keyType, KeySector)) {
                 if (WriteTag4Bytes(block, data)) {
-                    return true;
+                    return jsonStatus(1);
                 } else {
-                    return false;
+                    return jsonStatus(0);
                 }
             } else {
-                return false;
+                return jsonStatus(0);
             }
 
         } else {
             mensageProcess = "A função de escrita foi chamada, mas o modo escrita não está ativo.";
-            return false;
+            return jsonStatus(0);
         }
 
     }
@@ -355,6 +351,10 @@ private:
 
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
     uint8_t uidLength;
+
+    String jsonStatus(int status) {
+        return "{\"status\": \"" + String(status) + "\", \"mensage\": \"" + mensageProcess + "\"}";
+    }
 
     /**
      * Função que converte um conjunto bytes para HEX para String
