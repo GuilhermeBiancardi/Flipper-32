@@ -2,13 +2,15 @@
 
 Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidades de um Flipper Zero para a plataforma ESP32. 
 
-0. **Tarefas Gerais**
+      ATENÇÃO: O desenvolvimento da UI está sendo feita em paralelo a este projeto, por enquanto ela não fará parte deste projeto por motivos de praticidade do desenvolvimento. Após o termino a mesma será alocada em uma pasta nesse projeto com o nome SDCard. O andamento do desenvolvimento da UI está contido no final dessa página.
+
+1. **Tarefas Gerais**
    
    - [ ] Criar esquemático com as ligações.
    - [ ] Desenvolver GERBER da placa de circuito impresso
    - [ ] Desenvolver modelo 3D da case do Projeto
 
-1. **Tarefas relacionadas a ESP32**
+2. **Tarefas relacionadas a ESP32**
 
         Plataforma Utilizada, ESP32 Wroom Dev Kit 38 Pinos:
 
@@ -22,7 +24,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    -  - [x] Resolver problema que reinicia a ESP ao carregar muitos arquivos.
    - [x] Criar websocket para comunicação em tempo real com o webservice.
 
-2. **Tarefas relacionadas a NFC 13.56Mhz**
+3. **Tarefas relacionadas a NFC 13.56Mhz**
 
         Módulo utilizado, PN532: 
 
@@ -40,7 +42,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [ ] Bruteforce de Keys
    - [x] Importar dados da Tag em JSON
 
-3. **Tarefas relacionadas ao SDCard**
+4. **Tarefas relacionadas ao SDCard**
 
         Módulo utilizado, Micro SD Card: 
 
@@ -56,7 +58,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Criar uma pasta padrão do sistema
    - [x] Integração com a UI do Sistema
    
-4. **Tarefas relacionadas ao Infra Vermelho**
+5. **Tarefas relacionadas ao Infra Vermelho**
 
         Peças utilizadas, Led Emissor e Receptor Tl1838 Vs1838 38khz: 
 
@@ -72,12 +74,29 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
   
   
 5. **Tarefas relacionadas a UI do Sistema**
-   - [x] Criar UI moderna
    - [ ] Remover UI antiga do código
-   - [x] Tela Inicial
+   - [ ] Tela Inicial
+     - [ ] Adicionar informações importantes da Placa.
+     - [ ] Adicionar informações importantes do Leitor NFC
+     - [ ] Adicionar informações importantes do Leitor Infra-Vermelho
    - [x] Tela de Loading (Cache)
    - [ ] Tela de Configuração do SoftAP
+     - [ ] Mudar SSID
+     - [ ] Mudar Senha
    - [ ] Tela de Configuração do WiFi
+     - [ ] Mudar SSID
+     - [ ] Mudar Senha
    - [ ] Tela NFC
+     - [x] Ler dados da tag NFC
+     - [x] Gravar dados na tag NFC
+     - [x] Listar arquivos salvos no cartão de memória
+     - [ ] Salvar dados lidos em arquivo no cartão de memória
+     - [ ] Ler arquivos salvos no cartão de memória
+     - [ ] Definir key para leitura.
    - [ ] Tela Infra Vermelho
-   - [x] Migrar UI do Sistema do código para o SDCard. (Isso vai possibilitar desenvolver intervaces melhores sem comprometer o armazenamento limitado da ESP32, porém vai exigir que o dispositivo montado tenha um cartão Micro SD).
+     - [ ] Ler sinais IR
+     - [ ] Simular sinais IR
+     - [ ] Listar arquivos salvos no cartão de memória
+     - [ ] Salvar dados lidos em arquivo no cartão de memória
+     - [ ] Ler arquivos salvos no cartão de memória
+   - [x] Migrar UI integrada para o SDCard. (Isso vai possibilitar desenvolver interfaces melhores sem comprometer o armazenamento limitado da memória interna da ESP32, porém vai exigir que o dispositivo montado tenha um cartão Micro SD).
