@@ -258,6 +258,8 @@ void WebServiceSetup() {
     //     }
     // );
 
+    // --------- GERAL -----------
+
     server.on("/SYSTEM_OFF", HTTP_GET,
         [](AsyncWebServerRequest* request) {
             SystemMode = 0;
@@ -265,7 +267,25 @@ void WebServiceSetup() {
         }
     );
 
-    // --------- NFC -----------
+    server.on("/DELETE_FILE", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            
+            String path = "System/";
+
+            if (request->hasParam("path")) {
+                path += request->getParam("path")->value();
+            }
+
+            if(SDCard.Delete(path.c_str())) {
+                request->send_P(200, "text/plain", "ok");
+            } else {
+                request->send_P(200, "text/plain", "er");
+            }
+
+        }
+    );
+
+    // ---------- NFC ------------
 
     server.on("/NFC_LIST_DIR", HTTP_GET,
         [](AsyncWebServerRequest* request) {

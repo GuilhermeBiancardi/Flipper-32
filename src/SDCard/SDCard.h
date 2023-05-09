@@ -428,28 +428,6 @@ private:
         return json;
     }
 
-    // String List(File directory) {
-    //     String json = "";
-    //     while (true) {
-    //         File entry = directory.openNextFile();
-    //         if (!entry) {
-    //             break;
-    //         }
-    //         if (entry.isDirectory()) {
-    //             json += "\"" + String(entry.name()) + "\": {\"files\": {";
-    //             json += List(entry);
-    //             if (json.endsWith(",")) {
-    //                 json.remove(json.length() - 1);
-    //             }
-    //             json += "}},";
-    //         } else {
-    //             json += "\"" + String(entry.name()) + "\": {\"size\": \"" + entry.size() + "\"},";
-    //         }
-    //         entry.close();
-    //     }
-    //     return json;
-    // }
-
 };
 
 /*
