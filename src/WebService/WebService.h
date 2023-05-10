@@ -285,6 +285,42 @@ void WebServiceSetup() {
         }
     );
 
+    server.on("/CREATE_FILE", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            
+            String path = "System/";
+
+            if (request->hasParam("path")) {
+                path += request->getParam("path")->value() + ".json";
+            }
+
+            if(SDCard.FileCreate(path.c_str())) {
+                request->send_P(200, "text/plain", "ok");
+            } else {
+                request->send_P(200, "text/plain", "er");
+            }
+
+        }
+    );
+
+    server.on("/CREATE_FOLDER", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            
+            String path = "System/";
+
+            if (request->hasParam("path")) {
+                path += request->getParam("path")->value();
+            }
+
+            if(SDCard.FolderCreate(path.c_str())) {
+                request->send_P(200, "text/plain", "ok");
+            } else {
+                request->send_P(200, "text/plain", "er");
+            }
+
+        }
+    );
+
     // ---------- NFC ------------
 
     server.on("/NFC_LIST_DIR", HTTP_GET,
