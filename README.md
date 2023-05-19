@@ -2,10 +2,8 @@
 
 Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidades de um Flipper Zero para a plataforma ESP32. 
 
-      ATENÇÃO: O desenvolvimento da UI está sendo feita em paralelo a este projeto, por enquanto ela não
-      fará parte deste projeto por motivos de praticidade do desenvolvimento. Após o termino a mesma 
-      será alocada em uma pasta na raiz desse projeto com o nome SDCard. O andamento do desenvolvimento
-      da UI está descriminada no final dessa página.
+      ATENÇÃO: A UI do projeto está na raiz dentro da pasta SDCard. Para que o projeto funcione
+      corretamente todo o conteúdo dessa pasta deve ser copiado para o SDCard!
 
 1. **Tarefas Gerais**
    
