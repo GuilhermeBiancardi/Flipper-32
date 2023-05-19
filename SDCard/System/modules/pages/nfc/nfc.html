@@ -490,14 +490,27 @@
                                 </table>\
                             </div>\
                             <div class="input-group flex-nowrap">\
-                                <select id="nfc_type_key_sector-[ID_SECTOR]" class="form-select" style="min-width: 110px;">\
-                                    <option value="0">Chave A</option>\
-                                    <option value="1">Chave B</option>\
-                                </select>\
+                                <span class="input-group-text">CHAVE A</span>\
                                 <span class="input-group-text">STR</span>\
-                                <input type="text" id="nfc_str_key_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
+                                <input type="text" id="nfc_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
                                 <span class="input-group-text">HEX</span>\
-                                <input type="text" id="nfc_hex_key_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                                <input type="text" id="nfc_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                            </div>\
+                            <div class="input-group flex-nowrap">\
+                                <span class="input-group-text">CHAVE B</span>\
+                                <span class="input-group-text">STR</span>\
+                                <input type="text" id="nfc_str_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
+                                <span class="input-group-text">HEX</span>\
+                                <input type="text" id="nfc_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                            </div>\
+                            <br>\
+                            <div class="input-group flex-nowrap">\
+                                <span class="input-group-text">USAR CHAVE:</span>\
+                                <select id="nfc_type_key_sector-[ID_SECTOR]" class="form-select" style="min-width: 110px;">\
+                                    <option value="0">A</option>\
+                                    <option value="1">B</option>\
+                                </select>\
+                                <buttom class="btn btn-default form-control">Salvar</buttom>\
                             </div>\
                         </div>\
                 </div>\
@@ -611,7 +624,11 @@
             var sector_block = id[1].split("_");
             var sector = sector_block[0];
             var block = sector_block[1];
-            var key = $("#nfc_hex_key_sector-" + sector).val();
+            var type = $("#nfc_type_key_sector-" + sector).val();
+            var key = $("#nfc_hex_key_a_sector-" + sector).val();
+            if(type == 1) {
+                key = $("#nfc_hex_key_b_sector-" + sector).val();
+            }
             var dados = $("#block_data-" + id[1]).html();
 
             if (dados == "Vazio") {
@@ -623,7 +640,7 @@
 
                     var data = {
                         "block": block,
-                        "type": $("#nfc_type_key_sector-" + sector).val(),
+                        "type": type,
                         "key": key,
                         "data": dados
                     };
@@ -668,14 +685,29 @@
         $(".key_sector").keyup(function () {
             var id = $(this).attr("id").split("-");
             var value = $(this).val();
-            if (id[0] == "nfc_str_key_sector") {
-                $("#nfc_hex_key_sector-" + id[1]).val(StringToHex(value));
+            var auxJson = JSON.parse(json_mdfy);
+            if (id[0] == "nfc_str_key_a_sector" || id[0] == "nfc_str_key_b_sector") {
+                var hex = StringToHex(value);
+                $("#" + id[0].replaceAll(/\_str\_/g, "_hex_") + "-" + id[1]).val(hex);
+                if(id[0].indexOf("a") != -1) {
+                    auxJson["sector_" + id[1]]["key_a"] = hex;
+                } else {
+                    auxJson["sector_" + id[1]]["key_b"] = hex;
+                }
             } else {
+                if(id[0].indexOf("a") != -1) {
+                    auxJson["sector_" + id[1]]["key_a"] = value;
+                } else {
+                    auxJson["sector_" + id[1]]["key_b"] = value;
+                }
                 if (value.length % 2 == 1) {
                     value = value.slice(0, (value.length - 1));
                 }
-                $("#nfc_str_key_sector-" + id[1]).val(HexToString(value));
+                var str = HexToString(value);
+                $("#" + id[0].replaceAll(/\_hex\_/g, "_str_") + "-" + id[1]).val(str);
             }
+            json_mdfy = JSON.stringify(auxJson);
+            $("#json-nfc").val(json_mdfy);
         });
 
     }
@@ -753,12 +785,16 @@
                         var key_a = json["sector_" + i]["key_a"];
                         $("#key-hex-a-sector-" + i).val(key_a);
                         $("#key-str-a-sector-" + i).val(HexToString(key_a));
-                        $("#nfc_str_key_sector-" + i).val(HexToString(key_a));
-                        $("#nfc_hex_key_sector-" + i).val(key_a);
 
+                        $("#nfc_str_key_a_sector-" + i).val(HexToString(key_a));
+                        $("#nfc_hex_key_a_sector-" + i).val(key_a);
+                        
                         var key_b = json["sector_" + i]["key_b"];
                         $("#key-hex-b-sector-" + i).val(key_b);
                         $("#key-str-b-sector-" + i).val(HexToString(key_b));
+
+                        $("#nfc_str_key_b_sector-" + i).val(HexToString(key_b));
+                        $("#nfc_hex_key_b_sector-" + i).val(key_b);
 
                         for (var j = 0; j < 4; j++) {
                             var block = ((i * 4) + j);
