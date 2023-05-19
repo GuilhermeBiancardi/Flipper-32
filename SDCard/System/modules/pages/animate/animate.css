@@ -1,0 +1,25 @@
+.css-animation-box h1 {
+    font-size: 44px;
+}
+.animation-efect-links a {
+    padding: 6px 6px;
+    font-size: 12px;
+    margin: 5px;
+}
+#animation_box {
+    background-color: #1e2936;
+    border-radius: 16px;
+    width: 80%;
+    margin: 0 auto;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.animation-text-box h2 {
+    font-size: 54px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+.animation-text-box p {
+    font-size: 12px;
+    text-transform: uppercase;
+}

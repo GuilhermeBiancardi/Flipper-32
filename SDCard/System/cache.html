@@ -1,0 +1,109 @@
+<html data-bs-theme="dark">
+
+<head>
+
+    <title>System File Cache</title>
+
+    <meta http-equiv="Cache-Control" content="max-age=1209600">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="author" content="Guilherme Bruno Marques Biancardi">
+    <meta name="reply-to" content="guilhermeaw.com@gmail.com">
+    <meta name="Custodian" content="Biancardi, Guilherme">
+
+    <style>
+        body {
+            background-color: #1d2835f2 !important;
+            color: #fff !important;
+            text-align: center !important;
+            font-size: 1.5em !important;
+            padding: 40px 15px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <i class="bi bi-hourglass" style="font-size: 5rem;"></i>
+    <br>
+    Carregando arquivos de cache
+    <br>
+    por favor aguarde...
+
+    <script>
+
+        var indexFile = 0;
+        var atualFile = 0;
+
+        var HTMLFiles = [
+            "images/pattern-dark.png",
+            "images/logo-dark.png",
+            "plugins/bootstrap-icons/css/bootstrap-icons.min.css?v=0001",
+            "plugins/fonts/css/chakra-petch.css?v=0001",
+            "plugins/animate/css/animate.min.css?v=0001",
+            "plugins/app/css/app.css?v=0001",
+            "plugins/jquery/js/jquery-3.6.4.min.js?v=0001",
+            "plugins/bootstrap/js/bootstrap.bundle.min.js?v=0001",
+            "plugins/app/js/app.js?v=0001",
+        ];
+
+        function loadCSS(url, callback) {
+
+            var extensao = url.split('.').pop();
+            extensao = extensao.split('?').shift();
+
+            // Cria um elemento
+            if(extensao == "css") {
+                var file = document.createElement('link');
+                file.rel = 'stylesheet';
+                file.href = url;
+            }
+            
+            if(extensao == "js") {
+                var file = document.createElement('script');
+                file.src = url;
+            }
+            
+            if(extensao == "jpg" || extensao == "png" || extensao == "jpeg") {
+                var file = document.createElement('img');
+                file.src = url;
+            }
+
+            // Adiciona um ouvinte de evento de carga
+            file.addEventListener('load', function () {
+                // Chama o callback quando o arquivo CSS foi totalmente carregado
+                callback(null, file);
+            });
+
+            // Adiciona um ouvinte de evento de erro
+            file.addEventListener('error', function () {
+                // Chama o callback com um erro quando o arquivo CSS não pôde ser carregado
+                callback(new Error('Não foi possível carregar o arquivo CSS: ' + url));
+            });
+
+            // Adiciona o elemento <link> ao cabeçalho do documento
+            document.head.appendChild(file);
+        }
+
+        function startLoadCSS(indexFile) {
+            if(indexFile < HTMLFiles.length) {
+                loadCSS(HTMLFiles[indexFile], () => {
+                    indexFile++;
+                    startLoadCSS(indexFile);
+                });
+            } else {
+                window.location = "index.html";
+            }
+        }
+
+        startLoadCSS(indexFile);
+
+
+    </script>
+
+</body>
+
+</html>

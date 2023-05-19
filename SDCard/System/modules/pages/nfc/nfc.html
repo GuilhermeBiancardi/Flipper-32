@@ -1,0 +1,858 @@
+<div class="card card-fixed">
+    <div class="card-body">
+        <div class="btn-toolbar" role="toolbar">
+            <div class="d-flex align-items-center">
+                <i id="nfc_on_off" class="bi bi-circle-fill fs-6px text-danger me-2"></i>
+            </div>
+            <div class="btn-group me-2" role="group">
+                <button type="button" id="nfc_menu_read" class="btn btn-outline-secondary">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <!-- <button type="button" id="nfc_menu_toggle_write" class="btn btn-outline-secondary">
+                    <i class="bi bi-pen"></i>
+                </button> -->
+                <button type="button" id="nfc_menu_sd_card" class="btn btn-outline-secondary">
+                    <i class="bi bi-sd-card"></i>
+                </button>
+                <button type="button" id="nfc_menu_key" class="btn btn-outline-secondary">
+                    <i class="bi bi-key"></i>
+                </button>
+                <button type="button" id="nfc_menu_info" class="btn btn-outline-secondary">
+                    <i class="bi bi-info-circle"></i>
+                </button>
+            </div>
+            <input id="nfc_area_transferencia" type="text" class="form-control" maxlength="16" placeholder="Área de Transferência">
+        </div>
+    </div>
+</div>
+
+<div class="mt-5"></div>
+
+<div id="block-legend" class="animated-05 fadeInLeft d-none">
+
+    <div class="card">
+        <div class="card-header fw-bold small text-uppercase">
+            Informativo / Legendas
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table small text-nowrap m-0">
+                    <thead>
+                        <tr style='background: var(--bs-table-striped-bg);'>
+                            <th scope="col" style="width: 50px;">Símbolo</th>
+                            <th scope="col" class="w-100">Função</th>
+                        </tr>
+                    </thead>
+                    <tbody id="legend_data">
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-eye me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Liga o modo leitura do NFC, este modo permite ler o conteúdo de Tags.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-key me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Abre os dados de Chaves/Keys dos Setores/Blocos.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-sd-card me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Abre as opções de armazenamento externo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-front me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Copia o conteúdo do bloco para a Área de Transferência.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-clipboard me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Escreve o conteúdo da Área de Transferência para o bloco.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-pen me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Grava o conteúdo do bloco na Tag.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-trash2 me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Apaga todo o conteúdo do bloco.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-slash-circle me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Nenhuma ação disponível.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-file-plus-fill me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Seleciona a pasta atual, isso possibilita a criação de arquivos e pastas dentro da mesma.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-trash me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Deleta um arquivo ou diretório.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-box-arrow-down me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Abre o arquivo e pega seu conteúdo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-folder me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Pasta fechada.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-folder2-open me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Pasta aberta.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-folder-x me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Pasta vazia.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-circle-fill text-danger me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                O modo leitura não está ativo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-circle-fill text-success me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Modo Leitura está ativo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-square-fill text-danger me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Bloco reservado para armazenar a chave de acesso do setor.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-square-fill text-warning me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Bloco reservado para armazenar dados do fabricante.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-square-fill text-success me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Bloco disponível para gravação (Max: 16 caracteres).
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="card-arrow">
+            <div class="card-arrow-top-left"></div>
+            <div class="card-arrow-top-right"></div>
+            <div class="card-arrow-bottom-left"></div>
+            <div class="card-arrow-bottom-right"></div>
+        </div>
+    </div>
+
+    <hr>
+
+</div>
+
+<div id="block-sd-card" class="animated-05 fadeInLeft d-none">
+
+    <div class="card">
+        <div class="card-header fw-bold small text-uppercase">
+            Carregar/Salvar dados do/no cartão SD
+        </div>
+        <div class="card-body">
+            <div class="input-group">
+                <span class="input-group-text" id="path-nfc">NFC/</span>
+                <input id="path-nfc-input" type="text" class="form-control" placeholder="Nome do Arquivo">
+                <button class="btn btn-outline-secondary" type="button" id="create-file">Criar Arquivo</button>
+                <button class="btn btn-outline-secondary" type="button" id="create-folder">Criar Pasta</button>
+                <button class="btn btn-outline-secondary" type="button" id="list-files-sd">Listar Arquivos</button>
+            </div>
+            <br>
+            <div id="nfc_files_tree" class="treeview"></div>
+        </div>
+        <div class="card-arrow">
+            <div class="card-arrow-top-left"></div>
+            <div class="card-arrow-top-right"></div>
+            <div class="card-arrow-bottom-left"></div>
+            <div class="card-arrow-bottom-right"></div>
+        </div>
+    </div>
+    <hr>
+
+</div>
+
+<div id="block-key" class="animated-05 fadeInLeft d-none">
+
+    <div class="card">
+        <div class="card-header fw-bold small text-uppercase">
+            Chaves de Acesso Global
+        </div>
+        <div class="card-body">
+
+            <div class="input-group flex-nowrap mb-3">
+                <span class="input-group-text">Global: Chave A HEX</span>
+                <input id="default-hex-key-a" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff">
+                <span class="input-group-text">Global: Chave B HEX</span>
+                <input id="default-hex-key-b" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff">
+            </div>
+
+            <div class="input-group flex-nowrap mb-3">
+                <span class="input-group-text">Global: Chave A STR</span>
+                <input id="default-str-key-a" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ">
+                <span class="input-group-text">Global: Chave B STR</span>
+                <input id="default-str-key-b" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ">
+            </div>
+
+        </div>
+        <div class="card-arrow">
+            <div class="card-arrow-top-left"></div>
+            <div class="card-arrow-top-right"></div>
+            <div class="card-arrow-bottom-left"></div>
+            <div class="card-arrow-bottom-right"></div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="card">
+        <div class="card-header fw-bold small text-uppercase">
+            Chaves de Acesso por Setor
+        </div>
+        <div class="card-body">
+
+            <div id="key_by_sector">
+
+            </div>
+
+        </div>
+        <div class="card-arrow">
+            <div class="card-arrow-top-left"></div>
+            <div class="card-arrow-top-right"></div>
+            <div class="card-arrow-bottom-left"></div>
+            <div class="card-arrow-bottom-right"></div>
+        </div>
+    </div>
+
+    <hr>
+
+</div>
+
+<div class="col col-12 mb-3">
+    <div class="card">
+        <div class="card-header fw-bold small text-uppercase">
+            Último cartão lido
+        </div>
+        <div class="card-body">
+
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text">UID</span>
+                <input id="card_uid" class="form-control form-control text-uppercase" type="text" placeholder="00000000" readonly>
+            </div>
+
+            <br>
+            <label class="form-label" for="json-nfc">JSON NFC</label>
+            <textarea class="form-control" id="json-nfc" rows="15"></textarea>
+
+        </div>
+        <div class="card-arrow">
+            <div class="card-arrow-top-left"></div>
+            <div class="card-arrow-top-right"></div>
+            <div class="card-arrow-bottom-left"></div>
+            <div class="card-arrow-bottom-right"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var json_empy = '{"type":"NFC_TAG_4K","uid":"","sector_0":{"key_a":"","key_b":"","block_0":{"data":""},"block_1":{"data":""},"block_2":{"data":""},"block_3":{"data":""}},"sector_1":{"key_a":"","key_b":"","block_4":{"data":""},"block_5":{"data":""},"block_6":{"data":""},"block_7":{"data":""}},"sector_2":{"key_a":"","key_b":"","block_8":{"data":""},"block_9":{"data":""},"block_10":{"data":""},"block_11":{"data":""}},"sector_3":{"key_a":"","key_b":"","block_12":{"data":""},"block_13":{"data":""},"block_14":{"data":""},"block_15":{"data":""}},"sector_4":{"key_a":"","key_b":"","block_16":{"data":""},"block_17":{"data":""},"block_18":{"data":""},"block_19":{"data":""}},"sector_5":{"key_a":"","key_b":"","block_20":{"data":""},"block_21":{"data":""},"block_22":{"data":""},"block_23":{"data":""}},"sector_6":{"key_a":"","key_b":"","block_24":{"data":""},"block_25":{"data":""},"block_26":{"data":""},"block_27":{"data":""}},"sector_7":{"key_a":"","key_b":"","block_28":{"data":""},"block_29":{"data":""},"block_30":{"data":""},"block_31":{"data":""}},"sector_8":{"key_a":"","key_b":"","block_32":{"data":""},"block_33":{"data":""},"block_34":{"data":""},"block_35":{"data":""}},"sector_9":{"key_a":"","key_b":"","block_36":{"data":""},"block_37":{"data":""},"block_38":{"data":""},"block_39":{"data":""}},"sector_10":{"key_a":"","key_b":"","block_40":{"data":""},"block_41":{"data":""},"block_42":{"data":""},"block_43":{"data":""}},"sector_11":{"key_a":"","key_b":"","block_44":{"data":""},"block_45":{"data":""},"block_46":{"data":""},"block_47":{"data":""}},"sector_12":{"key_a":"","key_b":"","block_48":{"data":""},"block_49":{"data":""},"block_50":{"data":""},"block_51":{"data":""}},"sector_13":{"key_a":"","key_b":"","block_52":{"data":""},"block_53":{"data":""},"block_54":{"data":""},"block_55":{"data":""}},"sector_14":{"key_a":"","key_b":"","block_56":{"data":""},"block_57":{"data":""},"block_58":{"data":""},"block_59":{"data":""}},"sector_15":{"key_a":"","key_b":"","block_60":{"data":""},"block_61":{"data":""},"block_62":{"data":""},"block_63":{"data":""}}}';
+    var json_mdfy = json_empy;
+
+    function EmpyKeyBySector() {
+
+        var row_key = '<div class="row"></div>';
+
+        var card_key = '\
+        <div class="col col-md-6 col-sm-12 mb-3">\
+            <div class="card">\
+                <div class="card-header fw-bold small text-uppercase">\
+                    Chave Setor [ID_SECTOR]\
+                </div>\
+                <div class="card-body">\
+                    <div class="input-group flex-nowrap mb-3">\
+                        <span class="input-group-text">Chave A HEX</span>\
+                        <input id="key-hex-a-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff" readonly>\
+                        <span class="input-group-text">Chave B HEX</span>\
+                        <input id="key-hex-b-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff" readonly>\
+                    </div>\
+                    <div class="input-group flex-nowrap">\
+                        <span class="input-group-text">Chave A STR</span>\
+                        <input id="key-str-a-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ" readonly>\
+                        <span class="input-group-text">Chave B STR</span>\
+                        <input id="key-str-b-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ" readonly>\
+                    </div>\
+                </div>\
+                <div class="card-arrow">\
+                    <div class="card-arrow-top-left"></div>\
+                    <div class="card-arrow-top-right"></div>\
+                    <div class="card-arrow-bottom-left"></div>\
+                    <div class="card-arrow-bottom-right"></div>\
+                </div>\
+            </div>\
+        </div>\
+        ';
+
+        $("#key_by_sector").append(row_key);
+
+        for (var i = 0; i < 16; i++) {
+            var card = "";
+            card = card_key.replaceAll(/\[ID_SECTOR\]/g, i);
+            $("#key_by_sector .row").append(card);
+        }
+    }
+
+    function EmpyTableCardData() {
+
+        var table_start = '\
+        <div class="col-12 col-lg-6 mb-3">\
+            <div class="card">\
+                <div class="card-header fw-bold small text-uppercase">\
+                    Setor [ID_SECTOR]\
+                </div>\
+                <div class="card-body">\
+                    <div id="card_sector-[ID_SECTOR]">\
+                        <div class="table-responsive mb-3">\
+                            <table class="table mb-2px small text-nowrap m-0">\
+                                <thead>\
+                                    <tr style="background: var(--bs-table-striped-bg);">\
+                                        <th scope="col" style="width: 50px;">Bloco</th>\
+                                        <th scope="col" class="w-100">Dados</th>\
+                                        <th scope="col">Ações</th>\
+                                    </tr>\
+                                </thead>\
+                                <tbody id="card_table_data_[ID_SECTOR]">\
+        ';
+
+        var table_data = '\
+        <tr>\
+            <td class="text-center">[BLOCKS]</td>\
+            <td>\
+                <span class="d-flex align-items-center">\
+                    [DOT]\
+                    <div id="block_data-[ID_BLOCK]">[DATA]</div>\
+                </span>\
+            </td>\
+            <td class="text-center">\
+                [ACTIONS]\
+            </td>\
+        </tr>';
+
+        var table_data_action_copy = '\
+        <a id="block_data_copy-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_copy">\
+            <i class="bi bi-front me-2"></i>\
+        </a>\
+        ';
+
+        var table_data_action_paste = '\
+        <a id="block_data_paste-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_paste">\
+            <i class="bi bi-clipboard me-2"></i>\
+        </a>\
+        ';
+
+        var table_data_action_delete = '\
+        <a id="block_data_delete-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_delete">\
+            <i class="bi bi-trash2 me-2"></i>\
+        </a>\
+        ';
+
+        var table_data_action_write = '\
+        <a id="block_data_write-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_write">\
+            <i class="bi bi-pen me-2"></i>\
+        </a>\
+        ';
+
+        var table_data_action_nothing = '\
+        <a class="text-decoration-none text-inverse">\
+            <i class="bi bi-slash-circle me-2"></i>\
+        </a>\
+        <a class="text-decoration-none text-inverse">\
+            <i class="bi bi-slash-circle me-2"></i>\
+        </a>\
+        <a class="text-decoration-none text-inverse">\
+            <i class="bi bi-slash-circle me-2"></i>\
+        </a>\
+        <a class="text-decoration-none text-inverse">\
+            <i class="bi bi-slash-circle me-2"></i>\
+        </a>\
+        ';
+
+        var table_end = '\
+                                    </tbody>\
+                                </table>\
+                            </div>\
+                            <div class="input-group flex-nowrap">\
+                                <select id="nfc_type_key_sector-[ID_SECTOR]" class="form-select" style="min-width: 110px;">\
+                                    <option value="0">Chave A</option>\
+                                    <option value="1">Chave B</option>\
+                                </select>\
+                                <span class="input-group-text">STR</span>\
+                                <input type="text" id="nfc_str_key_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
+                                <span class="input-group-text">HEX</span>\
+                                <input type="text" id="nfc_hex_key_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                            </div>\
+                        </div>\
+                </div>\
+                <div class="card-arrow">\
+                    <div class="card-arrow-top-left"></div>\
+                    <div class="card-arrow-top-right"></div>\
+                    <div class="card-arrow-bottom-left"></div>\
+                    <div class="card-arrow-bottom-right"></div>\
+                </div>\
+            </div>\
+        </div>\
+        ';
+
+        var dot = "<i class='bi bi-square-fill fs-6px text-[COLOR] me-2'></i>";
+
+        var key_blocks = [0, 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, 63];
+
+        var blocks = 0;
+
+        for (var i = 0; i < 16; i++) {
+
+            var table = table_start;
+
+            for (var j = 0; j < 4; j++) {
+
+                var replace_table_data = "";
+                var replace_dot = "";
+                var block = ((i * 4) + j);
+
+                if (i == 0 && j == 0) {
+                    replace_dot = dot.replace(/\[COLOR\]/, "warning");
+                    replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
+                    replace_table_data = replace_table_data.replace(/\[DATA\]/, "Dados do Fabricante");
+                    replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_nothing);
+                } else {
+                    if (key_blocks.find(element => element == blocks)) {
+                        replace_dot = dot.replace(/\[COLOR\]/, "danger");
+                        replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
+                        replace_table_data = replace_table_data.replace(/\[DATA\]/, "Chave do Setor");
+                        replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_nothing);
+                    } else {
+                        replace_dot = dot.replace(/\[COLOR\]/, "success");
+                        replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
+                        replace_table_data = replace_table_data.replace(/\[DATA\]/, "Vazio");
+                        replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_copy + table_data_action_paste + table_data_action_write + table_data_action_delete);
+                    }
+                }
+
+                replace_table_data = replace_table_data.replaceAll(/\[ID_BLOCK\]/g, i + "_" + block);
+                replace_table_data = replace_table_data.replace(/\[BLOCKS\]/, blocks);
+                table += replace_table_data;
+                blocks++;
+
+            }
+
+            table += table_end;
+            table = table.replaceAll(/\[ID_SECTOR\]/g, i);
+
+            $("#modules").append(table);
+
+        }
+
+        SectorEvents();
+    }
+
+    function AnimateMenu(obj, conteudo, aIn = "fadeInLeft", aOut = "fadeOutLeft") {
+        if (obj.hasClass("btn-secondary")) {
+            obj.removeClass("btn-secondary").addClass("btn-outline-secondary");
+            $("#" + conteudo).removeClass(aIn).addClass(aOut);
+            window.setTimeout(() => {
+                $("#" + conteudo).toggleClass("d-none");
+            }, 500);
+        } else {
+            obj.removeClass("btn-outline-secondary").addClass("btn-secondary");
+            $("#" + conteudo).removeClass(aOut).addClass(aIn);
+            $("#" + conteudo).toggleClass("d-none");
+        }
+    }
+
+    function SectorEvents() {
+
+        $(".block_data_copy").unbind();
+        $(".block_data_copy").click(function () {
+            var id = $(this).attr("id").split("-");
+            var data = $("#block_data-" + id[1]).html();
+            if (data != "") {
+                $("#nfc_area_transferencia").val(data);
+            }
+        });
+
+        $(".block_data_paste").unbind();
+        $(".block_data_paste").click(function () {
+            var id = $(this).attr("id").split("-");
+            var sb = id[1].split("_");
+            var data = $("#nfc_area_transferencia").val();
+            if (data != "") {
+                var auxJson = JSON.parse(json_mdfy);
+                auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = data;
+                json_mdfy = JSON.stringify(auxJson);
+                $("#json-nfc").val(json_mdfy);
+                $("#block_data-" + id[1]).html(data);
+            } else {
+                notify("error", "A Área de Transferência está vazia.");
+            }
+        });
+
+        $(".block_data_write").unbind();
+        $(".block_data_write").click(function () {
+
+            var id = $(this).attr("id").split("-");
+            var sector_block = id[1].split("_");
+            var sector = sector_block[0];
+            var block = sector_block[1];
+            var key = $("#nfc_hex_key_sector-" + sector).val();
+            var dados = $("#block_data-" + id[1]).html();
+
+            if (dados == "Vazio") {
+                dados = "";
+            }
+
+            if (dados.length <= 16) {
+                if (key != "") {
+
+                    var data = {
+                        "block": block,
+                        "type": $("#nfc_type_key_sector-" + sector).val(),
+                        "key": key,
+                        "data": dados
+                    };
+
+                    request("/NFC_WRITE_ON", data, function (response) {
+                        if (isJson(response)) {
+                            var json = JSON.parse(response);
+                            if (json.status == "0") {
+                                notify("error", json.mensage);
+                            } else {
+                                notify("success", json.mensage);
+                            }
+                            window.setTimeout(function () {
+                                ONOFF("off");
+                            }, 250);
+                        }
+                    }, function (response) {
+                        notify("error", "Houve um problema com a comunicação.");
+                    });
+
+                } else {
+                    notify("warning", "A chave de acesso do setor não foi informada.");
+                }
+            } else {
+                notify("warning", "O dado a ser gravado não pode exceder 16 caracteres.");
+            }
+
+        });
+
+        $(".block_data_delete").unbind();
+        $(".block_data_delete").click(function () {
+            var id = $(this).attr("id").split("-");
+            var sb = id[1].split("_");
+            var auxJson = JSON.parse(json_mdfy);
+            auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = "";
+            json_mdfy = JSON.stringify(auxJson);
+            $("#json-nfc").val(json_mdfy);
+            $("#block_data-" + id[1]).html("Vazio");
+        });
+
+        $(".key_sector").unbind();
+        $(".key_sector").keyup(function () {
+            var id = $(this).attr("id").split("-");
+            var value = $(this).val();
+            if (id[0] == "nfc_str_key_sector") {
+                $("#nfc_hex_key_sector-" + id[1]).val(StringToHex(value));
+            } else {
+                if (value.length % 2 == 1) {
+                    value = value.slice(0, (value.length - 1));
+                }
+                $("#nfc_str_key_sector-" + id[1]).val(HexToString(value));
+            }
+        });
+
+    }
+
+    function ONOFF(type, success = "", error = "") {
+
+        $("#nfc_on_off").addClass("text-danger").removeClass("text-success");
+
+        var url = "/SYSTEM_OFF";
+
+        if (type == "on") {
+            url = "/NFC_READ_ON";
+        }
+
+        request(url, {}, function (response) {
+            if (response == "ok") {
+                if (type == "on") {
+                    $("#nfc_on_off").removeClass("text-danger").addClass("text-success");
+                    notify("success", "Modo leitura ligado, aguardando TAG...");
+                }
+                if (success != "") {
+                    success(response);
+                }
+            } else {
+                notify("error", "O modo leitura não pode ser ligado.");
+            }
+        }, function (response) {
+            notify("error", "Houve um problema com a comunicação.");
+            if (error != "") {
+                error(response);
+            }
+        });
+
+    }
+
+    function list_dir_nfc(success = "", error = "") {
+        request("/NFC_LIST_DIR", {}, function (response) {
+            if (isJson(response)) {
+                var json = JSON.parse(response);
+                $("#nfc_files_tree").html("");
+                generateTreeView("nfc_files_tree", json.root, 0, "NFC/");
+                if (success != "") {
+                    success();
+                }
+            } else {
+                notify("error", "O modo leitura não pode ser ligado.");
+                if (error != "") {
+                    error();
+                }
+            }
+        }, function (response) {
+            notify("error", "Houve um problema com a comunicação.");
+        });
+    }
+
+    $(document).ready(function () {
+
+        $("#json-nfc").val(json_empy);
+
+        ws.onmessage = function (event) {
+
+            if (isJson(event.data)) {
+
+                notify("success", "Dados lidos, processando...");
+                var json = JSON.parse(event.data);
+
+                if (json.type == "NFC_TAG_4K") {
+                    
+                    $("#card_uid").val(json.uid);
+                    $("#json-nfc").val(event.data);
+                    json_mdfy = event.data;
+
+                    for (var i = 0; i < 16; i++) {
+
+                        var key_a = json["sector_" + i]["key_a"];
+                        $("#key-hex-a-sector-" + i).val(key_a);
+                        $("#key-str-a-sector-" + i).val(HexToString(key_a));
+                        $("#nfc_str_key_sector-" + i).val(HexToString(key_a));
+                        $("#nfc_hex_key_sector-" + i).val(key_a);
+
+                        var key_b = json["sector_" + i]["key_b"];
+                        $("#key-hex-b-sector-" + i).val(key_b);
+                        $("#key-str-b-sector-" + i).val(HexToString(key_b));
+
+                        for (var j = 0; j < 4; j++) {
+                            var block = ((i * 4) + j);
+                            var data = json["sector_" + i]["block_" + block]["data"];
+                            if (data != "ffffffffffff") {
+                                $("#block_data-" + i + "_" + block).html(HexToString(data));
+                            }
+                        }
+                    }
+
+                    notify("success", "Os dados foram processados com sucesso!");
+
+                    window.setTimeout(function () {
+                        ONOFF("off");
+                    }, 250);
+                }
+
+            } else {
+                notify("error", "Os dados lidos foram corrompidos, tente novamente.");
+            }
+
+        };
+
+        EmpyTableCardData();
+        EmpyKeyBySector();
+
+        $("#nfc_menu_info").click(function () {
+            AnimateMenu($(this), "block-legend");
+        });
+
+        $("#nfc_menu_sd_card").click(function () {
+            AnimateMenu($(this), "block-sd-card");
+        });
+
+        $("#nfc_menu_key").click(function () {
+            AnimateMenu($(this), "block-key");
+        });
+
+        $("#nfc_menu_read").click(function () {
+            ONOFF("on");
+        });
+
+        $("#path-nfc-input").keyup(function () {
+            var text = $(this).val();
+            text = text.replaceAll(/\.|\/|\\/g, "");
+            $(this).val(text);
+        });
+
+        $("#list-files-sd").click(function () {
+            list_dir_nfc();
+        });
+
+        $("#create-file").click(function () {
+            var path = $("#path-nfc").html() + "/" + $("#path-nfc-input").val();
+            request("/CREATE_FILE", { path: path }, function (response) {
+                if (response == "ok") {
+                    notify("success", "Arquivo criado com sucesso.");
+                    list_dir_nfc(function () {
+                        var path = $("#path-nfc").html().split("/");
+                        var dir = "";
+                        for (var j = 1; j < path.length; j++) {
+                            dir += "_" + remove_accents(path[j].replaceAll(/\ |\\/g, "_").toLowerCase());
+                            $("#nfc" + dir).collapse("toggle");
+                        }
+                    });
+                } else {
+                    notify("error", "O arquivo não pode ser criado.");
+                }
+            }, function (response) {
+                notify("error", "Houve um problema com a comunicação.");
+            });
+        });
+
+        $("#create-folder").click(function () {
+            var path = $("#path-nfc").html() + "/" + $("#path-nfc-input").val();
+            request("/CREATE_FOLDER", { path: path }, function (response) {
+                if (response == "ok") {
+                    notify("success", "Pasta criada com sucesso.");
+                    list_dir_nfc(function () {
+                        var path = $("#path-nfc").html().split("/");
+                        var dir = "";
+                        for (var j = 1; j < path.length; j++) {
+                            dir += "_" + remove_accents(path[j].replaceAll(/\ |\\/g, "_").toLowerCase());
+                            $("#nfc" + dir).collapse("toggle");
+                        }
+                    });
+                } else {
+                    notify("error", "A pasta não pode ser criada.");
+                }
+            }, function (response) {
+                notify("error", "Houve um problema com a comunicação.");
+            });
+        });
+
+    });
+
+</script>

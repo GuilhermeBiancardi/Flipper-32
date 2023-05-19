@@ -1,0 +1,100 @@
+<html data-bs-theme="dark">
+
+<head>
+    <title>System Administrator</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimal-ui">
+    <meta name="apple-mobile-web-app-status-bar-style" content="yes">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="author" content="Guilherme Bruno Marques Biancardi">
+    <meta name="reply-to" content="guilhermeaw.com@gmail.com">
+    <meta name="Custodian" content="Biancardi, Guilherme">
+
+    <!-- <link rel="shortcut icon" href="favicon.png"> -->
+
+    <link href="plugins/bootstrap/css/bootstrap.min.css?v=0001" rel="stylesheet" type="text/css">
+    <link href="plugins/bootstrap-icons/css/bootstrap-icons.min.css?v=0001" rel="stylesheet" type="text/css">
+    <link href="plugins/fonts/css/chakra-petch.css?v=0001" rel="stylesheet" type="text/css">
+    <link href="plugins/animate/css/animate.min.css?v=0001" rel="stylesheet" type="text/css">
+    <link href="plugins/app/css/app.css?v=0001" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+    <div class="app">
+        <div include-html="modules/structure/header/header.html"></div>
+        <div include-html="modules/structure/left-bar/left-bar.html"></div>
+        
+        <div id="content" class="app-content">
+            
+            <div id="modules" class="row">
+                
+                
+                
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="toasts-container">
+
+        <div id="toast-success" class="toast fade mb-3 bg-success hide" data-autohide="false">
+            <div class="toast-header bg-success">
+                <i class="far fa-bell text-muted me-2"></i>
+                <strong class="me-auto">Sucesso</strong>
+                <small>Agora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div id="toast-success-mensage" class="toast-body">
+                Mensagem de Sucesso
+            </div>
+        </div>
+
+        <div id="toast-error" class="toast fade mb-3 bg-danger hide" data-autohide="false">
+            <div class="toast-header bg-danger">
+                <i class="far fa-bell text-muted me-2"></i>
+                <strong class="me-auto">Erro</strong>
+                <small>Agora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div id="toast-error-mensage" class="toast-body">
+                Mensagem de Erro
+            </div>
+        </div>
+
+        <div id="toast-info" class="toast fade mb-3 bg-info hide" data-autohide="false">
+            <div class="toast-header bg-info">
+                <i class="far fa-bell text-muted me-2"></i>
+                <strong class="me-auto text-white">Informativo</strong>
+                <small>Agora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div id="toast-info-mensage" class="toast-body text-white">
+                Mensagem Informativa
+            </div>
+        </div>
+
+        <div id="toast-warning" class="toast fade mb-3 bg-warning hide" data-autohide="false">
+            <div class="toast-header bg-warning">
+                <i class="far fa-bell text-muted me-2"></i>
+                <strong class="me-auto text-white">Atenção</strong>
+                <small>Agora</small>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div id="toast-warning-mensage" class="toast-body text-white">
+                Mensagem de Alerta
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Reference JS -->
+    <script type="text/javascript" src="plugins/jquery/js/jquery-3.6.4.min.js?v=0001"></script>
+    <script type="text/javascript" src="plugins/bootstrap/js/bootstrap.bundle.min.js?v=0001"></script>
+    <script type="text/javascript" src="plugins/app/js/app.js?v=0001"></script>
+
+</body>
+
+</html>
