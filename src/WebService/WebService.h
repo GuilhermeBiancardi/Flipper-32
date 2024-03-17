@@ -6,7 +6,7 @@
 #include "Pages/infra_vermelho.h"
 #include "Pages/config.h"
 
-String ssid = "FliperMCU";
+String ssid = "Fliper32";
 String pass = "12345678";
 
 const char* PARAM_INPUT_1 = "hardware";
@@ -83,8 +83,9 @@ void WebServiceSetup() {
 
                 AsyncWebServerResponse* response = request->beginResponse(SD, "/" + filename, "");
                 
+                // Verifica se o conteúdo é HTML
                 if(extension != "html") {
-                    // Adiciona o conteúdo da requisição no cache por 1 ano
+                    // Se não for adiciona o conteúdo da requisição no cache por 1 ano
                     response->addHeader("Cache-Control", "max-age=31536000");
                 }
 
@@ -113,86 +114,6 @@ void WebServiceSetup() {
 
         }
     );
-
-    // server.on("/RESET", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         InternalMemory.Clear(4096);
-    //         request->send_P(200, "text/html", load_config_html);
-    //     }
-    // );
-
-    // server.on("/GET", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-
-    //         // GET input value on <ESP_IP>/GET?input=<inputValue>
-    //         if (request->hasParam(PARAM_INPUT_1)) {
-    //             hardware = request->getParam(PARAM_INPUT_1)->value();
-    //         }
-
-    //         if (request->hasParam(PARAM_INPUT_2)) {
-    //             wifissid = request->getParam(PARAM_INPUT_2)->value();
-    //         }
-
-    //         if (request->hasParam(PARAM_INPUT_3)) {
-    //             password = request->getParam(PARAM_INPUT_3)->value();
-    //         }
-
-    //         if (request->hasParam(PARAM_INPUT_4)) {
-    //             passhard = request->getParam(PARAM_INPUT_4)->value();
-    //         }
-
-    //         InternalMemory.WriteStr(0, hardware);
-    //         InternalMemory.WriteStr(100, wifissid);
-    //         InternalMemory.WriteStr(200, password);
-    //         InternalMemory.WriteStr(300, passhard);
-
-    //         request->send_P(200, "text/html", load_config_html);
-
-    //     }
-    // );
-
-    // server.on("/RESTART", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         request->send_P(200, "text/html", load_config_html);
-    //     }
-    // );
-
-    // server.on("/hardware", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         request->send_P(200, "text/plain", String(hardware).c_str());
-    //     }
-    // );
-
-    // server.on("/ssid", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         request->send_P(200, "text/plain", String(wifissid).c_str());
-    //     }
-    // );
-
-    // server.on("/password", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         request->send_P(200, "text/plain", String(password).c_str());
-    //     }
-    // );
-
-    // server.on("/passhard", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         request->send_P(200, "text/plain", String(passhard).c_str());
-    //     }
-    // );
-
-    // server.on("/ip", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         request->send_P(200, "text/plain", WiFi.localIP().toString().c_str());
-    //     }
-    // );
-
-    // server.on("/reload", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         request->send_P(200, "text/html", "<script>window.location = '/';</script>");
-    //         ESP.restart();
-    //     }
-    // );
 
     // // --------- IR -----------
 
@@ -252,11 +173,71 @@ void WebServiceSetup() {
 
     // --------- CONFIG -----------
 
-    // server.on("/CONFIG", HTTP_GET,
-    //     [](AsyncWebServerRequest* request) {
-    //         request->send_P(200, "text/html", config_html);
-    //     }
-    // );
+    server.on("/CONFIG_GET_IP", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            String IP = WiFi.localIP().toString();
+            String json = "{\"IP\": \"" + IP + "\", \"SSID\": \"" + String(wifissid.c_str()) + "\", \"PASS\": \"" + String(password.c_str()) + "\",";
+            json += "\"HSSID\": \"" + String(hardware.c_str()) + "\", \"HPASS\": \"" + String(passhard.c_str()) + "\"}";
+            request->send_P(200, "text/plain", json.c_str());
+        }
+    );
+    
+    server.on("/CONFIG_RESET", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            ESP.restart();
+            request->send_P(200, "text/plain", "ok");
+        }
+    );
+
+    server.on("/CONFIG_SAVE_INTERNAL_WIFI", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+
+            String ssid = "";
+            String pass = "";
+            String json = "{\"status\": \"success\", \"mensage\": \"Os dados foram atualizados.\"}";
+
+            if (request->hasParam("HSSID")) {
+                ssid = request->getParam("HSSID")->value().c_str();
+            }
+
+            if (request->hasParam("HPASS")) {
+                pass = request->getParam("HPASS")->value().c_str();
+            }
+
+            hardware = ssid;
+            passhard = pass;
+            InternalMemory.WriteStr(0, ssid);
+            InternalMemory.WriteStr(300, pass);
+
+            request->send_P(200, "text/plain", json.c_str());
+
+        }
+    );
+
+    server.on("/CONFIG_SAVE_EXTERNAL_WIFI", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+
+            String ssid = "";
+            String pass = "";
+            String json = "{\"status\": \"success\", \"mensage\": \"Os dados foram atualizados.\"}";
+
+            if (request->hasParam("SSID")) {
+                ssid = request->getParam("SSID")->value();
+            }
+
+            if (request->hasParam("PASS")) {
+                pass = request->getParam("PASS")->value();
+            }
+
+            wifissid = ssid;
+            password = pass;
+            InternalMemory.WriteStr(100, ssid);
+            InternalMemory.WriteStr(200, pass);
+
+            request->send_P(200, "text/plain", json.c_str());
+
+        }
+    );
 
     // --------- GERAL -----------
 
@@ -271,7 +252,6 @@ void WebServiceSetup() {
         [](AsyncWebServerRequest* request) {
             
             String path = "System/";
-
             if (request->hasParam("path")) {
                 path += request->getParam("path")->value();
             }

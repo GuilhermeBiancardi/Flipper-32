@@ -154,10 +154,10 @@ public:
                 // Remove os espaços no começo e final da string
                 text.trim();
 
-                // Fecha o arquivo após a leitura.
-                SDCardFile.close();
-
             }
+
+            // Fecha o arquivo após a leitura.
+            SDCardFile.close();
 
         }
 

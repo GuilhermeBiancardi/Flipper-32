@@ -5,6 +5,11 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
       ATENÇÃO: A UI do projeto está na raiz dentro da pasta SDCard. Para que o projeto funcione
       corretamente todo o conteúdo dessa pasta deve ser copiado para o SDCard!
 
+0. **Primeiro Acesso**
+Após liga-lo pela primeira vez uma rede WiFi com o nome Fliper32 aparecerá, conecte nesta rede com a senha 12345678, feito isso
+abra um navegador e digite 192.168.4.1 na barra de pesquisa e espere os arquivos carregarem no CACHE, clique em Config e
+mude os dados de conexão local ou configure dados de WiFi para acessar o Fliper32 em uma rede local.
+
 1. **Tarefas Gerais**
    
    - [ ] Criar esquemático com as ligações.
@@ -75,18 +80,18 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
   
   
 5. **Tarefas relacionadas a UI do Sistema**
-   - [ ] Remover UI antiga do código
+   - [x] Remover UI antiga do código
    - [ ] Tela Inicial
      - [ ] Adicionar informações importantes da Placa.
      - [ ] Adicionar informações importantes do Leitor NFC
      - [ ] Adicionar informações importantes do Leitor Infra-Vermelho
    - [x] Tela de Loading (Cache)
-   - [ ] Tela de Configuração do SoftAP
-     - [ ] Mudar SSID
-     - [ ] Mudar Senha
-   - [ ] Tela de Configuração do WiFi
-     - [ ] Mudar SSID
-     - [ ] Mudar Senha
+   - [x] Tela de Configuração do SoftAP
+     - [x] Mudar SSID
+     - [x] Mudar Senha
+   - [x] Tela de Configuração do WiFi
+     - [x] Mudar SSID
+     - [x] Mudar Senha
    - [ ] Tela NFC
      - [x] Ler dados da tag NFC
      - [x] Gravar dados na tag NFC

@@ -1,0 +1,143 @@
+<div class="card">
+    <div class="card-header fw-bold small text-uppercase">
+        Configurações
+    </div>
+    <div class="card-body">
+
+        <div id="configs">
+
+            <div class="row">
+
+                <div class="col col-12 mb-3">
+                    <div class="card">
+                        <div class="card-header fw-bold small text-uppercase"> Detalhes da Conexão </div>
+                        <div class="card-body">
+                            <div class="input-group flex-nowrap mb-3">
+                                <span class="input-group-text">IP</span>
+                                <input id="ip-external-wifi" class="form-control form-control" type="text" placeholder="Conexão não encontrada.">
+                            </div>
+                            <buttom id="config-reset" class="btn btn-default form-control">Reiniciar Fliper32</buttom>
+                        </div>
+                        <div class="card-arrow">
+                            <div class="card-arrow-top-left"></div>
+                            <div class="card-arrow-top-right"></div>
+                            <div class="card-arrow-bottom-left"></div>
+                            <div class="card-arrow-bottom-right"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col col-md-6 col-sm-12 mb-3">
+                    <div class="card">
+                        <div class="card-header fw-bold small text-uppercase"> Rede Interna </div>
+                        <div class="card-body">
+                            <div class="input-group flex-nowrap mb-3">
+                                <span class="input-group-text">SSID</span>
+                                <input id="ssid-internal-wifi" class="form-control form-control" type="text" value="Flipper32">
+                            </div>
+                            <div class="input-group flex-nowrap mb-3">
+                                <span class="input-group-text">Pass</span>
+                                <input id="pass-internal-wifi" class="form-control form-control" type="text" value="12345678">
+                            </div>
+                            <buttom id="config-save-internal-wifi" class="btn btn-default form-control">Salvar</buttom>
+                        </div>
+                        <div class="card-arrow">
+                            <div class="card-arrow-top-left"></div>
+                            <div class="card-arrow-top-right"></div>
+                            <div class="card-arrow-bottom-left"></div>
+                            <div class="card-arrow-bottom-right"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col col-md-6 col-sm-12 mb-3">
+                    <div class="card">
+                        <div class="card-header fw-bold small text-uppercase"> WiFi Externo </div>
+                        <div class="card-body">
+                            <div class="input-group flex-nowrap mb-3">
+                                <span class="input-group-text">SSID</span>
+                                <input id="ssid-external-wifi" class="form-control form-control" type="text" placeholder="WiFi SSID">
+                            </div>
+                            <div class="input-group flex-nowrap mb-3">
+                                <span class="input-group-text">Pass</span>
+                                <input id="pass-external-wifi" class="form-control form-control" type="text" placeholder="WiFI Password">
+                            </div>
+                            <buttom id="config-save-external-wifi" class="btn btn-default form-control">Salvar</buttom>
+                        </div>
+                        <div class="card-arrow">
+                            <div class="card-arrow-top-left"></div>
+                            <div class="card-arrow-top-right"></div>
+                            <div class="card-arrow-bottom-left"></div>
+                            <div class="card-arrow-bottom-right"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="card-arrow">
+        <div class="card-arrow-top-left"></div>
+        <div class="card-arrow-top-right"></div>
+        <div class="card-arrow-bottom-left"></div>
+        <div class="card-arrow-bottom-right"></div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        request("/CONFIG_GET_IP", {}, function (response) {
+            if (isJson(response)) {
+                var json = JSON.parse(response);
+                $("#ip-external-wifi").val(json.IP);
+                $("#ssid-internal-wifi").val(json.HSSID);
+                $("#pass-internal-wifi").val(json.HPASS);
+                $("#ssid-external-wifi").val(json.SSID);
+                $("#pass-external-wifi").val(json.PASS);
+            }
+        }, function (response) {
+            notify("error", "Houve um problema com a comunicação.");
+        });
+
+        $("#config-save-internal-wifi").click(function() {
+            request("/CONFIG_SAVE_INTERNAL_WIFI", {
+                HSSID: $("#ssid-internal-wifi").val(), 
+                HPASS: $("#pass-internal-wifi").val()
+            }, function (response) {
+                if (isJson(response)) {
+                    var json = JSON.parse(response);
+                    notify(json.status, json.menssage);
+                }
+            }, function (response) {
+                notify("error", "Houve um problema com a comunicação.");
+            });
+        });
+
+        $("#config-save-external-wifi").click(function() {
+            request("/CONFIG_SAVE_EXTERNAL_WIFI", {
+                SSID: $("#ssid-external-wifi").val(), 
+                PASS: $("#pass-external-wifi").val()
+            }, function (response) {
+                if (isJson(response)) {
+                    var json = JSON.parse(response);
+                    notify(json.status, json.menssage);
+                }
+            }, function (response) {
+                notify("error", "Houve um problema com a comunicação.");
+            });
+        });
+
+        $("#config-reset").click(function() {
+            request("/CONFIG_RESET", {}, function (response) {
+                //
+            }, function (response) {
+                notify("error", "Houve um problema com a comunicação.");
+            });
+        });
+
+    });
+
+</script>
