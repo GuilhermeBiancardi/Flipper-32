@@ -1,11 +1,6 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 
-#include "Pages/index.h"
-#include "Pages/load_config.h"
-#include "Pages/infra_vermelho.h"
-#include "Pages/config.h"
-
 String ssid = "Fliper32";
 String pass = "12345678";
 
