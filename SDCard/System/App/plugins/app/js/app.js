@@ -31,7 +31,7 @@ function loadPage(obj) {
         request("modules/pages/" + page_load + "/" + page_load + ".html", {}, function(response) {
             $("#modules").html(response);
             EventsReload();
-            popover_elements();
+            // popover_elements();
         }, function(response) {
             // console.log(response);
         });
@@ -134,7 +134,9 @@ function remove_accents(str) {
 }
 
 function generateTreeView(id, json, nivel = 0, path = "") {
+
     var size = 25.75;
+
     for (var i = 0; i < json.length; i++) {
         var item = path + json[i].text;
         var item_id = remove_accents(item.replaceAll(/\ |\\/g, "_").toLowerCase());
@@ -256,32 +258,35 @@ function generateTreeView(id, json, nivel = 0, path = "") {
             notify("error", "Houve um problema com a comunicação.");
         });
     });
+
+    // popover_elements();
+
 }
 
-function popover_elements() {
+// function popover_elements() {
 
-    $(".popover").unbind();
-    $(".popover").each(function() {
-        $(this).popover('hide');
-    });
+//     $(".popover").unbind();
+//     $(".popover").each(function() {
+//         $(this).popover('hide');
+//     });
     
-    $(".pop").popover('dispose');
-    $('.pop').popover({
-        container: 'body',
-        placement: 'bottom',
-        trigger: 'hover',
-        boundary: 'window'
-    });
+//     $(".pop").popover('dispose');
+//     $('.pop').popover({
+//         container: 'body',
+//         placement: 'bottom',
+//         trigger: 'hover',
+//         boundary: 'window'
+//     });
 
-    $(".pop").mouseleave(function() {
-        $(this).popover('hide');
-    });
+//     $(".pop").mouseleave(function() {
+//         $(this).popover('hide');
+//     });
 
-    $(".pop").click(function() {
-        $(this).popover('hide');
-    });
+//     $(".pop").click(function() {
+//         $(this).popover('hide');
+//     });
 
-}
+// }
 
 var GetUrl = window.location;
 var ws = new WebSocket("ws://" + GetUrl.host + "/socket");
@@ -312,7 +317,7 @@ $(document).ready(function () {
                 $("#" + setid).after(r);
                 $("#" + setid).remove();
                 EventsReload();
-                popover_elements();
+                // popover_elements();
             }, function () {
                 console.log("Erro ao carregar: " + include);
                 // notificar(messages["error"]["load-module"], messages["error"]["load-module-title"], 3000, "error");
