@@ -4,6 +4,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
       ATENÇÃO: A UI do projeto está na raiz dentro da pasta SDCard. Para que o projeto funcione
       corretamente todo o conteúdo dessa pasta deve ser copiado para o SDCard!
+      ATENÇÃO: Somente o conteúdo da pasta SDCard deve ser movido, a pasta SDCard não deverá ser copiada.
 
 0. **Primeiro Acesso**
 
