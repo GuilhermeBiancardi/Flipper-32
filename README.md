@@ -8,17 +8,19 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
 0. **Primeiro Acesso**
 
-      Após liga-lo pela primeira vez uma rede WiFi com o nome Fliper32 aparecerá, conecte nesta rede com a senha 12345678, feito isso
-      abra um navegador e digite 192.168.4.1 na barra de pesquisa e espere os arquivos carregarem no CACHE, clique em Config e
-      mude os dados de conexão local ou configure dados de WiFi para acessar o Fliper32 em uma rede local.
+            Após liga-lo pela primeira vez uma rede WiFi com o nome Fliper32 aparecerá, conecte
+         nesta rede com a senha 12345678, feito isso abra um navegador e digite 192.168.4.1 na
+         barra de pesquisa e espere os arquivos carregarem no CACHE, clique em Config e mude
+         os dados de conexão local ou configure dados de WiFi para acessar o Fliper32 em uma
+         rede local.
 
-1. **Tarefas Gerais**
+2. **Tarefas Gerais**
    
    - [ ] Criar esquemático com as ligações.
    - [ ] Desenvolver GERBER da placa de circuito impresso
    - [ ] Desenvolver modelo 3D da case do Projeto
 
-2. **Tarefas relacionadas a ESP32**
+3. **Tarefas relacionadas a ESP32**
 
         Plataforma Utilizada, ESP32 Wroom Dev Kit 38 Pinos:
 
@@ -32,7 +34,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    -  - [x] Resolver problema que reinicia a ESP ao carregar muitos arquivos.
    - [x] Criar websocket para comunicação em tempo real com o webservice.
 
-3. **Tarefas relacionadas a NFC 13.56Mhz**
+4. **Tarefas relacionadas a NFC 13.56Mhz**
 
         Módulo utilizado, PN532: 
 
@@ -50,7 +52,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [ ] Bruteforce de Keys
    - [x] Importar dados da Tag em JSON
 
-4. **Tarefas relacionadas ao SDCard**
+5. **Tarefas relacionadas ao SDCard**
 
         Módulo utilizado, Micro SD Card: 
 
@@ -66,7 +68,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Criar uma pasta padrão do sistema
    - [x] Integração com a UI do Sistema
    
-5. **Tarefas relacionadas ao Infra Vermelho**
+6. **Tarefas relacionadas ao Infra Vermelho**
 
         Peças utilizadas, Led Emissor e Receptor Tl1838 Vs1838 38khz: 
 
