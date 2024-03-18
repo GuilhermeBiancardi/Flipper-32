@@ -5,6 +5,7 @@
  * 1 = IR
  * 2 = NFC Read
  * 3 = NFC Write
+ * 4 = SDCard File Read
 */
 int SystemMode = 0;
 

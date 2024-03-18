@@ -273,7 +273,7 @@ public:
     String ListDirectory(const char* directory) {
 
         // Armazenará o json que conterá a árvore de pastas e arquivos do diretório informado.
-        String json = "{\"status\": \"1\", \"mensage\": \"Listagem concluída.\", \"root\": [";
+        String json = "{\"status\": \"1\", \"message\": \"Listagem concluída.\", \"root\": [";
 
         // Abre o diretório no cartão SD.
         File ListDirectoryHome;
@@ -285,7 +285,7 @@ public:
             json.remove(json.length() - 1);
             json += "]}";
         } else {
-            json = "{\"status\": \"0\", \"mensage\": \"Erro ao listar a pasta NFC, verifique se ela existe ou se está liberada para leitura.\"}";
+            json = "{\"status\": \"0\", \"message\": \"Erro ao listar a pasta NFC, verifique se ela existe ou se está liberada para leitura.\"}";
         }
 
         return json;

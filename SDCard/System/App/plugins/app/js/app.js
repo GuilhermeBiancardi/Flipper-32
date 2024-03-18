@@ -70,18 +70,18 @@ function isMobile() {
     }
 }
 
-function notify(type, mensage) {
+function notify(type, message) {
     if (type == "success") {
-        $("#toast-success-mensage").html(mensage);
+        $("#toast-success-message").html(message);
         $("#toast-success").toast("show");
     } else if (type == "error") {
-        $("#toast-error-mensage").html(mensage);
+        $("#toast-error-message").html(message);
         $("#toast-error").toast("show");
     } else if (type == "info") {
-        $("#toast-info-mensage").html(mensage);
+        $("#toast-info-message").html(message);
         $("#toast-info").toast("show");
     } else if (type == "warning") {
-        $("#toast-warning-mensage").html(mensage);
+        $("#toast-warning-message").html(message);
         $("#toast-warning").toast("show");
     }
 }
@@ -148,8 +148,9 @@ function generateTreeView(id, json, nivel = 0, path = "") {
                 $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
                 
                 $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="new-' + item_id + '" class="bi bi-file-plus-fill item-new"></i>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash item-delete"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add pop" data-bs-content="Adicionar Path"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-folder-minus item-remove pop" data-bs-content="Remover Path"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Pasta"></i>');
                 
                 generateTreeView(item_id, json[i].nodes, nivel + 1, path + json[i].text + "/");
             } else {
@@ -160,8 +161,9 @@ function generateTreeView(id, json, nivel = 0, path = "") {
                 $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
                 
                 $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="new-' + item_id + '" class="bi bi-file-plus-fill item-new"></i>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash item-delete"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add pop" data-bs-content="Adicionar Path"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-folder-minus item-remove pop" data-bs-content="Remover Path"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Pasta"></i>');
             }
         } else {
             $("#" + id).prepend('<div role="treeitem" id="item-' + item_id + '" class="list-group-node" data-path="' + path + json[i].text + '" data-bs-toggle="collapse" data-bs-target="#' + item_id + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
@@ -171,8 +173,9 @@ function generateTreeView(id, json, nivel = 0, path = "") {
             $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
 
             $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
-            $("#" + id + " #item-" + item_id + " .float-end").append('<i id="open-' + item_id + '" class="bi bi-box-arrow-down item-open"></i>');
-            $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash item-delete"></i>');
+            $("#" + id + " #item-" + item_id + " .float-end").append('<i id="save-' + item_id + '" class="bi bi-floppy item-save pop" data-bs-content="Salvar Dados"></i>');
+            $("#" + id + " #item-" + item_id + " .float-end").append('<i id="open-' + item_id + '" class="bi bi-download item-open pop" data-bs-content="Carregar Dados"></i>');
+            $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Arquivo"></i>');
         }
     }
 
@@ -187,26 +190,55 @@ function generateTreeView(id, json, nivel = 0, path = "") {
 
     var list_group_id = "";
     
-    $(".item-new").unbind();
-    $(".item-new").click(function (e) {
+    $(".item-add").unbind();
+    $(".item-add").click(function (e) {
         var path = $(this).parent().parent().attr("data-path");
         $("#path-nfc").html(path + "/");
         e.stopPropagation();
     });
+    
+    $(".item-remove").unbind();
+    $(".item-remove").click(function (e) {
+        var path = $(this).parent().parent().attr("data-path");
+        var lastIndex = path.lastIndexOf('/');
+        var result = path.substring(0, lastIndex);
+        $("#path-nfc").html(result + "/");
+        e.stopPropagation();
+    });
 
-    $(".item-new").mouseenter(function () {
+    $(".item-add, .item-remove").mouseenter(function () {
         list_group_id = $(this).parent().parent().attr("data-bs-target");
         $(this).parent().parent().removeAttr("data-bs-target");
     });
 
-    $(".item-new").mouseleave(function () {
+    $(".item-add, .item-remove").mouseleave(function () {
         $(this).parent().parent().attr({"data-bs-target": list_group_id});
     });
     
     $(".item-open").unbind();
     $(".item-open").click(function () {
         var path = $(this).parent().parent().attr("data-path");
-        console.log(path);
+        request("/FILE_OPEN", {path: path}, function (response) {
+            if (isJson(response)) {
+                var json = JSON.parse(response);
+                notify(json.status, json.message);
+            }
+        }, function (response) {
+            notify("error", "Houve um problema com a comunicação.");
+        });
+    });
+    
+    $(".item-save").unbind();
+    $(".item-save").click(function () {
+        var path = $(this).parent().parent().attr("data-path");
+        request("/FILE_SAVE", {path: path, json: $("#json-nfc").val()}, function (response) {
+            if (isJson(response)) {
+                var json = JSON.parse(response);
+                notify(json.status, json.message);
+            }
+        }, function (response) {
+            notify("error", "Houve um problema com a comunicação.");
+        });
     });
     
     $(".item-delete").unbind();
@@ -283,7 +315,7 @@ $(document).ready(function () {
                 popover_elements();
             }, function () {
                 console.log("Erro ao carregar: " + include);
-                // notificar(mensages["error"]["load-module"], mensages["error"]["load-module-title"], 3000, "error");
+                // notificar(messages["error"]["load-module"], messages["error"]["load-module-title"], 3000, "error");
             });
 
         }

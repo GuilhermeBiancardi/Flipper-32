@@ -189,7 +189,7 @@ void WebServiceSetup() {
 
             String ssid = "";
             String pass = "";
-            String json = "{\"status\": \"success\", \"mensage\": \"Os dados foram atualizados.\"}";
+            String json = "{\"status\": \"success\", \"message\": \"Os dados foram atualizados.\"}";
 
             if (request->hasParam("HSSID")) {
                 ssid = request->getParam("HSSID")->value().c_str();
@@ -214,7 +214,7 @@ void WebServiceSetup() {
 
             String ssid = "";
             String pass = "";
-            String json = "{\"status\": \"success\", \"mensage\": \"Os dados foram atualizados.\"}";
+            String json = "{\"status\": \"success\", \"message\": \"Os dados foram atualizados.\"}";
 
             if (request->hasParam("SSID")) {
                 ssid = request->getParam("SSID")->value();
@@ -240,6 +240,44 @@ void WebServiceSetup() {
         [](AsyncWebServerRequest* request) {
             SystemMode = 0;
             request->send_P(200, "text/plain", "ok");
+        }
+    );
+
+    server.on("/FILE_OPEN", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+
+            String path = "System/";
+
+            if (request->hasParam("path")) {
+                path += request->getParam("path")->value();
+            }
+
+            SystemMode = 4;
+            PN532.SetJSON(SDCard.FileRead(path.c_str()));
+            request->send_P(200, "text/plain", "{\"status\": \"success\", \"message\": \"Arquivo carregado com sucesso.\"}");
+        }
+    );
+
+    server.on("/FILE_SAVE", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+
+            String path = "System/";
+            String json = "";
+
+            if (request->hasParam("path")) {
+                path += request->getParam("path")->value();
+            }
+
+            if (request->hasParam("json")) {
+                json = request->getParam("json")->value();
+            }
+
+            if(SDCard.FileWrite(path.c_str(), json.c_str())) {
+                request->send_P(200, "text/plain", "{\"status\": \"success\", \"message\": \"Dados salvos com sucesso.\"}");
+            } else {
+                request->send_P(200, "text/plain", "{\"status\": \"error\", \"message\": \"Os dados não foram salvos.\"}");
+            }
+
         }
     );
 
@@ -353,17 +391,7 @@ void WebServiceSetup() {
 
 void WebServiceLoop() {
 
-    // Serial.println("AP IP:");
-    // Serial.println(WiFi.softAPIP());
-    // Serial.println("Local IP:");
-    // Serial.println(WiFi.localIP());
-
-    // Serial.println(hardware);
-    // Serial.println(wifissid);
-    // Serial.println(password);
-    // delay(500);
-
-    if(SystemMode == 2) {
+    if(SystemMode == 2 || SystemMode == 4) {
         String json = PN532.GetJSON();
         if(json != "") {
             ws.textAll(json);

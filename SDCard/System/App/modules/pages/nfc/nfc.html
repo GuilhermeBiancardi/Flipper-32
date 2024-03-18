@@ -128,7 +128,7 @@
                         <tr>
                             <td class="text-center">
                                 <a>
-                                    <i class="bi bi-file-plus-fill me-2"></i>
+                                    <i class="bi bi-folder-plus me-2"></i>
                                 </a>
                             </td>
                             <td>
@@ -138,7 +138,17 @@
                         <tr>
                             <td class="text-center">
                                 <a>
-                                    <i class="bi bi-trash me-2"></i>
+                                    <i class="bi bi-folder-minus me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Deseleciona a pasta atual, voltando para a pasta anterior.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-trash2 me-2"></i>
                                 </a>
                             </td>
                             <td>
@@ -148,7 +158,7 @@
                         <tr>
                             <td class="text-center">
                                 <a>
-                                    <i class="bi bi-box-arrow-down me-2"></i>
+                                    <i class="bi bi-download me-2"></i>
                                 </a>
                             </td>
                             <td>
@@ -617,8 +627,14 @@
         $(".block_data").unbind();
         $(".block_data").keydown(function(event) {
             var text = $(this).text();
+            
             var id = $(this).attr("id").split("-");
             var sb = id[1].split("_");
+            var auxJson = JSON.parse(json_mdfy);
+            auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = StringToHex(text);
+            json_mdfy = JSON.stringify(auxJson);
+            $("#json-nfc").val(json_mdfy);
+
             var ignoreKeys = [8, 17, 18, 37, 38, 39, 40, 16, 20];
             if (!ignoreKeys.includes(event.which)) {
                 if(text.length == 16) {
@@ -626,20 +642,12 @@
                 } else {
                     if(event.which == 13) {
                         event.preventDefault();
-                    } else {
-                        if(text != "") {
-                            var auxJson = JSON.parse(json_mdfy);
-                            auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = StringToHex(text);
-                            json_mdfy = JSON.stringify(auxJson);
-                            $("#json-nfc").val(json_mdfy);
-                        }
                     }
                 }
             }
         });
 
         $(".block_data").on('focus', function() {
-            console.log($(this).text());
             if ($(this).text() === 'Vazio') {
                 $(this).text('');
             }
@@ -683,9 +691,9 @@
                         if (isJson(response)) {
                             var json = JSON.parse(response);
                             if (json.status == "0") {
-                                notify("error", json.mensage);
+                                notify("error", json.message);
                             } else {
-                                notify("success", json.mensage);
+                                notify("success", json.message);
                             }
                             window.setTimeout(function () {
                                 ONOFF("off");
@@ -761,9 +769,6 @@
                 if (type == "on") {
                     $("#nfc_on_off").removeClass("text-danger").addClass("text-success");
                     notify("success", "Modo leitura ligado, aguardando TAG...");
-                } else {
-                    $("#nfc_on_off").removeClass("text-success").addClass("text-danger");
-                    notify("success", "Modo leitura desligado.");
                 }
                 if (success != "") {
                     success(response);
@@ -837,7 +842,12 @@
                             var block = ((i * 4) + j);
                             var data = json["sector_" + i]["block_" + block]["data"];
                             if (data != "ffffffffffff") {
-                                $("#block_data-" + i + "_" + block).html(HexToString(data));
+                                var text = HexToString(data);
+                                if(text != "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00") {
+                                    $("#block_data-" + i + "_" + block).html(text);
+                                } else {
+                                    $("#block_data-" + i + "_" + block).html("Vazio");
+                                }
                             }
                         }
                     }
@@ -871,7 +881,11 @@
         });
 
         $("#nfc_menu_read").click(function () {
-            ONOFF("on");
+            if($("#nfc_on_off").hasClass("text-success")) {
+                ONOFF("off");
+            } else {
+                ONOFF("on");
+            }
         });
 
         $("#path-nfc-input").keyup(function () {

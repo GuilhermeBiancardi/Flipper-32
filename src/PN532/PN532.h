@@ -330,7 +330,7 @@ public:
             }
 
         } else {
-            mensageProcess = "A função de escrita foi chamada, mas o modo escrita não está ativo.";
+            messageProcess = "A função de escrita foi chamada, mas o modo escrita não está ativo.";
             return jsonStatus(0);
         }
 
@@ -341,7 +341,7 @@ private:
     Adafruit_PN532 PN532;
 
     // Mensagem de Erro/Sucesso
-    String mensageProcess = "";
+    String messageProcess = "";
 
     // Todos os dados do cartão em json
     String jsonString;
@@ -353,7 +353,7 @@ private:
     uint8_t uidLength;
 
     String jsonStatus(int status) {
-        return "{\"status\": \"" + String(status) + "\", \"mensage\": \"" + mensageProcess + "\"}";
+        return "{\"status\": \"" + String(status) + "\", \"message\": \"" + messageProcess + "\"}";
     }
 
     /**
@@ -431,11 +431,11 @@ private:
 
             if (connection) {
                 // Serial.println("Bloco autenticado.");
-                mensageProcess = "O bloco foi autenticado.";
+                messageProcess = "O bloco foi autenticado.";
                 return true;
             } else {
                 // Serial.println("Erro na autenticação.");
-                mensageProcess = "Nenhuma Tag encontrada ou a chave de acesso está incorreta!";
+                messageProcess = "Nenhuma Tag encontrada ou a chave de acesso está incorreta!";
                 return false;
             }
 
@@ -461,15 +461,15 @@ private:
             connection = PN532.mifareclassic_WriteDataBlock(block, data);
 
             if (connection) {
-                mensageProcess = "Dados armazenados com sucesso!";
+                messageProcess = "Dados armazenados com sucesso!";
                 return true;
             } else {
-                mensageProcess = "Houve um problema com a conexão do bloco.";
+                messageProcess = "Houve um problema com a conexão do bloco.";
                 return false;
             }
 
         } else {
-            mensageProcess = "O bloco informado é reservado para a Chave do Setor.";
+            messageProcess = "O bloco informado é reservado para a Chave do Setor.";
             return false;
         }
 
