@@ -3500,3 +3500,30 @@ textarea.form-control-lg {
 .treeview .list-group-node .list-group {
     border-radius: 0;
 }
+
+/* block data */
+
+.block_data {
+    position: relative;
+    min-width: 95%;
+}
+
+/* popover */
+
+.popover {
+    background: #2c3d4c;
+    border: 1px solid #798e98;
+}
+
+.popover-arrow::before {
+    border-bottom-color: #798e98 !important;
+}
+
+.popover-arrow::after {
+    border-bottom-color: #2c3d4c !important;
+}
+
+.popover-body {
+    color: #ccd0d3;
+    padding: 10px;
+}

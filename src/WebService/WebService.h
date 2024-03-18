@@ -168,7 +168,7 @@ void WebServiceSetup() {
 
     // --------- CONFIG -----------
 
-    server.on("/CONFIG_GET_IP", HTTP_GET,
+    server.on("/CONFIG_GET_DATA", HTTP_GET,
         [](AsyncWebServerRequest* request) {
             String IP = WiFi.localIP().toString();
             String json = "{\"IP\": \"" + IP + "\", \"SSID\": \"" + String(wifissid.c_str()) + "\", \"PASS\": \"" + String(password.c_str()) + "\",";

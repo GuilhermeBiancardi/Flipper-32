@@ -89,7 +89,7 @@
 
     $(document).ready(function() {
 
-        request("/CONFIG_GET_IP", {}, function (response) {
+        request("/CONFIG_GET_DATA", {}, function (response) {
             if (isJson(response)) {
                 var json = JSON.parse(response);
                 $("#ip-external-wifi").val(json.IP);

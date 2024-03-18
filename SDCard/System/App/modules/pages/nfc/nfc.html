@@ -5,23 +5,23 @@
                 <i id="nfc_on_off" class="bi bi-circle-fill fs-6px text-danger me-2"></i>
             </div>
             <div class="btn-group me-2" role="group">
-                <button type="button" id="nfc_menu_read" class="btn btn-outline-secondary">
-                    <i class="bi bi-eye"></i>
+                <button type="button" id="nfc_menu_read" class="btn btn-outline-secondary pop" data-bs-content="Ligar/Desligar Leitora">
+                    <i class="bi bi-toggle-on"></i>
                 </button>
                 <!-- <button type="button" id="nfc_menu_toggle_write" class="btn btn-outline-secondary">
                     <i class="bi bi-pen"></i>
                 </button> -->
-                <button type="button" id="nfc_menu_sd_card" class="btn btn-outline-secondary">
+                <button type="button" id="nfc_menu_sd_card" class="btn btn-outline-secondary pop" data-bs-content="Abrir/Fechar Funções do SDCard">
                     <i class="bi bi-sd-card"></i>
                 </button>
-                <button type="button" id="nfc_menu_key" class="btn btn-outline-secondary">
+                <button type="button" id="nfc_menu_key" class="btn btn-outline-secondary pop" data-bs-content="Abrir/Fechar Dados das Chaves da Tag">
                     <i class="bi bi-key"></i>
                 </button>
-                <button type="button" id="nfc_menu_info" class="btn btn-outline-secondary">
+                <button type="button" id="nfc_menu_info" class="btn btn-outline-secondary pop" data-bs-content="Abrir/Fechar Tabela Informativa">
                     <i class="bi bi-info-circle"></i>
                 </button>
             </div>
-            <input id="nfc_area_transferencia" type="text" class="form-control" maxlength="16" placeholder="Área de Transferência">
+            <!-- <input id="nfc_area_transferencia" type="text" class="form-control" maxlength="16" placeholder="Área de Transferência"> -->
         </div>
     </div>
 </div>
@@ -48,7 +48,7 @@
                         <tr>
                             <td class="text-center">
                                 <a>
-                                    <i class="bi bi-eye me-2"></i>
+                                    <i class="bi bi-toggle-on me-2"></i>
                                 </a>
                             </td>
                             <td>
@@ -75,7 +75,7 @@
                                 Abre as opções de armazenamento externo.
                             </td>
                         </tr>
-                        <tr>
+                        <!-- <tr>
                             <td class="text-center">
                                 <a>
                                     <i class="bi bi-front me-2"></i>
@@ -94,7 +94,7 @@
                             <td>
                                 Escreve o conteúdo da Área de Transferência para o bloco.
                             </td>
-                        </tr>
+                        </tr> -->
                         <tr>
                             <td class="text-center">
                                 <a>
@@ -339,7 +339,7 @@
 <div class="col col-12 mb-3">
     <div class="card">
         <div class="card-header fw-bold small text-uppercase">
-            Último cartão lido
+            Última TAG lida
         </div>
         <div class="card-body">
 
@@ -438,7 +438,7 @@
             <td>\
                 <span class="d-flex align-items-center">\
                     [DOT]\
-                    <div id="block_data-[ID_BLOCK]">[DATA]</div>\
+                    <div id="block_data-[ID_BLOCK]" class="block_data" [EDITABLE]>[DATA]</div>\
                 </span>\
             </td>\
             <td class="text-center">\
@@ -446,17 +446,17 @@
             </td>\
         </tr>';
 
-        var table_data_action_copy = '\
-        <a id="block_data_copy-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_copy">\
-            <i class="bi bi-front me-2"></i>\
-        </a>\
-        ';
+        // var table_data_action_copy = '\
+        // <a id="block_data_copy-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_copy">\
+        //     <i class="bi bi-front me-2"></i>\
+        // </a>\
+        // ';
 
-        var table_data_action_paste = '\
-        <a id="block_data_paste-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_paste">\
-            <i class="bi bi-clipboard me-2"></i>\
-        </a>\
-        ';
+        // var table_data_action_paste = '\
+        // <a id="block_data_paste-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_paste">\
+        //     <i class="bi bi-clipboard me-2"></i>\
+        // </a>\
+        // ';
 
         var table_data_action_delete = '\
         <a id="block_data_delete-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_delete">\
@@ -477,12 +477,6 @@
         <a class="text-decoration-none text-inverse">\
             <i class="bi bi-slash-circle me-2"></i>\
         </a>\
-        <a class="text-decoration-none text-inverse">\
-            <i class="bi bi-slash-circle me-2"></i>\
-        </a>\
-        <a class="text-decoration-none text-inverse">\
-            <i class="bi bi-slash-circle me-2"></i>\
-        </a>\
         ';
 
         var table_end = '\
@@ -496,6 +490,7 @@
                                 <span class="input-group-text">HEX</span>\
                                 <input type="text" id="nfc_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
                             </div>\
+                            <div class="p-1"></div>\
                             <div class="input-group flex-nowrap">\
                                 <span class="input-group-text">CHAVE B</span>\
                                 <span class="input-group-text">STR</span>\
@@ -503,7 +498,7 @@
                                 <span class="input-group-text">HEX</span>\
                                 <input type="text" id="nfc_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
                             </div>\
-                            <br>\
+                            <div class="p-1"></div>\
                             <div class="input-group flex-nowrap">\
                                 <span class="input-group-text">USAR CHAVE:</span>\
                                 <select id="nfc_type_key_sector-[ID_SECTOR]" class="form-select" style="min-width: 110px;">\
@@ -549,13 +544,15 @@
                     if (key_blocks.find(element => element == blocks)) {
                         replace_dot = dot.replace(/\[COLOR\]/, "danger");
                         replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
+                        replace_table_data = replace_table_data.replace(/\[EDITABLE\]/, "");
                         replace_table_data = replace_table_data.replace(/\[DATA\]/, "Chave do Setor");
                         replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_nothing);
                     } else {
                         replace_dot = dot.replace(/\[COLOR\]/, "success");
                         replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
+                        replace_table_data = replace_table_data.replace(/\[EDITABLE\]/, "contenteditable");
                         replace_table_data = replace_table_data.replace(/\[DATA\]/, "Vazio");
-                        replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_copy + table_data_action_paste + table_data_action_write + table_data_action_delete);
+                        replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, /*table_data_action_copy + table_data_action_paste + */table_data_action_write + table_data_action_delete);
                     }
                 }
 
@@ -592,28 +589,65 @@
 
     function SectorEvents() {
 
-        $(".block_data_copy").unbind();
-        $(".block_data_copy").click(function () {
+        // $(".block_data_copy").unbind();
+        // $(".block_data_copy").click(function () {
+        //     var id = $(this).attr("id").split("-");
+        //     var data = $("#block_data-" + id[1]).html();
+        //     if (data != "") {
+        //         $("#nfc_area_transferencia").val(data);
+        //     }
+        // });
+
+        // $(".block_data_paste").unbind();
+        // $(".block_data_paste").click(function () {
+        //     var id = $(this).attr("id").split("-");
+        //     var sb = id[1].split("_");
+        //     var data = $("#nfc_area_transferencia").val();
+        //     if (data != "") {
+        //         var auxJson = JSON.parse(json_mdfy);
+        //         auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = data;
+        //         json_mdfy = JSON.stringify(auxJson);
+        //         $("#json-nfc").val(json_mdfy);
+        //         $("#block_data-" + id[1]).html(data);
+        //     } else {
+        //         notify("error", "A Área de Transferência está vazia.");
+        //     }
+        // });
+
+        $(".block_data").unbind();
+        $(".block_data").keydown(function(event) {
+            var text = $(this).text();
             var id = $(this).attr("id").split("-");
-            var data = $("#block_data-" + id[1]).html();
-            if (data != "") {
-                $("#nfc_area_transferencia").val(data);
+            var sb = id[1].split("_");
+            var ignoreKeys = [8, 17, 18, 37, 38, 39, 40, 16, 20];
+            if (!ignoreKeys.includes(event.which)) {
+                if(text.length == 16) {
+                    event.preventDefault();
+                } else {
+                    if(event.which == 13) {
+                        event.preventDefault();
+                    } else {
+                        if(text != "") {
+                            var auxJson = JSON.parse(json_mdfy);
+                            auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = StringToHex(text);
+                            json_mdfy = JSON.stringify(auxJson);
+                            $("#json-nfc").val(json_mdfy);
+                        }
+                    }
+                }
             }
         });
 
-        $(".block_data_paste").unbind();
-        $(".block_data_paste").click(function () {
-            var id = $(this).attr("id").split("-");
-            var sb = id[1].split("_");
-            var data = $("#nfc_area_transferencia").val();
-            if (data != "") {
-                var auxJson = JSON.parse(json_mdfy);
-                auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = data;
-                json_mdfy = JSON.stringify(auxJson);
-                $("#json-nfc").val(json_mdfy);
-                $("#block_data-" + id[1]).html(data);
-            } else {
-                notify("error", "A Área de Transferência está vazia.");
+        $(".block_data").on('focus', function() {
+            console.log($(this).text());
+            if ($(this).text() === 'Vazio') {
+                $(this).text('');
+            }
+        });
+
+        $(".block_data").on('blur', function() {
+            if ($(this).text() === '') {
+                $(this).text('Vazio');
             }
         });
 
@@ -727,6 +761,9 @@
                 if (type == "on") {
                     $("#nfc_on_off").removeClass("text-danger").addClass("text-success");
                     notify("success", "Modo leitura ligado, aguardando TAG...");
+                } else {
+                    $("#nfc_on_off").removeClass("text-success").addClass("text-danger");
+                    notify("success", "Modo leitura desligado.");
                 }
                 if (success != "") {
                     success(response);
