@@ -133,7 +133,7 @@ function remove_accents(str) {
     return novastr;
 }
 
-function generateTreeView(id, json, nivel = 0, path = "") {
+function generateTreeView(id, json, nivel = 0, path = "", callbackFileOpen = "") {
 
     var size = 25.75;
 
@@ -221,9 +221,8 @@ function generateTreeView(id, json, nivel = 0, path = "") {
     $(".item-open").click(function () {
         var path = $(this).parent().parent().attr("data-path");
         request("/FILE_OPEN", {path: path}, function (response) {
-            if (isJson(response)) {
-                var json = JSON.parse(response);
-                notify(json.status, json.message);
+            if(callbackFileOpen != "") {
+                callbackFileOpen(response);
             }
         }, function (response) {
             notify("error", "Houve um problema com a comunicação.");

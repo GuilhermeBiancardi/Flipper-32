@@ -627,14 +627,6 @@
         $(".block_data").unbind();
         $(".block_data").keydown(function(event) {
             var text = $(this).text();
-            
-            var id = $(this).attr("id").split("-");
-            var sb = id[1].split("_");
-            var auxJson = JSON.parse(json_mdfy);
-            auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = StringToHex(text);
-            json_mdfy = JSON.stringify(auxJson);
-            $("#json-nfc").val(json_mdfy);
-
             var ignoreKeys = [8, 17, 18, 37, 38, 39, 40, 16, 20];
             if (!ignoreKeys.includes(event.which)) {
                 if(text.length == 16) {
@@ -645,6 +637,16 @@
                     }
                 }
             }
+        });
+
+        $(".block_data").keyup(function(event) {
+            var text = $(this).text();
+            var id = $(this).attr("id").split("-");
+            var sb = id[1].split("_");
+            var auxJson = JSON.parse(json_mdfy);
+            auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = StringToHex(text);
+            json_mdfy = JSON.stringify(auxJson);
+            $("#json-nfc").val(json_mdfy);
         });
 
         $(".block_data").on('focus', function() {
@@ -785,12 +787,68 @@
 
     }
 
+    function jsonTagRead(json_str) {
+        if (isJson(json_str)) {
+
+            notify("success", "Dados lidos, processando...");
+            var json = JSON.parse(json_str);
+
+            if (json.type == "NFC_TAG_4K") {
+                
+                $("#card_uid").val(json.uid);
+                $("#json-nfc").val(json_str);
+                json_mdfy = json_str;
+
+                for (var i = 0; i < 16; i++) {
+
+                    var key_a = json["sector_" + i]["key_a"];
+                    $("#key-hex-a-sector-" + i).val(key_a);
+                    $("#key-str-a-sector-" + i).val(HexToString(key_a));
+
+                    $("#nfc_str_key_a_sector-" + i).val(HexToString(key_a));
+                    $("#nfc_hex_key_a_sector-" + i).val(key_a);
+                    
+                    var key_b = json["sector_" + i]["key_b"];
+                    $("#key-hex-b-sector-" + i).val(key_b);
+                    $("#key-str-b-sector-" + i).val(HexToString(key_b));
+
+                    $("#nfc_str_key_b_sector-" + i).val(HexToString(key_b));
+                    $("#nfc_hex_key_b_sector-" + i).val(key_b);
+
+                    for (var j = 0; j < 4; j++) {
+                        var block = ((i * 4) + j);
+                        var data = json["sector_" + i]["block_" + block]["data"];
+                        if (data != "ffffffffffff") {
+                            var text = HexToString(data);
+                            if(text != "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" && text != "") {
+                                $("#block_data-" + i + "_" + block).html(text);
+                            } else {
+                                $("#block_data-" + i + "_" + block).html("Vazio");
+                            }
+                        }
+                    }
+                }
+
+                notify("success", "Os dados foram processados com sucesso!");
+
+                window.setTimeout(function () {
+                    ONOFF("off");
+                }, 250);
+            }
+
+        } else {
+            notify("error", "Os dados lidos foram corrompidos, tente novamente.");
+        }
+    }
+
     function list_dir_nfc(success = "", error = "") {
         request("/NFC_LIST_DIR", {}, function (response) {
             if (isJson(response)) {
                 var json = JSON.parse(response);
                 $("#nfc_files_tree").html("");
-                generateTreeView("nfc_files_tree", json.root, 0, "NFC/");
+                generateTreeView("nfc_files_tree", json.root, 0, "NFC/", (response) => {
+                    jsonTagRead(response);
+                });
                 if (success != "") {
                     success();
                 }
@@ -810,59 +868,7 @@
         $("#json-nfc").val(json_empy);
 
         ws.onmessage = function (event) {
-
-            if (isJson(event.data)) {
-
-                notify("success", "Dados lidos, processando...");
-                var json = JSON.parse(event.data);
-
-                if (json.type == "NFC_TAG_4K") {
-                    
-                    $("#card_uid").val(json.uid);
-                    $("#json-nfc").val(event.data);
-                    json_mdfy = event.data;
-
-                    for (var i = 0; i < 16; i++) {
-
-                        var key_a = json["sector_" + i]["key_a"];
-                        $("#key-hex-a-sector-" + i).val(key_a);
-                        $("#key-str-a-sector-" + i).val(HexToString(key_a));
-
-                        $("#nfc_str_key_a_sector-" + i).val(HexToString(key_a));
-                        $("#nfc_hex_key_a_sector-" + i).val(key_a);
-                        
-                        var key_b = json["sector_" + i]["key_b"];
-                        $("#key-hex-b-sector-" + i).val(key_b);
-                        $("#key-str-b-sector-" + i).val(HexToString(key_b));
-
-                        $("#nfc_str_key_b_sector-" + i).val(HexToString(key_b));
-                        $("#nfc_hex_key_b_sector-" + i).val(key_b);
-
-                        for (var j = 0; j < 4; j++) {
-                            var block = ((i * 4) + j);
-                            var data = json["sector_" + i]["block_" + block]["data"];
-                            if (data != "ffffffffffff") {
-                                var text = HexToString(data);
-                                if(text != "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00") {
-                                    $("#block_data-" + i + "_" + block).html(text);
-                                } else {
-                                    $("#block_data-" + i + "_" + block).html("Vazio");
-                                }
-                            }
-                        }
-                    }
-
-                    notify("success", "Os dados foram processados com sucesso!");
-
-                    window.setTimeout(function () {
-                        ONOFF("off");
-                    }, 250);
-                }
-
-            } else {
-                notify("error", "Os dados lidos foram corrompidos, tente novamente.");
-            }
-
+            jsonTagRead(event.data);
         };
 
         EmpyTableCardData();

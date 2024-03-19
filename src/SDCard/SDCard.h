@@ -94,7 +94,7 @@ public:
             char* FileName = SDCardFolderName(file);
 
             // Abre o arquivo no modo de escrita.
-            SDCardFile = SD.open(FileName, FILE_APPEND);
+            SDCardFile = SD.open(FileName, FILE_WRITE);
 
             if (SDCardFile) {
 

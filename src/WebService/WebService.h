@@ -252,9 +252,8 @@ void WebServiceSetup() {
                 path += request->getParam("path")->value();
             }
 
-            SystemMode = 4;
-            PN532.SetJSON(SDCard.FileRead(path.c_str()));
-            request->send_P(200, "text/plain", "{\"status\": \"success\", \"message\": \"Arquivo carregado com sucesso.\"}");
+            String json = SDCard.FileRead(path.c_str());
+            request->send_P(200, "text/plain", json.c_str());
         }
     );
 
@@ -391,7 +390,7 @@ void WebServiceSetup() {
 
 void WebServiceLoop() {
 
-    if(SystemMode == 2 || SystemMode == 4) {
+    if(SystemMode == 2) {
         String json = PN532.GetJSON();
         if(json != "") {
             ws.textAll(json);
