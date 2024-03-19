@@ -1,8 +1,8 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 
-String ssid = "Fliper32";
-String pass = "12345678";
+String ssid = "Flipper32";
+String pass = "123456789";
 
 const char* PARAM_INPUT_1 = "hardware";
 const char* PARAM_INPUT_2 = "wifissid";

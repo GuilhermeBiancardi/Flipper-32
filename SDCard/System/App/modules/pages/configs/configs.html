@@ -16,7 +16,7 @@
                                 <span class="input-group-text">IP</span>
                                 <input id="ip-external-wifi" class="form-control form-control" type="text" placeholder="Conexão não encontrada.">
                             </div>
-                            <buttom id="config-reset" class="btn btn-default form-control">Reiniciar Fliper32</buttom>
+                            <buttom id="config-reset" class="btn btn-default form-control">Reiniciar Flipper32</buttom>
                         </div>
                         <div class="card-arrow">
                             <div class="card-arrow-top-left"></div>
@@ -37,7 +37,8 @@
                             </div>
                             <div class="input-group flex-nowrap mb-3">
                                 <span class="input-group-text">Pass</span>
-                                <input id="pass-internal-wifi" class="form-control form-control" type="text" value="12345678">
+                                <input id="pass-internal-wifi" class="form-control form-control" type="password" value="12345678">
+                                <div id="config-internal-pass-viewer" class="input-group-text bi-eye" role='button'></div>
                             </div>
                             <buttom id="config-save-internal-wifi" class="btn btn-default form-control">Salvar</buttom>
                         </div>
@@ -60,7 +61,8 @@
                             </div>
                             <div class="input-group flex-nowrap mb-3">
                                 <span class="input-group-text">Pass</span>
-                                <input id="pass-external-wifi" class="form-control form-control" type="text" placeholder="WiFI Password">
+                                <input id="pass-external-wifi" class="form-control form-control" type="password" placeholder="WiFI Password">
+                                <div id="config-external-pass-viewer" class="input-group-text bi-eye" role='button'></div>
                             </div>
                             <buttom id="config-save-external-wifi" class="btn btn-default form-control">Salvar</buttom>
                         </div>
@@ -136,6 +138,24 @@
             }, function (response) {
                 notify("error", "Houve um problema com a comunicação.");
             });
+        });
+
+        $("#config-external-pass-viewer").click(function() {
+            var type = $("#pass-external-wifi").attr("type");
+            if(type == "password") {
+                $("#pass-external-wifi").attr({"type": "text"});
+            } else {
+                $("#pass-external-wifi").attr({"type": "password"});
+            }
+        });
+
+        $("#config-internal-pass-viewer").click(function() {
+            var type = $("#pass-internal-wifi").attr("type");
+            if(type == "password") {
+                $("#pass-internal-wifi").attr({"type": "text"});
+            } else {
+                $("#pass-internal-wifi").attr({"type": "password"});
+            }
         });
 
     });

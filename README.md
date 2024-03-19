@@ -9,10 +9,10 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
 0. **Primeiro Acesso**
 
-            Após liga-lo pela primeira vez uma rede WiFi com o nome Fliper32 aparecerá, conecte
-         nesta rede com a senha 12345678, feito isso abra um navegador e digite 192.168.4.1 na
+            Após liga-lo pela primeira vez uma rede WiFi com o nome Flipper32 aparecerá, conecte
+         nesta rede com a senha 123456789, feito isso abra um navegador e digite 192.168.4.1 na
          barra de pesquisa e espere os arquivos carregarem no CACHE, clique em Config e mude
-         os dados de conexão local ou configure dados de WiFi para acessar o Fliper32 em uma
+         os dados de conexão local ou configure dados de WiFi para acessar o Flipper32 em uma
          rede local.
 
 2. **Tarefas Gerais**
