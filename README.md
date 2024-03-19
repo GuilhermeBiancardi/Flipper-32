@@ -45,10 +45,11 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Leitura da Tag
    - [x] Escrita na Tag
    - [ ] Clonar Tag
-   - [ ] Emulação de Tag (Verificar viabilidade)
-   - [ ] Integração com o módulo SDCard
+   - [x] Emulação de Tag (Verificar viabilidade)
+     - [x] PN532 não suporta emulação de Tags
+   - [x] Integração com o módulo SDCard
      - [ ] Salvar uma lista de Keys conhecidas
-     - [ ] Salvar Tags lidas
+     - [x] Salvar Tags lidas
    - [x] Integração com a UI do Sistema
    - [ ] Bruteforce de Keys
    - [x] Importar dados da Tag em JSON
@@ -75,12 +76,12 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
      ![Leds Infra Vermelho](https://cf.shopee.com.br/file/9df3b03281de181d8d3c050fa51ba083)
 
-   - [x] Captar Sinais
-   - [x] Emitir Sinais
-   - [x] Clonar Sinais
-   - [x] Integração como o módulo SDCard
-     - [x] Salvar Sinais capturados
-   - [x] Integração com a UI do Sistema
+   - [ ] Captar Sinais
+   - [ ] Emitir Sinais
+   - [ ] Clonar Sinais
+   - [ ] Integração como o módulo SDCard
+     - [ ] Salvar Sinais capturados
+   - [ ] Integração com a UI do Sistema
    - [x] Disponibilizar funções em forma de Classe
   
   
@@ -91,18 +92,21 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
      - [ ] Adicionar informações importantes do Leitor NFC
      - [ ] Adicionar informações importantes do Leitor Infra-Vermelho
    - [x] Tela de Loading (Cache)
+   - [ ] Tela de Loading ao carregar uma página.
    - [x] Tela de Configuração do SoftAP
      - [x] Mudar SSID
      - [x] Mudar Senha
    - [x] Tela de Configuração do WiFi
      - [x] Mudar SSID
      - [x] Mudar Senha
-   - [ ] Tela NFC
+   - [x] Tela NFC
      - [x] Ler dados da tag NFC
      - [x] Gravar dados na tag NFC
      - [x] Listar arquivos salvos no cartão de memória
-     - [ ] Salvar dados lidos em arquivo no cartão de memória
-     - [ ] Ler arquivos salvos no cartão de memória
+     - [x] Salvar dados lidos em arquivo no cartão de memória
+     - [x] Ler arquivos salvos no cartão de memória
+     - [ ] Clonar Tags.
+     - [ ] Bruteforce de Keys.
      - [ ] Definir key para leitura.
    - [ ] Tela Infra Vermelho
      - [ ] Ler sinais IR
