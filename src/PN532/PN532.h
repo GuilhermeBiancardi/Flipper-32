@@ -303,21 +303,9 @@ public:
             // KeyA chave padrão
             uint8_t KeySector[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
-            // Converte os dados via String para Char
-            char charArray[string.length() + 1];
-            string.toCharArray(charArray, string.length() + 1);
-            for (int i = 0; i < string.length(); i++) {
-                data[i] = (uint8_t)charArray[i];
-            }
+            stringToChar(string, data);
 
-            // Converte a key HEX em Byte
-            for (int i = 0; i < 6; i++) {
-                char c1 = key.charAt(i * 2);
-                char c2 = key.charAt(i * 2 + 1);
-                int n1 = c1 >= 'A' ? c1 - 'A' + 10 : c1 - '0';
-                int n2 = c2 >= 'A' ? c2 - 'A' + 10 : c2 - '0';
-                KeySector[i] = (n1 << 4) | n2;
-            }
+            hexToByte(key, KeySector);
 
             if (BlockConnection(block, keyType, KeySector)) {
                 if (WriteTag4Bytes(block, data)) {
@@ -352,13 +340,37 @@ private:
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
     uint8_t uidLength;
 
+    /**
+     * Converte os dados da TAG de String para Char
+     */
+    void stringToChar(String string, uint8_t* data) {
+        char charArray[string.length() + 1];
+        string.toCharArray(charArray, string.length() + 1);
+        for (int i = 0; i < string.length(); i++) {
+            data[i] = (uint8_t)charArray[i];
+        }
+    }
+
+    /**
+     * Converte a key do setor de HEX para Byte
+     */ 
+    void hexToByte(String key, uint8_t* KeySector) {
+        for (int i = 0; i < 6; i++) {
+            char c1 = key.charAt(i * 2);
+            char c2 = key.charAt(i * 2 + 1);
+            int n1 = c1 >= 'A' ? c1 - 'A' + 10 : c1 - '0';
+            int n2 = c2 >= 'A' ? c2 - 'A' + 10 : c2 - '0';
+            KeySector[i] = (n1 << 4) | n2;
+        }
+    }
+
     String jsonStatus(int status) {
         return "{\"status\": \"" + String(status) + "\", \"message\": \"" + messageProcess + "\"}";
     }
 
     /**
      * Função que converte um conjunto bytes para HEX para String
-    */
+     */
     String byteToHexString(uint8_t* data, size_t length) {
         String result = "";
         for (size_t i = 0; i < length; i++) {
@@ -383,20 +395,9 @@ private:
         connection = PN532.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
 
         if (connection) {
-
-            // Imprime informações da Tag encontrada.
-            // Serial.println("Encontrado Tag ISO14443A");
-            // Serial.print("-- Tamanho da UID: "); Serial.print(uidLength, DEC); Serial.println(" bytes");
-            // Serial.print("-- Valor da UID: ");
-            // PN532.PrintHex(uid, uidLength);
-            // Serial.println("");
-
             return true;
-
         } else {
-
             return false;
-
         }
 
     }

@@ -133,6 +133,17 @@ function remove_accents(str) {
     return novastr;
 }
 
+function getDateTime() {
+    var dataAtual = new Date();
+    var dia = String(dataAtual.getDate()).padStart(2, '0');
+    var mes = String(dataAtual.getMonth() + 1).padStart(2, '0'); // Os meses são indexados a partir de 0
+    var ano = dataAtual.getFullYear();
+    var horas = String(dataAtual.getHours()).padStart(2, '0');
+    var minutos = String(dataAtual.getMinutes()).padStart(2, '0');
+    var segundos = String(dataAtual.getSeconds()).padStart(2, '0');
+    return dia + "/" + mes + "/" + ano + " " + horas + ":" + minutos + ":" + segundos;
+}
+
 function generateTreeView(id, json, nivel = 0, path = "", callbackFileOpen = "") {
 
     var size = 25.75;

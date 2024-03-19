@@ -5,16 +5,19 @@
                 <i id="nfc_on_off" class="bi bi-circle-fill fs-6px text-danger me-2"></i>
             </div>
             <div class="btn-group me-2" role="group">
-                <button type="button" id="nfc_menu_read" class="btn btn-outline-secondary pop" data-bs-content="Ligar/Desligar Leitora">
+                <button type="button" id="nfc_menu_read" class="btn btn-outline-secondary">
                     <i class="bi bi-toggle-on"></i>
                 </button>
-                <button type="button" id="nfc_menu_sd_card" class="btn btn-outline-secondary pop" data-bs-content="Abrir/Fechar Funções do SDCard">
+                <button type="button" id="nfc_menu_sd_card" class="btn btn-outline-secondary">
                     <i class="bi bi-sd-card"></i>
                 </button>
-                <button type="button" id="nfc_menu_key" class="btn btn-outline-secondary pop" data-bs-content="Abrir/Fechar Dados das Chaves da Tag">
-                    <i class="bi bi-key"></i>
+                <button type="button" id="nfc_menu_tag" class="btn btn-outline-secondary">
+                    <i class="bi bi-credit-card-2-front"></i>
                 </button>
-                <button type="button" id="nfc_menu_info" class="btn btn-outline-secondary pop" data-bs-content="Abrir/Fechar Tabela Informativa">
+                <button type="button" id="nfc_menu_log" class="btn btn-outline-secondary">
+                    <i class="bi bi-file-earmark-text"></i>
+                </button>
+                <button type="button" id="nfc_menu_info" class="btn btn-outline-secondary">
                     <i class="bi bi-info-circle"></i>
                 </button>
             </div>
@@ -24,7 +27,33 @@
 
 <div class="mt-5"></div>
 
-<div id="block-legend" class="animated-05 fadeInLeft d-none">
+<div id="block-log" class="animated-05 fadeInLeft d-none mb-3">
+
+    <div class="card">
+        <div class="card-header fw-bold small text-uppercase">
+            Log de Gravação Multipla:
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="nfc_table_log" class="table table-striped table-borderless mb-2px small text-nowrap">
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <div class="card-arrow">
+            <div class="card-arrow-top-left"></div>
+            <div class="card-arrow-top-right"></div>
+            <div class="card-arrow-bottom-left"></div>
+            <div class="card-arrow-bottom-right"></div>
+        </div>
+    </div>
+
+</div>
+
+<div id="block-legend" class="animated-05 fadeInLeft d-none mb-3">
 
     <div class="card">
         <div class="card-header fw-bold small text-uppercase">
@@ -54,11 +83,11 @@
                         <tr>
                             <td class="text-center">
                                 <a>
-                                    <i class="bi bi-key me-2"></i>
+                                    <i class="bi bi-credit-card-2-front me-2"></i>
                                 </a>
                             </td>
                             <td>
-                                Abre os dados de Chaves/Keys dos Setores/Blocos.
+                                Abre os dados completos da Tag em JSON.
                             </td>
                         </tr>
                         <tr>
@@ -69,6 +98,16 @@
                             </td>
                             <td>
                                 Abre as opções de armazenamento externo.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-center">
+                                <a>
+                                    <i class="bi bi-file-earmark-text me-2"></i>
+                                </a>
+                            </td>
+                            <td>
+                                Log de Gravação Multipla.
                             </td>
                         </tr>
                         <tr>
@@ -234,11 +273,9 @@
         </div>
     </div>
 
-    <hr>
-
 </div>
 
-<div id="block-sd-card" class="animated-05 fadeInLeft d-none">
+<div id="block-sd-card" class="animated-05 fadeInLeft d-none mb-3">
 
     <div class="card">
         <div class="card-header fw-bold small text-uppercase">
@@ -262,70 +299,14 @@
             <div class="card-arrow-bottom-right"></div>
         </div>
     </div>
-    <hr>
 
 </div>
 
-<div id="block-key" class="animated-05 fadeInLeft d-none">
+<div id="block-tag" class="animated-05 fadeInLeft d-none mb-3">
 
     <div class="card">
         <div class="card-header fw-bold small text-uppercase">
-            Chaves de Acesso Global
-        </div>
-        <div class="card-body">
-
-            <div class="input-group flex-nowrap mb-3">
-                <span class="input-group-text">Global: Chave A HEX</span>
-                <input id="default-hex-key-a" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff">
-                <span class="input-group-text">Global: Chave B HEX</span>
-                <input id="default-hex-key-b" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff">
-            </div>
-
-            <div class="input-group flex-nowrap mb-3">
-                <span class="input-group-text">Global: Chave A STR</span>
-                <input id="default-str-key-a" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ">
-                <span class="input-group-text">Global: Chave B STR</span>
-                <input id="default-str-key-b" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ">
-            </div>
-
-        </div>
-        <div class="card-arrow">
-            <div class="card-arrow-top-left"></div>
-            <div class="card-arrow-top-right"></div>
-            <div class="card-arrow-bottom-left"></div>
-            <div class="card-arrow-bottom-right"></div>
-        </div>
-    </div>
-
-    <hr>
-
-    <div class="card">
-        <div class="card-header fw-bold small text-uppercase">
-            Chaves de Acesso por Setor
-        </div>
-        <div class="card-body">
-
-            <div id="key_by_sector">
-
-            </div>
-
-        </div>
-        <div class="card-arrow">
-            <div class="card-arrow-top-left"></div>
-            <div class="card-arrow-top-right"></div>
-            <div class="card-arrow-bottom-left"></div>
-            <div class="card-arrow-bottom-right"></div>
-        </div>
-    </div>
-
-    <hr>
-
-</div>
-
-<div class="col col-12 mb-3">
-    <div class="card">
-        <div class="card-header fw-bold small text-uppercase">
-            Última TAG lida
+            Dados completos da TAG
         </div>
         <div class="card-body">
 
@@ -348,55 +329,84 @@
             <div class="card-arrow-bottom-right"></div>
         </div>
     </div>
+
 </div>
+
+<!-- <div class="col col-12">
+    <div class="card">
+        <div class="card-header fw-bold small text-uppercase">
+            Dados completos da TAG
+        </div>
+        <div class="card-body">
+
+            <div class="input-group flex-nowrap">
+                <span class="input-group-text">UID</span>
+                <input id="card_uid" class="form-control form-control text-uppercase" type="text" placeholder="00000000" readonly>
+            </div>
+
+            <br>
+            <label class="form-label" for="json-nfc">JSON NFC</label>
+            <textarea class="form-control" id="json-nfc" rows="15"></textarea>
+            <br>
+            <buttom class="btn btn-default form-control">Gravar Tag Completa.</buttom>
+
+        </div>
+        <div class="card-arrow">
+            <div class="card-arrow-top-left"></div>
+            <div class="card-arrow-top-right"></div>
+            <div class="card-arrow-bottom-left"></div>
+            <div class="card-arrow-bottom-right"></div>
+        </div>
+    </div>
+</div> -->
 
 <script>
 
     var json_empy = '{"type":"NFC_TAG_4K","uid":"","sector_0":{"key_a":"","key_b":"","block_0":{"data":""},"block_1":{"data":""},"block_2":{"data":""},"block_3":{"data":""}},"sector_1":{"key_a":"","key_b":"","block_4":{"data":""},"block_5":{"data":""},"block_6":{"data":""},"block_7":{"data":""}},"sector_2":{"key_a":"","key_b":"","block_8":{"data":""},"block_9":{"data":""},"block_10":{"data":""},"block_11":{"data":""}},"sector_3":{"key_a":"","key_b":"","block_12":{"data":""},"block_13":{"data":""},"block_14":{"data":""},"block_15":{"data":""}},"sector_4":{"key_a":"","key_b":"","block_16":{"data":""},"block_17":{"data":""},"block_18":{"data":""},"block_19":{"data":""}},"sector_5":{"key_a":"","key_b":"","block_20":{"data":""},"block_21":{"data":""},"block_22":{"data":""},"block_23":{"data":""}},"sector_6":{"key_a":"","key_b":"","block_24":{"data":""},"block_25":{"data":""},"block_26":{"data":""},"block_27":{"data":""}},"sector_7":{"key_a":"","key_b":"","block_28":{"data":""},"block_29":{"data":""},"block_30":{"data":""},"block_31":{"data":""}},"sector_8":{"key_a":"","key_b":"","block_32":{"data":""},"block_33":{"data":""},"block_34":{"data":""},"block_35":{"data":""}},"sector_9":{"key_a":"","key_b":"","block_36":{"data":""},"block_37":{"data":""},"block_38":{"data":""},"block_39":{"data":""}},"sector_10":{"key_a":"","key_b":"","block_40":{"data":""},"block_41":{"data":""},"block_42":{"data":""},"block_43":{"data":""}},"sector_11":{"key_a":"","key_b":"","block_44":{"data":""},"block_45":{"data":""},"block_46":{"data":""},"block_47":{"data":""}},"sector_12":{"key_a":"","key_b":"","block_48":{"data":""},"block_49":{"data":""},"block_50":{"data":""},"block_51":{"data":""}},"sector_13":{"key_a":"","key_b":"","block_52":{"data":""},"block_53":{"data":""},"block_54":{"data":""},"block_55":{"data":""}},"sector_14":{"key_a":"","key_b":"","block_56":{"data":""},"block_57":{"data":""},"block_58":{"data":""},"block_59":{"data":""}},"sector_15":{"key_a":"","key_b":"","block_60":{"data":""},"block_61":{"data":""},"block_62":{"data":""},"block_63":{"data":""}}}';
     var json_mdfy = json_empy;
 
-    function EmpyKeyBySector() {
+    // function EmpyKeyBySector() {
 
-        var row_key = '<div class="row"></div>';
+    //     var row_key = '<div class="row"></div>';
 
-        var card_key = '\
-        <div class="col col-md-6 col-sm-12 mb-3">\
-            <div class="card">\
-                <div class="card-header fw-bold small text-uppercase">\
-                    Chave Setor [ID_SECTOR]\
-                </div>\
-                <div class="card-body">\
-                    <div class="input-group flex-nowrap mb-3">\
-                        <span class="input-group-text">Chave A HEX</span>\
-                        <input id="key-hex-a-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff" readonly>\
-                        <span class="input-group-text">Chave B HEX</span>\
-                        <input id="key-hex-b-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff" readonly>\
-                    </div>\
-                    <div class="input-group flex-nowrap">\
-                        <span class="input-group-text">Chave A STR</span>\
-                        <input id="key-str-a-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ" readonly>\
-                        <span class="input-group-text">Chave B STR</span>\
-                        <input id="key-str-b-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ" readonly>\
-                    </div>\
-                </div>\
-                <div class="card-arrow">\
-                    <div class="card-arrow-top-left"></div>\
-                    <div class="card-arrow-top-right"></div>\
-                    <div class="card-arrow-bottom-left"></div>\
-                    <div class="card-arrow-bottom-right"></div>\
-                </div>\
-            </div>\
-        </div>\
-        ';
+    //     var card_key = '\
+    //     <div class="col col-md-6 col-sm-12 mb-3">\
+    //         <div class="card">\
+    //             <div class="card-header fw-bold small text-uppercase">\
+    //                 Chave Setor [ID_SECTOR]\
+    //             </div>\
+    //             <div class="card-body">\
+    //                 <div class="input-group flex-nowrap mb-3">\
+    //                     <span class="input-group-text">Chave A HEX</span>\
+    //                     <input id="key-hex-a-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff" readonly>\
+    //                     <span class="input-group-text">Chave B HEX</span>\
+    //                     <input id="key-hex-b-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff" readonly>\
+    //                 </div>\
+    //                 <div class="input-group flex-nowrap">\
+    //                     <span class="input-group-text">Chave A STR</span>\
+    //                     <input id="key-str-a-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ" readonly>\
+    //                     <span class="input-group-text">Chave B STR</span>\
+    //                     <input id="key-str-b-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ" readonly>\
+    //                 </div>\
+    //             </div>\
+    //             <div class="card-arrow">\
+    //                 <div class="card-arrow-top-left"></div>\
+    //                 <div class="card-arrow-top-right"></div>\
+    //                 <div class="card-arrow-bottom-left"></div>\
+    //                 <div class="card-arrow-bottom-right"></div>\
+    //             </div>\
+    //         </div>\
+    //     </div>\
+    //     ';
 
-        $("#key_by_sector").append(row_key);
+    //     $("#key_by_sector").append(row_key);
 
-        for (var i = 0; i < 16; i++) {
-            var card = "";
-            card = card_key.replaceAll(/\[ID_SECTOR\]/g, i);
-            $("#key_by_sector .row").append(card);
-        }
-    }
+    //     for (var i = 0; i < 16; i++) {
+    //         var card = "";
+    //         card = card_key.replaceAll(/\[ID_SECTOR\]/g, i);
+    //         $("#key_by_sector .row").append(card);
+    //     }
+    // }
 
     function EmpyTableCardData() {
 
@@ -481,7 +491,7 @@
                                     <option value="0">A</option>\
                                     <option value="1">B</option>\
                                 </select>\
-                                <buttom class="btn btn-default form-control">Salvar Setor</buttom>\
+                                <buttom id="nfc_sector_save-[ID_SECTOR]" class="btn btn-default form-control save_sector">Salvar Setor</buttom>\
                             </div>\
                         </div>\
                 </div>\
@@ -568,7 +578,7 @@
         $(".block_data").unbind();
         $(".block_data").keydown(function(event) {
             var text = $(this).text();
-            var ignoreKeys = [8, 17, 18, 37, 38, 39, 40, 16, 20];
+            var ignoreKeys = [8, 17, 18, 37, 38, 39, 40, 16, 20, 46];
             if (!ignoreKeys.includes(event.which)) {
                 if(text.length == 16) {
                     event.preventDefault();
@@ -695,6 +705,62 @@
             $("#json-nfc").val(json_mdfy);
         });
 
+        $(".save_sector").unbind();
+        $(".save_sector").click(function() {
+            var id = $(this).attr("id").split("-");
+            var start = (parseInt(id[1]) * 4);
+            var type = $("#nfc_type_key_sector-" + id[1]).val();
+            var key = $("#nfc_hex_key_a_sector-" + id[1]).val();
+            type == 1 ? key = $("#nfc_hex_key_b_sector-" + id[1]).val() : key;
+            logTableAdd("reset");
+            for(var block = start; block < (start + 3); block++) {
+                if(block != 0) {
+                    var data = $("#block_data-" + id[1] + "_" + block).html();
+                    data == "Vazio" ? data = "" : data;
+                    saveSectorData(id[1], block, type, key, data);
+                }
+            }
+            notify("success", "Comando concluído, consulte o log de gravação para obter mais detalhes.");
+        });
+
+    }
+
+    function saveSectorData(sector, block, type, key, data) {
+        if (data.length <= 16) {
+            if (key != "") {
+                var data = {
+                    "block": block,
+                    "type": type,
+                    "key": key,
+                    "data": data
+                };
+                request("/NFC_WRITE_ON", data, function (response) {
+                    if (isJson(response)) {
+                        var json = JSON.parse(response);
+                        json.status == 0 ? json.menssage = "Erro na Gravação!" : json.menssage = "Dados Gravados com Sucesso!";
+                        logTableAdd(json.status, "Setor: " + sector + " Bloco: " + block, json.menssage);
+                    }
+                }, function (response) {
+                    logTableAdd(0, "Setor: " + sector + " Bloco: " + block, "Houve um problema com a comunicação.");
+                });
+            } else {
+                logTableAdd(2, "Setor: " + sector + " Bloco: " + block, "A chave de acesso do setor não foi informada.");
+            }
+        } else {
+            logTableAdd(2, "Setor: " + sector + " Bloco: " + block, "O dado a ser gravado não pode exceder 16 caracteres.");
+        }
+    }
+
+    function logTableAdd(status, title, menssage) {
+        if(status == "reset") {
+            $("#nfc_table_log tbody").html("");
+        } else if(status == 0) {
+            $("#nfc_table_log tbody").append('<tr class="table-danger"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-danger me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
+        } else if(status == 1) {
+            $("#nfc_table_log tbody").append('<tr class="table-success"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-success me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
+        } else {
+            $("#nfc_table_log tbody").append('<tr class="table-warning"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-warning me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
+        }
     }
 
     function ONOFF(type, success = "", error = "") {
@@ -815,7 +881,7 @@
         };
 
         EmpyTableCardData();
-        EmpyKeyBySector();
+        // EmpyKeyBySector();
 
         $("#nfc_menu_info").click(function () {
             AnimateMenu($(this), "block-legend");
@@ -825,8 +891,12 @@
             AnimateMenu($(this), "block-sd-card");
         });
 
-        $("#nfc_menu_key").click(function () {
-            AnimateMenu($(this), "block-key");
+        $("#nfc_menu_tag").click(function () {
+            AnimateMenu($(this), "block-tag");
+        });
+
+        $("#nfc_menu_log").click(function () {
+            AnimateMenu($(this), "block-log");
         });
 
         $("#nfc_menu_read").click(function () {
