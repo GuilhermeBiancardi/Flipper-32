@@ -317,7 +317,7 @@
 
             <br>
             <label class="form-label" for="json-nfc">JSON NFC</label>
-            <textarea class="form-control" id="json-nfc" rows="15"></textarea>
+            <textarea class="form-control" id="json-nfc" rows="15" disabled></textarea>
             <br>
             <buttom class="btn btn-default form-control">Gravar Tag Completa.</buttom>
 
@@ -332,81 +332,10 @@
 
 </div>
 
-<!-- <div class="col col-12">
-    <div class="card">
-        <div class="card-header fw-bold small text-uppercase">
-            Dados completos da TAG
-        </div>
-        <div class="card-body">
-
-            <div class="input-group flex-nowrap">
-                <span class="input-group-text">UID</span>
-                <input id="card_uid" class="form-control form-control text-uppercase" type="text" placeholder="00000000" readonly>
-            </div>
-
-            <br>
-            <label class="form-label" for="json-nfc">JSON NFC</label>
-            <textarea class="form-control" id="json-nfc" rows="15"></textarea>
-            <br>
-            <buttom class="btn btn-default form-control">Gravar Tag Completa.</buttom>
-
-        </div>
-        <div class="card-arrow">
-            <div class="card-arrow-top-left"></div>
-            <div class="card-arrow-top-right"></div>
-            <div class="card-arrow-bottom-left"></div>
-            <div class="card-arrow-bottom-right"></div>
-        </div>
-    </div>
-</div> -->
-
 <script>
 
     var json_empy = '{"type":"NFC_TAG_4K","uid":"","sector_0":{"key_a":"","key_b":"","block_0":{"data":""},"block_1":{"data":""},"block_2":{"data":""},"block_3":{"data":""}},"sector_1":{"key_a":"","key_b":"","block_4":{"data":""},"block_5":{"data":""},"block_6":{"data":""},"block_7":{"data":""}},"sector_2":{"key_a":"","key_b":"","block_8":{"data":""},"block_9":{"data":""},"block_10":{"data":""},"block_11":{"data":""}},"sector_3":{"key_a":"","key_b":"","block_12":{"data":""},"block_13":{"data":""},"block_14":{"data":""},"block_15":{"data":""}},"sector_4":{"key_a":"","key_b":"","block_16":{"data":""},"block_17":{"data":""},"block_18":{"data":""},"block_19":{"data":""}},"sector_5":{"key_a":"","key_b":"","block_20":{"data":""},"block_21":{"data":""},"block_22":{"data":""},"block_23":{"data":""}},"sector_6":{"key_a":"","key_b":"","block_24":{"data":""},"block_25":{"data":""},"block_26":{"data":""},"block_27":{"data":""}},"sector_7":{"key_a":"","key_b":"","block_28":{"data":""},"block_29":{"data":""},"block_30":{"data":""},"block_31":{"data":""}},"sector_8":{"key_a":"","key_b":"","block_32":{"data":""},"block_33":{"data":""},"block_34":{"data":""},"block_35":{"data":""}},"sector_9":{"key_a":"","key_b":"","block_36":{"data":""},"block_37":{"data":""},"block_38":{"data":""},"block_39":{"data":""}},"sector_10":{"key_a":"","key_b":"","block_40":{"data":""},"block_41":{"data":""},"block_42":{"data":""},"block_43":{"data":""}},"sector_11":{"key_a":"","key_b":"","block_44":{"data":""},"block_45":{"data":""},"block_46":{"data":""},"block_47":{"data":""}},"sector_12":{"key_a":"","key_b":"","block_48":{"data":""},"block_49":{"data":""},"block_50":{"data":""},"block_51":{"data":""}},"sector_13":{"key_a":"","key_b":"","block_52":{"data":""},"block_53":{"data":""},"block_54":{"data":""},"block_55":{"data":""}},"sector_14":{"key_a":"","key_b":"","block_56":{"data":""},"block_57":{"data":""},"block_58":{"data":""},"block_59":{"data":""}},"sector_15":{"key_a":"","key_b":"","block_60":{"data":""},"block_61":{"data":""},"block_62":{"data":""},"block_63":{"data":""}}}';
     var json_mdfy = json_empy;
-
-    // function EmpyKeyBySector() {
-
-    //     var row_key = '<div class="row"></div>';
-
-    //     var card_key = '\
-    //     <div class="col col-md-6 col-sm-12 mb-3">\
-    //         <div class="card">\
-    //             <div class="card-header fw-bold small text-uppercase">\
-    //                 Chave Setor [ID_SECTOR]\
-    //             </div>\
-    //             <div class="card-body">\
-    //                 <div class="input-group flex-nowrap mb-3">\
-    //                     <span class="input-group-text">Chave A HEX</span>\
-    //                     <input id="key-hex-a-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff" readonly>\
-    //                     <span class="input-group-text">Chave B HEX</span>\
-    //                     <input id="key-hex-b-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="12" placeholder="ffffffffffff" readonly>\
-    //                 </div>\
-    //                 <div class="input-group flex-nowrap">\
-    //                     <span class="input-group-text">Chave A STR</span>\
-    //                     <input id="key-str-a-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ" readonly>\
-    //                     <span class="input-group-text">Chave B STR</span>\
-    //                     <input id="key-str-b-sector-[ID_SECTOR]" class="form-control form-control" type="text" maxlength="6" placeholder="ÿÿÿÿÿÿ" readonly>\
-    //                 </div>\
-    //             </div>\
-    //             <div class="card-arrow">\
-    //                 <div class="card-arrow-top-left"></div>\
-    //                 <div class="card-arrow-top-right"></div>\
-    //                 <div class="card-arrow-bottom-left"></div>\
-    //                 <div class="card-arrow-bottom-right"></div>\
-    //             </div>\
-    //         </div>\
-    //     </div>\
-    //     ';
-
-    //     $("#key_by_sector").append(row_key);
-
-    //     for (var i = 0; i < 16; i++) {
-    //         var card = "";
-    //         card = card_key.replaceAll(/\[ID_SECTOR\]/g, i);
-    //         $("#key_by_sector .row").append(card);
-    //     }
-    // }
 
     function EmpyTableCardData() {
 
@@ -491,7 +420,7 @@
                                     <option value="0">A</option>\
                                     <option value="1">B</option>\
                                 </select>\
-                                <buttom id="nfc_sector_save-[ID_SECTOR]" class="btn btn-default form-control save_sector">Salvar Setor</buttom>\
+                                <buttom id="nfc_sector_save-[ID_SECTOR]" class="btn btn-default form-control save_sector">Gravar Setor</buttom>\
                             </div>\
                         </div>\
                 </div>\
