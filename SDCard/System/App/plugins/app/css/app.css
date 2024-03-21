@@ -598,7 +598,10 @@ td {
     margin-bottom: 0;
     color: var(--bs-card-cap-color);
     background-color: var(--bs-card-cap-bg);
-    border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color)
+    border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between !important;
 }
 
 .card-header:first-child {
@@ -684,7 +687,7 @@ td {
 .btn:hover {
     color: var(--bs-btn-hover-color);
     background-color: var(--bs-btn-hover-bg);
-    border-color: var(--bs-btn-hover-border-color)
+    border-color: var(--bs-btn-hover-border-color);
 }
 
 .btn-check+.btn:hover {
@@ -2528,6 +2531,11 @@ navbar-expand {
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out
 }
 
+buttom.form-control:hover {
+    background-color: #FFFFFF25 !important;
+    border-color: #FFFFFF45 !important;
+}
+
 @media (prefers-reduced-motion:reduce) {
     .form-control {
         transition: none
@@ -3114,7 +3122,7 @@ textarea.form-control-lg {
     flex-wrap: wrap;
     align-items: stretch;
     width: 100%;
-    overflow-x: auto;
+    /* overflow-x: auto; */
 }
 
 .input-group>.form-control,.input-group>.form-floating,.input-group>.form-select {

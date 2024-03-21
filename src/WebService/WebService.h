@@ -382,6 +382,38 @@ void WebServiceSetup() {
         }
     );
 
+    server.on("/NFC_WRITE_KEY_ON", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            
+            SystemMode = 3;
+
+            int block;
+            String key_a = "";
+            String key_b = "";
+            String new_key = "";
+
+            if (request->hasParam("block")) {
+                block = request->getParam("block")->value().toInt();
+            }
+
+            if (request->hasParam("key_a")) {
+                key_a = request->getParam("key_a")->value();
+            }
+
+            if (request->hasParam("key_b")) {
+                key_b = request->getParam("key_b")->value();
+            }
+
+            if (request->hasParam("new_key")) {
+                new_key = request->getParam("new_key")->value();
+            }
+
+            String response = PN532.StartWriteData(new_key, block, 0, key_a, true);
+
+            request->send_P(200, "text/plain", response.c_str());
+        }
+    );
+
     ws.onEvent(handleWebSocket);
     server.addHandler(&ws);
     server.begin();

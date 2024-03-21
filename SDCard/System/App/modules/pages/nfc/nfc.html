@@ -319,7 +319,7 @@
             <label class="form-label" for="json-nfc">JSON NFC</label>
             <textarea class="form-control" id="json-nfc" rows="15" disabled></textarea>
             <br>
-            <buttom class="btn btn-default form-control">Gravar Tag Completa.</buttom>
+            <buttom id="nfc_tag_save" class="btn btn-default form-control">Gravar Tag Completa.</buttom>
 
         </div>
         <div class="card-arrow">
@@ -336,22 +336,27 @@
 
     var json_empy = '{"type":"NFC_TAG_4K","uid":"","sector_0":{"key_a":"","key_b":"","block_0":{"data":""},"block_1":{"data":""},"block_2":{"data":""},"block_3":{"data":""}},"sector_1":{"key_a":"","key_b":"","block_4":{"data":""},"block_5":{"data":""},"block_6":{"data":""},"block_7":{"data":""}},"sector_2":{"key_a":"","key_b":"","block_8":{"data":""},"block_9":{"data":""},"block_10":{"data":""},"block_11":{"data":""}},"sector_3":{"key_a":"","key_b":"","block_12":{"data":""},"block_13":{"data":""},"block_14":{"data":""},"block_15":{"data":""}},"sector_4":{"key_a":"","key_b":"","block_16":{"data":""},"block_17":{"data":""},"block_18":{"data":""},"block_19":{"data":""}},"sector_5":{"key_a":"","key_b":"","block_20":{"data":""},"block_21":{"data":""},"block_22":{"data":""},"block_23":{"data":""}},"sector_6":{"key_a":"","key_b":"","block_24":{"data":""},"block_25":{"data":""},"block_26":{"data":""},"block_27":{"data":""}},"sector_7":{"key_a":"","key_b":"","block_28":{"data":""},"block_29":{"data":""},"block_30":{"data":""},"block_31":{"data":""}},"sector_8":{"key_a":"","key_b":"","block_32":{"data":""},"block_33":{"data":""},"block_34":{"data":""},"block_35":{"data":""}},"sector_9":{"key_a":"","key_b":"","block_36":{"data":""},"block_37":{"data":""},"block_38":{"data":""},"block_39":{"data":""}},"sector_10":{"key_a":"","key_b":"","block_40":{"data":""},"block_41":{"data":""},"block_42":{"data":""},"block_43":{"data":""}},"sector_11":{"key_a":"","key_b":"","block_44":{"data":""},"block_45":{"data":""},"block_46":{"data":""},"block_47":{"data":""}},"sector_12":{"key_a":"","key_b":"","block_48":{"data":""},"block_49":{"data":""},"block_50":{"data":""},"block_51":{"data":""}},"sector_13":{"key_a":"","key_b":"","block_52":{"data":""},"block_53":{"data":""},"block_54":{"data":""},"block_55":{"data":""}},"sector_14":{"key_a":"","key_b":"","block_56":{"data":""},"block_57":{"data":""},"block_58":{"data":""},"block_59":{"data":""}},"sector_15":{"key_a":"","key_b":"","block_60":{"data":""},"block_61":{"data":""},"block_62":{"data":""},"block_63":{"data":""}}}';
     var json_mdfy = json_empy;
+    var tag_size = "16";
 
     function EmpyTableCardData() {
 
         var table_start = '\
         <div class="col-12 col-lg-6 mb-3">\
-            <div class="card">\
-                <div class="card-header fw-bold small text-uppercase">\
+            <div id="nfc_card-[ID_SECTOR]" class="card">\
+                <div class="card-header fw-bold text-uppercase">\
                     Setor [ID_SECTOR]\
+                    <div class="d-flex flex-row">\
+                        <a id="nfc_key_menu-[ID_SECTOR]" class="float-end fs-6 bi-key p-1 m-1 text-inverse" role="button" data-bs-toggle="collapse" data-bs-target="#nfc_key_panel-[ID_SECTOR]" aria-expanded="true">\</a>\
+                        <a id="nfc_burn_menu-[ID_SECTOR]" class="float-end fs-6 bi-fire p-1 m-1 text-inverse" role="button" data-bs-toggle="collapse" data-bs-target="#nfc_burn_panel-[ID_SECTOR]" aria-expanded="true"></a>\
+                    </div>\
                 </div>\
                 <div class="card-body">\
                     <div id="card_sector-[ID_SECTOR]">\
-                        <div class="table-responsive mb-3">\
+                        <div class="table-responsive">\
                             <table class="table mb-2px small text-nowrap m-0">\
                                 <thead>\
                                     <tr style="background: var(--bs-table-striped-bg);">\
-                                        <th scope="col" style="width: 50px;">Bloco</th>\
+                                        <th scope="col">Bloco</th>\
                                         <th scope="col" class="w-100">Dados</th>\
                                         <th scope="col">Ações</th>\
                                     </tr>\
@@ -365,7 +370,7 @@
             <td>\
                 <span class="d-flex align-items-center">\
                     [DOT]\
-                    <div id="block_data-[ID_BLOCK]" class="block_data" [EDITABLE]>[DATA]</div>\
+                    <input type="text" id="block_data-[ID_BLOCK]" class="block_data form-control border-0 p-0" maxlength="16" value="[DATA]" />\
                 </span>\
             </td>\
             <td class="text-center">\
@@ -398,29 +403,75 @@
                                     </tbody>\
                                 </table>\
                             </div>\
-                            <div class="input-group flex-nowrap">\
-                                <span class="input-group-text">CHAVE A</span>\
-                                <span class="input-group-text">STR</span>\
-                                <input type="text" id="nfc_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
-                                <span class="input-group-text">HEX</span>\
-                                <input type="text" id="nfc_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                            <div id="nfc_burn_panel-[ID_SECTOR]" class="accordion-collapse collapse mt-3">\
+                                <div class="input-group flex-nowrap">\
+                                    <span class="input-group-text">USAR CHAVE:</span>\
+                                    <select id="nfc_type_key_sector-[ID_SECTOR]" class="form-select" style="min-width: 110px;">\
+                                        <option value="0">A</option>\
+                                        <option value="1">B</option>\
+                                    </select>\
+                                    <buttom id="nfc_sector_save-[ID_SECTOR]" class="btn btn-default form-control save_sector">Gravar Setor</buttom>\
+                                </div>\
                             </div>\
-                            <div class="p-1"></div>\
-                            <div class="input-group flex-nowrap">\
-                                <span class="input-group-text">CHAVE B</span>\
-                                <span class="input-group-text">STR</span>\
-                                <input type="text" id="nfc_str_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
-                                <span class="input-group-text">HEX</span>\
-                                <input type="text" id="nfc_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
-                            </div>\
-                            <div class="p-1"></div>\
-                            <div class="input-group flex-nowrap">\
-                                <span class="input-group-text">USAR CHAVE:</span>\
-                                <select id="nfc_type_key_sector-[ID_SECTOR]" class="form-select" style="min-width: 110px;">\
-                                    <option value="0">A</option>\
-                                    <option value="1">B</option>\
-                                </select>\
-                                <buttom id="nfc_sector_save-[ID_SECTOR]" class="btn btn-default form-control save_sector">Gravar Setor</buttom>\
+                            <div id="nfc_key_panel-[ID_SECTOR]" class="accordion-collapse collapse">\
+                                <div class="card mb-3 mt-3">\
+                                    <div class="card-header fw-bold small text-uppercase">\
+                                        Chave Atual\
+                                    </div>\
+                                    <div class="card-body">\
+                                        <div class="input-group flex-nowrap">\
+                                            <span class="input-group-text">CHAVE A</span>\
+                                            <span class="input-group-text">STR</span>\
+                                            <input type="text" id="nfc_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;" disabled>\
+                                            <span class="input-group-text">HEX</span>\
+                                            <input type="text" id="nfc_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;" disabled>\
+                                        </div>\
+                                        <div class="p-1"></div>\
+                                        <div class="input-group flex-nowrap">\
+                                            <span class="input-group-text">CHAVE B</span>\
+                                            <span class="input-group-text">STR</span>\
+                                            <input type="text" id="nfc_str_key_b_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;" disabled>\
+                                            <span class="input-group-text">HEX</span>\
+                                            <input type="text" id="nfc_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;" disabled>\
+                                        </div>\
+                                    </div>\
+                                    <div class="card-arrow">\
+                                        <div class="card-arrow-top-left"></div>\
+                                        <div class="card-arrow-top-right"></div>\
+                                        <div class="card-arrow-bottom-left"></div>\
+                                        <div class="card-arrow-bottom-right"></div>\
+                                    </div>\
+                                </div>\
+                                <div class="card">\
+                                    <div class="card-header fw-bold small text-uppercase">\
+                                        Nova Chave\
+                                    </div>\
+                                    <div class="card-body">\
+                                        <div class="input-group flex-nowrap">\
+                                            <span class="input-group-text">CHAVE A</span>\
+                                            <span class="input-group-text">STR</span>\
+                                            <input type="text" id="nfc_new_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
+                                            <span class="input-group-text">HEX</span>\
+                                            <input type="text" id="nfc_new_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                                        </div>\
+                                        <div class="p-1"></div>\
+                                        <div class="input-group flex-nowrap">\
+                                            <span class="input-group-text">CHAVE B</span>\
+                                            <span class="input-group-text">STR</span>\
+                                            <input type="text" id="nfc_new_str_key_b_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
+                                            <span class="input-group-text">HEX</span>\
+                                            <input type="text" id="nfc_new_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                                        </div>\
+                                        <div class="p-1"></div>\
+                                        <buttom id="nfc_key_save-[ID_SECTOR]" class="btn btn-default form-control save_sector_keys">Gravar Chaves</buttom>\
+                                    </div>\
+                                    <div class="card-arrow">\
+                                        <div class="card-arrow-top-left"></div>\
+                                        <div class="card-arrow-top-right"></div>\
+                                        <div class="card-arrow-bottom-left"></div>\
+                                        <div class="card-arrow-bottom-right"></div>\
+                                    </div>\
+                                </div>\
                             </div>\
                         </div>\
                 </div>\
@@ -440,7 +491,7 @@
 
         var blocks = 0;
 
-        for (var i = 0; i < 16; i++) {
+        for (var i = 0; i < tag_size; i++) {
 
             var table = table_start;
 
@@ -459,13 +510,13 @@
                     if (key_blocks.find(element => element == blocks)) {
                         replace_dot = dot.replace(/\[COLOR\]/, "danger");
                         replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
-                        replace_table_data = replace_table_data.replace(/\[EDITABLE\]/, "");
+                        // replace_table_data = replace_table_data.replace(/\[EDITABLE\]/, "");
                         replace_table_data = replace_table_data.replace(/\[DATA\]/, "Chave do Setor");
                         replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_nothing);
                     } else {
                         replace_dot = dot.replace(/\[COLOR\]/, "success");
                         replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
-                        replace_table_data = replace_table_data.replace(/\[EDITABLE\]/, "contenteditable");
+                        // replace_table_data = replace_table_data.replace(/\[EDITABLE\]/, "contenteditable");
                         replace_table_data = replace_table_data.replace(/\[DATA\]/, "Vazio");
                         replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_write + table_data_action_delete);
                     }
@@ -504,23 +555,8 @@
 
     function SectorEvents() {
 
-        $(".block_data").unbind();
-        $(".block_data").keydown(function(event) {
-            var text = $(this).text();
-            var ignoreKeys = [8, 17, 18, 37, 38, 39, 40, 16, 20, 46];
-            if (!ignoreKeys.includes(event.which)) {
-                if(text.length == 16) {
-                    event.preventDefault();
-                } else {
-                    if(event.which == 13) {
-                        event.preventDefault();
-                    }
-                }
-            }
-        });
-
         $(".block_data").keyup(function(event) {
-            var text = $(this).text();
+            var text = $(this).val();
             var id = $(this).attr("id").split("-");
             var sb = id[1].split("_");
             var auxJson = JSON.parse(json_mdfy);
@@ -530,14 +566,14 @@
         });
 
         $(".block_data").on('focus', function() {
-            if ($(this).text() === 'Vazio') {
-                $(this).text('');
+            if ($(this).val() === 'Vazio') {
+                $(this).val('');
             }
         });
 
         $(".block_data").on('blur', function() {
-            if ($(this).text() === '') {
-                $(this).text('Vazio');
+            if ($(this).val() === '') {
+                $(this).val('Vazio');
             }
         });
 
@@ -553,7 +589,7 @@
             if(type == 1) {
                 key = $("#nfc_hex_key_b_sector-" + sector).val();
             }
-            var dados = $("#block_data-" + id[1]).html();
+            var dados = $("#block_data-" + id[1]).val();
 
             if (dados == "Vazio") {
                 dados = "";
@@ -572,14 +608,8 @@
                     request("/NFC_WRITE_ON", data, function (response) {
                         if (isJson(response)) {
                             var json = JSON.parse(response);
-                            if (json.status == "0") {
-                                notify("error", json.message);
-                            } else {
-                                notify("success", json.message);
-                            }
-                            window.setTimeout(function () {
-                                ONOFF("off");
-                            }, 250);
+                            notify(json.status, json.message);
+                            ONOFF("off");
                         }
                     }, function (response) {
                         notify("error", "Houve um problema com a comunicação.");
@@ -602,7 +632,7 @@
             auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = "";
             json_mdfy = JSON.stringify(auxJson);
             $("#json-nfc").val(json_mdfy);
-            $("#block_data-" + id[1]).html("Vazio");
+            $("#block_data-" + id[1]).val("Vazio");
         });
 
         $(".key_sector").unbind();
@@ -610,7 +640,7 @@
             var id = $(this).attr("id").split("-");
             var value = $(this).val();
             var auxJson = JSON.parse(json_mdfy);
-            if (id[0] == "nfc_str_key_a_sector" || id[0] == "nfc_str_key_b_sector") {
+            if (id[0] == "nfc_new_str_key_a_sector" || id[0] == "nfc_new_str_key_b_sector") {
                 var hex = StringToHex(value);
                 $("#" + id[0].replaceAll(/\_str\_/g, "_hex_") + "-" + id[1]).val(hex);
                 if(id[0].indexOf("a") != -1) {
@@ -637,55 +667,132 @@
         $(".save_sector").unbind();
         $(".save_sector").click(function() {
             var id = $(this).attr("id").split("-");
-            var start = (parseInt(id[1]) * 4);
-            var type = $("#nfc_type_key_sector-" + id[1]).val();
-            var key = $("#nfc_hex_key_a_sector-" + id[1]).val();
-            type == 1 ? key = $("#nfc_hex_key_b_sector-" + id[1]).val() : key;
-            logTableAdd("reset");
-            for(var block = start; block < (start + 3); block++) {
-                if(block != 0) {
-                    var data = $("#block_data-" + id[1] + "_" + block).html();
-                    data == "Vazio" ? data = "" : data;
-                    saveSectorData(id[1], block, type, key, data);
+            asyncSectorSave(id).then(() => {
+                notify("success", "Comando concluído, consulte o log de gravação para obter mais detalhes.");
+                ONOFF("off");
+            }).catch((error) => {
+                notify("error", "Ocorreu um erro durante o processamento: " + error);
+            });
+        });
+
+        $(".save_sector_keys").unbind();
+        $(".save_sector_keys").click(function() {
+            var id = $(this).attr("id").split("-");
+            var block = ((parseInt(id[1]) * 4) + 3);
+            var new_key_a = $("#nfc_new_hex_key_a_sector-" + id[1]).val();
+            var new_key_b = $("#nfc_new_hex_key_b_sector-" + id[1]).val();
+            if(new_key_a != "" && new_key_b != "") {
+                if(new_key_a.length == 12 && new_key_b.length == 12) {
+                    if(isHex(new_key_a) && isHex(new_key_b)) {
+                        logTableAdd("reset");
+                        var data = {
+                            "block": block,
+                            "key_a": $("#nfc_hex_key_a_sector-" + id[1]).val(),
+                            "key_b": $("#nfc_hex_key_b_sector-" + id[1]).val(),
+                            "new_key": new_key_a + "FF078069" + new_key_b,
+                        };
+                        request("/NFC_WRITE_KEY_ON", data, function (response) {
+                            if (isJson(response)) {
+                                var json = JSON.parse(response);
+                                json.status == "success" ? json.menssage = "KeyA e KeyB foram alteradas com sucesso!" : json.menssage;
+                                notify(json.status, json.menssage);
+                                ONOFF("off");
+                            }
+                        }, function (response) {
+                            notify("warning", "Houve um problema com a comunicação.");
+                        });
+                    } else {
+                        notify("warning", "Chave A ou Chave B não são um HEX válido.");
+                    }
+                } else {
+                    notify("warning", "Chave A ou Chave B não contém 6 caracteres STR ou 12 caracteres HEX.");
                 }
+            } else {
+                notify("warning", "Chave A e Chave B são necessárias para gravação, certifique-se que ambas foram informadas.");
             }
-            notify("success", "Comando concluído, consulte o log de gravação para obter mais detalhes.");
         });
 
     }
 
-    function saveSectorData(sector, block, type, key, data) {
-        if (data.length <= 16) {
-            if (key != "") {
-                var data = {
-                    "block": block,
-                    "type": type,
-                    "key": key,
-                    "data": data
-                };
-                request("/NFC_WRITE_ON", data, function (response) {
-                    if (isJson(response)) {
-                        var json = JSON.parse(response);
-                        json.status == 0 ? json.menssage = "Erro na Gravação!" : json.menssage = "Dados Gravados com Sucesso!";
-                        logTableAdd(json.status, "Setor: " + sector + " Bloco: " + block, json.menssage);
-                    }
-                }, function (response) {
-                    logTableAdd(0, "Setor: " + sector + " Bloco: " + block, "Houve um problema com a comunicação.");
-                });
-            } else {
-                logTableAdd(2, "Setor: " + sector + " Bloco: " + block, "A chave de acesso do setor não foi informada.");
+    async function asyncSectorSave(id) {
+        logTableAdd("reset");
+        var start = (parseInt(id[1]) * 4);
+        var type = $("#nfc_type_key_sector-" + id[1]).val();
+        var key = $("#nfc_hex_key_a_sector-" + id[1]).val();
+        type == 1 ? key = $("#nfc_hex_key_b_sector-" + id[1]).val() : key;
+        for (var block = start; block < (start + 3); block++) {
+            if (block != 0) {
+                var data = $("#block_data-" + id[1] + "_" + block).val();
+                data == "Vazio" ? data = "" : data;
+                await saveSectorData(id[1], block, type, key, data);
             }
-        } else {
-            logTableAdd(2, "Setor: " + sector + " Bloco: " + block, "O dado a ser gravado não pode exceder 16 caracteres.");
         }
+    }
+
+    async function asyncTagSave() {
+        logTableAdd("reset");
+        for (var sector = 0; sector < 16; sector++) {
+            var start = (sector * 4);
+            var type = $("#nfc_type_key_sector-" + sector).val();
+            var key = $("#nfc_hex_key_a_sector-" + sector).val();
+            type == 1 ? key = $("#nfc_hex_key_b_sector-" + sector).val() : key;
+            for (var block = start; block < (start + 3); block++) {
+                if (block != 0) {
+                    var data = $("#block_data-" + sector + "_" + block).val();
+                    data == "Vazio" ? data = "" : data;
+                    await saveSectorData(sector, block, type, key, data);
+                }
+            }
+        }
+    }
+
+    $("#nfc_tag_save").click(function() {
+        asyncTagSave().then(() => {
+            notify("success", "Comando concluído, consulte o log de gravação para obter mais detalhes.");
+            ONOFF("off");
+        }).catch((error) => {
+            notify("error", "Ocorreu um erro durante o processamento: " + error);
+        });
+    });
+
+    function saveSectorData(sector, block, type, key, data) {
+        return new Promise((resolve, reject) => {
+            if (data.length <= 16) {
+                if (key != "") {
+                    var requestData = {
+                        "block": block,
+                        "type": type,
+                        "key": key,
+                        "data": data
+                    };
+                    request("/NFC_WRITE_ON", requestData, function (response) {
+                        if (isJson(response)) {
+                            var json = JSON.parse(response);
+                            json.status == "error" ? json.message = "Erro na Gravação!" : json.message = "Dados Gravados com Sucesso!";
+                            logTableAdd(json.status, "Setor: " + sector + " Bloco: " + block, json.message);
+                            resolve(); // Resolvendo a promessa quando a operação é concluída com sucesso
+                        }
+                    }, function (response) {
+                        logTableAdd("error", "Setor: " + sector + " Bloco: " + block, "Houve um problema com a comunicação.");
+                        reject(new Error("Houve um problema com a comunicação.")); // Rejeitando a promessa se houver um problema de comunicação
+                    });
+                } else {
+                    logTableAdd("warning", "Setor: " + sector + " Bloco: " + block, "A chave de acesso do setor não foi informada.");
+                    reject(new Error("A chave de acesso do setor não foi informada.")); // Rejeitando a promessa se a chave não for informada
+                }
+            } else {
+                logTableAdd("warning", "Setor: " + sector + " Bloco: " + block, "O dado a ser gravado não pode exceder 16 caracteres.");
+                reject(new Error("O dado a ser gravado não pode exceder 16 caracteres.")); // Rejeitando a promessa se o dado exceder 16 caracteres
+            }
+        });
     }
 
     function logTableAdd(status, title, menssage) {
         if(status == "reset") {
             $("#nfc_table_log tbody").html("");
-        } else if(status == 0) {
+        } else if(status == "error") {
             $("#nfc_table_log tbody").append('<tr class="table-danger"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-danger me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
-        } else if(status == 1) {
+        } else if(status == "success") {
             $("#nfc_table_log tbody").append('<tr class="table-success"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-success me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
         } else {
             $("#nfc_table_log tbody").append('<tr class="table-warning"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-warning me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
@@ -730,6 +837,8 @@
             var json = JSON.parse(json_str);
 
             if (json.type == "NFC_TAG_4K") {
+
+                tag_size = 16;
                 
                 var ignore = [ 0, 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, 63 ];
 
@@ -737,21 +846,29 @@
                 $("#json-nfc").val(json_str);
                 json_mdfy = json_str;
 
-                for (var i = 0; i < 16; i++) {
+                for (var i = 0; i < tag_size; i++) {
 
                     var key_a = json["sector_" + i]["key_a"];
-                    $("#key-hex-a-sector-" + i).val(key_a);
-                    $("#key-str-a-sector-" + i).val(HexToString(key_a));
-
-                    $("#nfc_str_key_a_sector-" + i).val(HexToString(key_a));
-                    $("#nfc_hex_key_a_sector-" + i).val(key_a);
+                    if(key_a != "0") {     
+                        $("#nfc_str_key_a_sector-" + i).val(HexToString(key_a));
+                        $("#nfc_hex_key_a_sector-" + i).val(key_a);
+                        $("#nfc_card-" + i).removeClass("bg-danger bg-opacity-25");
+                    } else {
+                        $("#nfc_str_key_a_sector-" + i).val("");
+                        $("#nfc_hex_key_a_sector-" + i).val("");
+                        $("#nfc_card-" + i).addClass("bg-danger bg-opacity-25");
+                    }
                     
                     var key_b = json["sector_" + i]["key_b"];
-                    $("#key-hex-b-sector-" + i).val(key_b);
-                    $("#key-str-b-sector-" + i).val(HexToString(key_b));
-
-                    $("#nfc_str_key_b_sector-" + i).val(HexToString(key_b));
-                    $("#nfc_hex_key_b_sector-" + i).val(key_b);
+                    if(key_b != "0") {
+                        $("#nfc_str_key_b_sector-" + i).val(HexToString(key_b));
+                        $("#nfc_hex_key_b_sector-" + i).val(key_b);
+                        $("#nfc_card-" + i).removeClass("bg-danger bg-opacity-25");
+                    } else {
+                        $("#nfc_str_key_b_sector-" + i).val("");
+                        $("#nfc_hex_key_b_sector-" + i).val("");
+                        $("#nfc_card-" + i).addClass("bg-danger bg-opacity-25");
+                    }
 
                     for (var j = 0; j < 4; j++) {
                         var block = ((i * 4) + j);
@@ -759,9 +876,9 @@
                         if (!ignore.includes(block)) {
                             var text = HexToString(data);
                             if(text != "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" && text != "") {
-                                $("#block_data-" + i + "_" + block).html(text);
+                                $("#block_data-" + i + "_" + block).val(text);
                             } else {
-                                $("#block_data-" + i + "_" + block).html("Vazio");
+                                $("#block_data-" + i + "_" + block).val("Vazio");
                             }
                         }
                     }

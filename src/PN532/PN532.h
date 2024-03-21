@@ -220,7 +220,7 @@ public:
     }
 
     void CardToJson() {
-        uint8_t success = PN532.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+        uint8_t success = TagConnection();
         if (success) {
 
             String json = "{\"type\":\"NFC_TAG_4K\",\"uid\":\"" + byteToHexString(uid, uidLength) + "\",";
@@ -237,11 +237,12 @@ public:
                     success = PN532.mifareclassic_ReadDataBlock(block, data);
                     if (success) {
                         String sectorKey = byteToHexString(key, sizeof(key));
-                        String sectorData = byteToHexString(data, sizeof(data));
                         json += "\"key_a\":\"" + sectorKey + "\",";
+                    } else {
+                        json += "\"key_a\":\"0\",";
                     }
                 } else {
-                    json += "\"key_a\":\"\\0\\0\\0\\0\\0\\0\",";
+                    json += "\"key_a\":\"0\",";
                 }
 
                 success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 1, key);
@@ -249,16 +250,17 @@ public:
                     success = PN532.mifareclassic_ReadDataBlock(block, data);
                     if (success) {
                         String sectorKey = byteToHexString(key, sizeof(key));
-                        String sectorData = byteToHexString(data, sizeof(data));
                         json += "\"key_b\":\"" + sectorKey + "\",";
+                    } else {
+                        json += "\"key_b\":\"0\",";
                     }
                 } else {
-                    json += "\"key_b\":\"\\0\\0\\0\\0\\0\\0\",";
+                    json += "\"key_b\":\"0\",";
                 }
 
                 for (int j = 0; j < 4; j++) {
                     block = ((i * 4) + j);
-                    if (!IgnoreReservedBlocks(block)) {
+                    // if (!IgnoreReservedBlocks(block)) {
                         success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 0, key);
                         if (success) {
                             success = PN532.mifareclassic_ReadDataBlock(block, data);
@@ -266,15 +268,24 @@ public:
                                 String sectorKey = byteToHexString(key, sizeof(key));
                                 String sectorData = byteToHexString(data, sizeof(data));
                                 json += "\"block_" + String(block) + "\":{\"data\":\"" + sectorData + "\"},";
+                            } else {
+                                json += "\"block_" + String(block) + "\":{\"data\":\"\"},";
                             }
+                        } else {
+                            json += "\"block_" + String(block) + "\":{\"data\":\"\"},";
                         }
-                    } else {
-                        json += "\"block_" + String(block) + "\":{\"data\":\"ffffffffffff\"},";
-                    }
+                    // } else {
+                    //     json += "\"block_" + String(block) + "\":{\"data\":\"ffffffffffff\"},";
+                    // }
                 }
 
                 json.remove(json.length() - 1); // remove a última vírgula
                 json += "},";
+
+                /**
+                 * Checa a existência de uma tag antes de executar a próxima checagem.
+                */
+                TagConnection();
 
             }
 
@@ -293,33 +304,51 @@ public:
         jsonString = uid;
     }
 
-    String StartWriteData(String string, int block, int keyType, String key) {
+    String StartWriteData(String string, int block, int keyType, String key, bool keySave = false) {
 
         if (SystemMode == 3) {
 
-            // 16 Bytes (caracteres) por bloco
+            /**
+             * Checa a existência de uma tag antes de executar a gravação.
+            */
+            TagConnection();
+
+            bool isWrite = false;
+
+            // 16 Bytes (caracteres) por bloco + 1 byte nulo
             uint8_t data[17] = { "" };
 
-            // KeyA chave padrão
-            uint8_t KeySector[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+            // 16 Bytes key
+            uint8_t newKeySector[16] = { "" };
 
-            stringToChar(string, data);
+            // KeyA/B padrão
+            uint8_t keySector[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
 
-            hexToByte(key, KeySector);
+            // Verifico se estou tentando salvar uma chave
+            if(keySave) {
+                hexToMatriz(string, newKeySector);
+            } else {
+                stringToChar(string, data);
+            }
 
-            if (BlockConnection(block, keyType, KeySector)) {
-                if (WriteTag4Bytes(block, data)) {
-                    return jsonStatus(1);
+            hexToByte(key, keySector);
+
+            if (BlockConnection(block, keyType, keySector)) {
+                keySave ? isWrite = WriteTag4Bytes(block, newKeySector, keySave) : isWrite = WriteTag4Bytes(block, data, keySave);
+                if (isWrite) {
+                    return jsonStatus("success");
                 } else {
-                    return jsonStatus(0);
+                    return jsonStatus("error");
                 }
             } else {
-                return jsonStatus(0);
+                return jsonStatus("error");
             }
+
+            SystemMode = 2;
 
         } else {
             messageProcess = "A função de escrita foi chamada, mas o modo escrita não está ativo.";
-            return jsonStatus(0);
+            return jsonStatus("error");
         }
 
     }
@@ -338,7 +367,7 @@ private:
     uint8_t uid[7] = { 0, 0, 0, 0, 0, 0, 0 };
 
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
-    uint8_t uidLength;
+    uint8_t uidLength = 0;
 
     /**
      * Converte os dados da TAG de String para Char
@@ -364,7 +393,21 @@ private:
         }
     }
 
-    String jsonStatus(int status) {
+    /**
+     * Converte a key do setor de HEX para Matriz uint8_t 
+     */ 
+    void hexToMatriz(String key, uint8_t* keySector) {
+        // Converte a string em uma matriz de bytes
+        for (int i = 0; i < key.length(); i += 2) {
+            // Extrai cada par de caracteres da string
+            String byteString = key.substring(i, i + 2);
+
+            // Converte o par de caracteres em um byte hexadecimal
+            keySector[i / 2] = strtoul(byteString.c_str(), NULL, 16);
+        }
+    }
+
+    String jsonStatus(String status) {
         return "{\"status\": \"" + String(status) + "\", \"message\": \"" + messageProcess + "\"}";
     }
 
@@ -436,7 +479,7 @@ private:
                 return true;
             } else {
                 // Serial.println("Erro na autenticação.");
-                messageProcess = "Nenhuma Tag encontrada ou a chave de acesso está incorreta!";
+                messageProcess = "Nenhuma Tag lida ainda / A Tag lida não é a mesma que a Tag atual / A Chave de acesso está incorreta!";
                 return false;
             }
 
@@ -452,12 +495,12 @@ private:
      * @param block Número do bloco onde os dados serão escritos.
      * @param data Array de 17 bytes contendo os dados a serem escritos na tag. O tamanho deve ser de 17 bytes, sendo o último byte reservado para o caractere nulo (terminador de string).
      */
-    bool WriteTag4Bytes(int block, uint8_t data[17]) {
+    bool WriteTag4Bytes(int block, uint8_t data[17], bool keySave = false) {
 
         // Armazena dados da conexão
         uint8_t connection;
 
-        if (!IgnoreReservedBlocks(block)) {
+        if (!IgnoreReservedBlocks(block) || keySave) {
 
             connection = PN532.mifareclassic_WriteDataBlock(block, data);
 

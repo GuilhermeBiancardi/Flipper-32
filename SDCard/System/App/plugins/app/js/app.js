@@ -95,6 +95,11 @@ function isJson(str) {
     return true;
 }
 
+function isHex(text) {
+    const hexRegex = /^[0-9A-Fa-f]+$/g;
+    return hexRegex.test(text);
+}
+
 function HexToString(hexx) {
     var hex = hexx.toString();
     var str = '';
