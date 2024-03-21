@@ -127,7 +127,7 @@ public:
      * Função para ler o conteúdo de um arquivo no cartão SD.
      *
      * @param file O nome do arquivo a ser lido.
-     * @return bool Uma string contendo o conteúdo do arquivo, ou uma string
+     * @return String contendo o conteúdo do arquivo, ou uma string
      * vazia caso o arquivo não seja encontrado ou não possa ser lido.
      *
      */
@@ -146,9 +146,12 @@ public:
 
             if (SDCardFile) {
 
-                // Lê o conteúdo do arquivo linha por linha e adiciona à variável 'text'.
+                // Enquanto existir conteúdo para leitura
                 while (SDCardFile.available()) {
+
+                    // Adiciona cada byte lido em text
                     text += (char) SDCardFile.read();
+
                 }
 
                 // Remove os espaços no começo e final da string
@@ -163,6 +166,62 @@ public:
 
         // Retorna o conteúdo do arquivo lido, ou uma string vazia se o arquivo não for encontrado ou não puder ser lido.
         return text;
+
+    }
+
+    /**
+     * Função para ler o conteúdo de um arquivo no cartão SD
+     * linha por linha.
+     *
+     * @param file O nome do arquivo a ser lido.
+     * @return vector<String> contendo o conteúdo do arquivo
+     * linha por linha
+     *
+     */
+    std::vector<String> FileReadLineByLine(const char* file) {
+
+        // Vetor de Strings
+        std::vector<String> keys;
+
+        //Checa se o arquivo existe
+        if (CheckExists(file)) {
+
+            // Converte o nome do arquivo para inserir a barra / no inicio.
+            char* FileName = SDCardFolderName(file);
+
+            // Abre o arquivo no cartão SD para leitura.
+            SDCardFile = SD.open(FileName);
+
+            if (SDCardFile) {
+
+                // Enquanto existir conteúdo para leitura
+                while (SDCardFile.available()) {
+
+                    // Le o conteúdo até achar o fim da linha
+                    String line = SDCardFile.readStringUntil('\n');
+
+                    // Se o conteúdo for maior que 0
+                    if (line.length() > 0) {
+
+                        // Removo os espaços do começo e fim da linha
+                        line.trim();
+
+                        // Adiciono a linha no vetor de String
+                        keys.push_back(line);
+
+                    }
+
+                }
+
+                // Fecha o arquivo após a leitura.
+                SDCardFile.close();
+
+            }
+
+        }
+
+        // Retorna o conteúdo do arquivo lido
+        return keys;
 
     }
 

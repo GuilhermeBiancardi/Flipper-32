@@ -3,6 +3,7 @@ function request(url, data, success = "", error = "") {
         url: url,
         method: "GET",
         data: data,
+        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
     });
 
     request.done(function (response) {

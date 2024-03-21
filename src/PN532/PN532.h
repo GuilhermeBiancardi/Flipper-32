@@ -222,77 +222,30 @@ public:
     void CardToJson() {
         uint8_t success = TagConnection();
         if (success) {
-
+            std::vector<String> keys = SDCard.FileReadLineByLine("System/KEYS/keys.list");
             String json = "{\"type\":\"NFC_TAG_4K\",\"uid\":\"" + byteToHexString(uid, uidLength) + "\",";
-
             for (int i = 0; i < 16; i++) {
-                uint8_t key[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-                uint8_t block = (i * 4);
-                uint8_t data[16];
-
-                json += "\"sector_" + String(i) + "\":{";
-
-                success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 0, key);
-                if (success) {
-                    success = PN532.mifareclassic_ReadDataBlock(block, data);
-                    if (success) {
-                        String sectorKey = byteToHexString(key, sizeof(key));
-                        json += "\"key_a\":\"" + sectorKey + "\",";
-                    } else {
-                        json += "\"key_a\":\"0\",";
-                    }
-                } else {
-                    json += "\"key_a\":\"0\",";
-                }
-
-                success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 1, key);
-                if (success) {
-                    success = PN532.mifareclassic_ReadDataBlock(block, data);
-                    if (success) {
-                        String sectorKey = byteToHexString(key, sizeof(key));
-                        json += "\"key_b\":\"" + sectorKey + "\",";
-                    } else {
-                        json += "\"key_b\":\"0\",";
-                    }
-                } else {
-                    json += "\"key_b\":\"0\",";
-                }
-
+                uint8_t key[6], block = (i * 4);
+                std::vector<String> keyData = OrganizeAuthenticateData(keys, i, block);
+                keyData[0] != 0 ? hexToMatriz(keyData[0], key) : void();
+                keyData[1] != 0 ? hexToMatriz(keyData[1], key) : void();
+                json += keyData[3];
                 for (int j = 0; j < 4; j++) {
-                    block = ((i * 4) + j);
-                    // if (!IgnoreReservedBlocks(block)) {
-                        success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, 0, key);
-                        if (success) {
-                            success = PN532.mifareclassic_ReadDataBlock(block, data);
-                            if (success) {
-                                String sectorKey = byteToHexString(key, sizeof(key));
-                                String sectorData = byteToHexString(data, sizeof(data));
-                                json += "\"block_" + String(block) + "\":{\"data\":\"" + sectorData + "\"},";
-                            } else {
-                                json += "\"block_" + String(block) + "\":{\"data\":\"\"},";
-                            }
-                        } else {
-                            json += "\"block_" + String(block) + "\":{\"data\":\"\"},";
-                        }
-                    // } else {
-                    //     json += "\"block_" + String(block) + "\":{\"data\":\"ffffffffffff\"},";
-                    // }
+                    uint8_t data[16], actualBlock = block + j;
+                    success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, actualBlock, keyData[2].toInt(), key);
+                    if (success) {
+                        success = PN532.mifareclassic_ReadDataBlock(actualBlock, data);
+                        json += "\"block_" + String(actualBlock) + "\":{\"data\":\"" + byteToHexString(data, sizeof(data)) + "\"},";
+                    } else {
+                        json += "\"block_" + String(actualBlock) + "\":{\"data\":\"\"},";
+                    }
                 }
-
-                json.remove(json.length() - 1); // remove a última vírgula
+                json.remove(json.length() - 1);
                 json += "},";
-
-                /**
-                 * Checa a existência de uma tag antes de executar a próxima checagem.
-                */
-                TagConnection();
-
             }
-
-            json.remove(json.length() - 1); // remove a última vírgula
+            json.remove(json.length() - 1);
             json += "}";
             jsonString = json;
-
         }
     }
 
@@ -300,8 +253,8 @@ public:
         return jsonString;
     }
 
-    void SetJSON(String uid) {
-        jsonString = uid;
+    void SetJSON(String json) {
+        jsonString = json;
     }
 
     String StartWriteData(String string, int block, int keyType, String key, bool keySave = false) {
@@ -328,13 +281,14 @@ public:
             if(keySave) {
                 hexToMatriz(string, newKeySector);
             } else {
-                stringToChar(string, data);
+                // stringToChar(string, data);
+                hexStringToBytes(string, data);
             }
 
             hexToByte(key, keySector);
 
             if (BlockConnection(block, keyType, keySector)) {
-                keySave ? isWrite = WriteTag4Bytes(block, newKeySector, keySave) : isWrite = WriteTag4Bytes(block, data, keySave);
+                keySave ? isWrite = WriteTag4Bytes(block, newKeySector) : isWrite = WriteTag4Bytes(block, data);
                 if (isWrite) {
                     return jsonStatus("success");
                 } else {
@@ -396,19 +350,14 @@ private:
     /**
      * Converte a key do setor de HEX para Matriz uint8_t 
      */ 
-    void hexToMatriz(String key, uint8_t* keySector) {
+    void hexToMatriz(String key, uint8_t* keyMatriz) {
         // Converte a string em uma matriz de bytes
         for (int i = 0; i < key.length(); i += 2) {
             // Extrai cada par de caracteres da string
             String byteString = key.substring(i, i + 2);
-
             // Converte o par de caracteres em um byte hexadecimal
-            keySector[i / 2] = strtoul(byteString.c_str(), NULL, 16);
+            keyMatriz[i / 2] = strtoul(byteString.c_str(), NULL, 16);
         }
-    }
-
-    String jsonStatus(String status) {
-        return "{\"status\": \"" + String(status) + "\", \"message\": \"" + messageProcess + "\"}";
     }
 
     /**
@@ -423,26 +372,54 @@ private:
     }
 
     /**
+     * Converte uma String HEX para Bytes
+    */
+    void hexStringToBytes(const String& hexString, uint8_t* bytes) {
+        // Garante que o comprimento da string hexadecimal seja par
+        if (hexString.length() % 2 != 0) {
+            return; // Saia se o comprimento for ímpar
+        }
+        // Converte cada par de caracteres hexadecimais em um byte
+        for (size_t i = 0; i < hexString.length(); i += 2) {
+            String hexPair = hexString.substring(i, i + 2);
+            bytes[i / 2] = strtol(hexPair.c_str(), NULL, 16);
+        }
+    }
+
+    /**
+     * Coloca os caracteres de uma String em maiúsculo.
+    */
+    String toUpperCase(const String &str) {
+        String upperCase;
+        for (size_t i = 0; i < str.length(); i++) {
+            upperCase += char(toupper(str[i]));
+        }
+        return upperCase;
+    }
+
+    /**
+     * Estrutura de um JSON de retorno.
+    */
+    String jsonStatus(String status) {
+        return "{\"status\": \"" + String(status) + "\", \"message\": \"" + messageProcess + "\"}";
+    }
+
+    /**
      * Função para procurar e identificar uma tag ISO14443A usando o leitor PN532.
+     * Aguarda uma Tag ISO14443A (Mifare, etc.) ser encontrada pela placa.
+     * Quando encontrada armazenará o UID da Tag na variável uidLength
+     * Se o UID tiver 4 bytes = (Mifare Classic) ou 7 bytes = (Mifare Ultralight)
      *
      * @return True se uma tag foi encontrada, False caso contrário.
      */
     bool TagConnection() {
-
-        // Armazena dados da conexão
         uint8_t connection;
-
-        // Aguarda uma Tag ISO14443A (Mifare, etc.) ser encontrada pela placa.
-        // Quando encontrada armazenará o UID da Tag na variável uidLength
-        // Se o UID tiver 4 bytes = (Mifare Classic) ou 7 bytes = (Mifare Ultralight)
         connection = PN532.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
-
         if (connection) {
             return true;
         } else {
             return false;
         }
-
     }
 
     /**
@@ -454,39 +431,19 @@ private:
      * @return True se a autenticação foi bem-sucedida, False caso contrário.
      */
     bool BlockConnection(int block, int keyType, uint8_t* key) {
-
-        // Armazena dados da conexão
+        bool isConnected = false;
         uint8_t connection;
-
         if (uidLength == 4) {
-
-            // Serial.println("Tag Mifare Classic (4 byte UID)");
-
-            // if (keyType == 0) {
-            //     Serial.println("Tentando autenticar o bloco informado com a chave padrão KeyA.");
-            // }
-
-            // if (keyType == 1) {
-            //     Serial.println("Tentando autenticar o bloco informado com a chave padrão KeyB.");
-            // }
-
-            // Tenta autenticar o setor do bloco informado com a KeyA ou KeyB
             connection = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, block, keyType, key);
-
             if (connection) {
-                // Serial.println("Bloco autenticado.");
                 messageProcess = "O bloco foi autenticado.";
-                return true;
+                isConnected = true;
             } else {
-                // Serial.println("Erro na autenticação.");
                 messageProcess = "Nenhuma Tag lida ainda / A Tag lida não é a mesma que a Tag atual / A Chave de acesso está incorreta!";
-                return false;
             }
 
-        } else {
-            return false;
         }
-
+        return isConnected;
     }
 
     /**
@@ -495,42 +452,80 @@ private:
      * @param block Número do bloco onde os dados serão escritos.
      * @param data Array de 17 bytes contendo os dados a serem escritos na tag. O tamanho deve ser de 17 bytes, sendo o último byte reservado para o caractere nulo (terminador de string).
      */
-    bool WriteTag4Bytes(int block, uint8_t data[17], bool keySave = false) {
-
-        // Armazena dados da conexão
+    bool WriteTag4Bytes(int block, uint8_t data[17]) {
         uint8_t connection;
-
-        if (!IgnoreReservedBlocks(block) || keySave) {
-
-            connection = PN532.mifareclassic_WriteDataBlock(block, data);
-
-            if (connection) {
-                messageProcess = "Dados armazenados com sucesso!";
-                return true;
-            } else {
-                messageProcess = "Houve um problema com a conexão do bloco.";
-                return false;
-            }
-
+        connection = PN532.mifareclassic_WriteDataBlock(block, data);
+        if (connection) {
+            messageProcess = "Dados armazenados com sucesso!";
+            return true;
         } else {
-            messageProcess = "O bloco informado é reservado para a Chave do Setor.";
+            messageProcess = "Houve um problema com a conexão do bloco.";
             return false;
         }
-
     }
 
-    // Ignora os blocos que contém as chaves de acesso e as informações do fabricante.
-    bool IgnoreReservedBlocks(int AtualBlock) {
-        bool found = false;
-        // Blocos reservados
-        int array[] = { 0, 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, 63 };
-        for (int i = 0; i < 17; i++) {
-            if (array[i] == AtualBlock) {
-                found = true;
-                break;
+    /**
+     * Tenta autenticar um bloco de um setor a fim de encontrar a key correta
+     * @param keys Vetor com as chaves recuperadas do SDCard
+     * @param block Primeiro bloco do setor a ser checado.
+     * @param keyType Tipo de autenticação 0 = Chave A, 1 = Chave B
+     * @param data Ponteiro para o valor do bloco.
+    */
+    std::vector<String> AuthenticateBlock(std::vector<String> keys, uint8_t block, int keyType) {
+        std::vector<String> foundKey(4);
+        for (size_t i = 0; i < keys.size(); i++) {
+            uint8_t success = TagConnection();
+            if (success) {
+                uint8_t tempKey[6];
+                uint8_t tempData[16];
+                hexToMatriz(keys[i], tempKey);
+                success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, (block + 3), keyType, tempKey);
+                if (success) {
+                    success = PN532.mifareclassic_ReadDataBlock((block + 3), tempData);
+                    if (success) {
+                        foundKey[0] = byteToHexString(tempData, sizeof(tempData));
+                        keyType == 0 ? foundKey[1] = keys[i] : foundKey[1] = toUpperCase(foundKey[0].substring(0, 12));
+                        foundKey[2] = toUpperCase(foundKey[0].substring(12, 12 + 8));
+                        foundKey[3] = toUpperCase(foundKey[0].substring(20, 20 + 12));
+                        break;
+                    }
+                }
             }
         }
-        return found;
+        return foundKey;
+    }
+
+    /**
+     * Organiza as chaves encontradas dentro dos seus respectivos
+     * lugares no JSON de saída.
+     * @param keys Vetor com as chaves recuperadas do SDCard
+     * @param sector Setor sendo percorrido no momento.
+     * @param block Bloco do setor a ser validado.
+    */
+    std::vector<String> OrganizeAuthenticateData(std::vector<String> keys, int sector, uint8_t block) {
+        std::vector<String> foundKey;
+        std::vector<String> returnData(4);
+        returnData[3] += "\"sector_" + String(sector) + "\":{";
+        foundKey = AuthenticateBlock(keys, block, 0);
+        if(foundKey[1] != "") {
+            returnData[0] = foundKey[1];
+            returnData[1] = foundKey[3];
+            returnData[2] = "0";
+            returnData[3] += "\"found_key\":\"A\",";
+            returnData[3] += "\"key_a\":\"" + foundKey[1] + "\",";
+            returnData[3] += "\"key_b\":\"" + foundKey[3] + "\",";
+            returnData[3] += "\"key_acs\":\"" + foundKey[2] + "\",";
+        } else {
+            foundKey = AuthenticateBlock(keys, block, 1);
+            returnData[0] = foundKey[1];
+            returnData[1] = foundKey[3];
+            returnData[2] = "1";
+            foundKey[1] != "" ? returnData[3] += "\"found_key\":\"B\"," : returnData[3] += "\"found_key\":\"\",";
+            returnData[3] += "\"key_a\":\"" + foundKey[1] + "\",";
+            returnData[3] += "\"key_b\":\"" + foundKey[3] + "\",";
+            returnData[3] += "\"key_acs\":\"" + foundKey[2] + "\",";
+        }
+        return returnData;
     }
 
 };

@@ -11,11 +11,11 @@
                 <button type="button" id="nfc_menu_sd_card" class="btn btn-outline-secondary">
                     <i class="bi bi-sd-card"></i>
                 </button>
-                <button type="button" id="nfc_menu_tag" class="btn btn-outline-secondary">
-                    <i class="bi bi-credit-card-2-front"></i>
-                </button>
                 <button type="button" id="nfc_menu_log" class="btn btn-outline-secondary">
                     <i class="bi bi-file-earmark-text"></i>
+                </button>
+                <button type="button" id="nfc_menu_tag" class="btn btn-outline-secondary">
+                    <i class="bi bi-gear"></i>
                 </button>
                 <button type="button" id="nfc_menu_info" class="btn btn-outline-secondary">
                     <i class="bi bi-info-circle"></i>
@@ -279,7 +279,7 @@
 
     <div class="card">
         <div class="card-header fw-bold small text-uppercase">
-            Carregar/Salvar dados do/no cartão SD
+            Carregar/Salvar TAGs do/no cartão SD
         </div>
         <div class="card-body">
             <div class="input-group">
@@ -316,10 +316,10 @@
             </div>
 
             <br>
-            <label class="form-label" for="json-nfc">JSON NFC</label>
-            <textarea class="form-control" id="json-nfc" rows="15" disabled></textarea>
+            <label class="form-label" for="json-nfc">JSON Tag</label>
+            <textarea class="form-control" id="json-nfc" rows="8" disabled></textarea>
             <br>
-            <buttom id="nfc_tag_save" class="btn btn-default form-control">Gravar Tag Completa.</buttom>
+            <buttom id="nfc_tag_save" class="btn btn-default form-control">Gravar JSON na Tag.</buttom>
 
         </div>
         <div class="card-arrow">
@@ -422,17 +422,25 @@
                                         <div class="input-group flex-nowrap">\
                                             <span class="input-group-text">CHAVE A</span>\
                                             <span class="input-group-text">STR</span>\
-                                            <input type="text" id="nfc_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;" disabled>\
+                                            <input type="text" id="nfc_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
                                             <span class="input-group-text">HEX</span>\
-                                            <input type="text" id="nfc_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;" disabled>\
+                                            <input type="text" id="nfc_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                                        </div>\
+                                        <div class="p-1"></div>\
+                                        <div class="input-group flex-nowrap">\
+                                            <span class="input-group-text">KEY ACS</span>\
+                                            <span class="input-group-text">STR</span>\
+                                            <input type="text" id="nfc_str_key_acs_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="4" placeholder="XXXX" style="min-width: 75px;">\
+                                            <span class="input-group-text">HEX</span>\
+                                            <input type="text" id="nfc_hex_key_acs_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="8" placeholder="XXXXXXXX" style="min-width: 120px;">\
                                         </div>\
                                         <div class="p-1"></div>\
                                         <div class="input-group flex-nowrap">\
                                             <span class="input-group-text">CHAVE B</span>\
                                             <span class="input-group-text">STR</span>\
-                                            <input type="text" id="nfc_str_key_b_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;" disabled>\
+                                            <input type="text" id="nfc_str_key_b_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
                                             <span class="input-group-text">HEX</span>\
-                                            <input type="text" id="nfc_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;" disabled>\
+                                            <input type="text" id="nfc_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
                                         </div>\
                                     </div>\
                                     <div class="card-arrow">\
@@ -453,6 +461,14 @@
                                             <input type="text" id="nfc_new_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
                                             <span class="input-group-text">HEX</span>\
                                             <input type="text" id="nfc_new_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
+                                        </div>\
+                                        <div class="p-1"></div>\
+                                        <div class="input-group flex-nowrap">\
+                                            <span class="input-group-text">KEY ACS</span>\
+                                            <span class="input-group-text">STR</span>\
+                                            <input type="text" id="nfc_new_str_key_acs_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="4" placeholder="XXXX" style="min-width: 75px;">\
+                                            <span class="input-group-text">HEX</span>\
+                                            <input type="text" id="nfc_new_hex_key_acs_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="8" placeholder="XXXXXXXX" style="min-width: 120px;">\
                                         </div>\
                                         <div class="p-1"></div>\
                                         <div class="input-group flex-nowrap">\
@@ -602,7 +618,7 @@
                         "block": block,
                         "type": type,
                         "key": key,
-                        "data": dados
+                        "data": StringToHex(dados)
                     };
 
                     request("/NFC_WRITE_ON", data, function (response) {
@@ -680,27 +696,32 @@
             var id = $(this).attr("id").split("-");
             var block = ((parseInt(id[1]) * 4) + 3);
             var new_key_a = $("#nfc_new_hex_key_a_sector-" + id[1]).val();
+            var key_acs = $("#nfc_new_hex_key_acs_sector-" + id[1]).val();
             var new_key_b = $("#nfc_new_hex_key_b_sector-" + id[1]).val();
             if(new_key_a != "" && new_key_b != "") {
                 if(new_key_a.length == 12 && new_key_b.length == 12) {
                     if(isHex(new_key_a) && isHex(new_key_b)) {
-                        logTableAdd("reset");
-                        var data = {
-                            "block": block,
-                            "key_a": $("#nfc_hex_key_a_sector-" + id[1]).val(),
-                            "key_b": $("#nfc_hex_key_b_sector-" + id[1]).val(),
-                            "new_key": new_key_a + "FF078069" + new_key_b,
-                        };
-                        request("/NFC_WRITE_KEY_ON", data, function (response) {
-                            if (isJson(response)) {
-                                var json = JSON.parse(response);
-                                json.status == "success" ? json.menssage = "KeyA e KeyB foram alteradas com sucesso!" : json.menssage;
-                                notify(json.status, json.menssage);
-                                ONOFF("off");
-                            }
-                        }, function (response) {
-                            notify("warning", "Houve um problema com a comunicação.");
-                        });
+                        if(key_acs == $("#nfc_hex_key_acs_sector-" + id[1]).val()) {
+                            logTableAdd("reset");
+                            var data = {
+                                "block": block,
+                                "key_a": $("#nfc_hex_key_a_sector-" + id[1]).val(),
+                                "key_b": $("#nfc_hex_key_b_sector-" + id[1]).val(),
+                                "new_key": new_key_a + key_acs + new_key_b,
+                            };
+                            request("/NFC_WRITE_KEY_ON", data, function (response) {
+                                if (isJson(response)) {
+                                    var json = JSON.parse(response);
+                                    json.status == "success" ? json.menssage = "KeyA e KeyB foram alteradas com sucesso!" : json.menssage;
+                                    notify(json.status, json.menssage);
+                                    ONOFF("off");
+                                }
+                            }, function (response) {
+                                notify("warning", "Houve um problema com a comunicação.");
+                            });
+                        } else {
+                            notify("warning", "A KEY ACS está diferente do padrão do cartão, se continuar os dados do setor poderão ser perdidos.");
+                        }
                     } else {
                         notify("warning", "Chave A ou Chave B não são um HEX válido.");
                     }
@@ -763,7 +784,7 @@
                         "block": block,
                         "type": type,
                         "key": key,
-                        "data": data
+                        "data": StringToHex(data)
                     };
                     request("/NFC_WRITE_ON", requestData, function (response) {
                         if (isJson(response)) {
@@ -849,7 +870,7 @@
                 for (var i = 0; i < tag_size; i++) {
 
                     var key_a = json["sector_" + i]["key_a"];
-                    if(key_a != "0") {     
+                    if(key_a != "") {     
                         $("#nfc_str_key_a_sector-" + i).val(HexToString(key_a));
                         $("#nfc_hex_key_a_sector-" + i).val(key_a);
                         $("#nfc_card-" + i).removeClass("bg-danger bg-opacity-25");
@@ -859,8 +880,21 @@
                         $("#nfc_card-" + i).addClass("bg-danger bg-opacity-25");
                     }
                     
+                    var key_acs = json["sector_" + i]["key_acs"];
+                    if(key_acs != "") {
+                        $("#nfc_str_key_acs_sector-" + i).val(HexToString(key_acs));
+                        $("#nfc_hex_key_acs_sector-" + i).val(key_acs);
+                        $("#nfc_new_str_key_acs_sector-" + i).val(HexToString(key_acs));
+                        $("#nfc_new_hex_key_acs_sector-" + i).val(key_acs);
+                        $("#nfc_card-" + i).removeClass("bg-danger bg-opacity-25");
+                    } else {
+                        $("#nfc_str_key_acs_sector-" + i).val("");
+                        $("#nfc_hex_key_acs_sector-" + i).val("");
+                        $("#nfc_card-" + i).addClass("bg-danger bg-opacity-25");
+                    }
+                    
                     var key_b = json["sector_" + i]["key_b"];
-                    if(key_b != "0") {
+                    if(key_b != "") {
                         $("#nfc_str_key_b_sector-" + i).val(HexToString(key_b));
                         $("#nfc_hex_key_b_sector-" + i).val(key_b);
                         $("#nfc_card-" + i).removeClass("bg-danger bg-opacity-25");

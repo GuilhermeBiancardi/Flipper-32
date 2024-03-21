@@ -44,14 +44,15 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Disponibilizar funções em forma de Classe
    - [x] Leitura da Tag
    - [x] Escrita na Tag
-   - [ ] Clonar Tag
+   - [x] Clonar Tag
    - [x] Emulação de Tag (Verificar viabilidade)
      - [x] PN532 não suporta emulação de Tags
    - [x] Integração com o módulo SDCard
      - [ ] Salvar uma lista de Keys conhecidas
+     - [x] Leitura da Tag usando uma lista de Keys conhecidas.
      - [x] Salvar Tags lidas
    - [x] Integração com a UI do Sistema
-   - [ ] Bruteforce de Keys
+   - [ ] Bruteforce de Keys (Viável?)
    - [x] Importar dados da Tag em JSON
 
 5. **Tarefas relacionadas ao SDCard**
@@ -76,9 +77,9 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
      ![Leds Infra Vermelho](https://cf.shopee.com.br/file/9df3b03281de181d8d3c050fa51ba083)
 
-   - [ ] Captar Sinais
-   - [ ] Emitir Sinais
-   - [ ] Clonar Sinais
+   - [x] Captar Sinais
+   - [x] Emitir Sinais
+   - [x] Clonar Sinais
    - [ ] Integração como o módulo SDCard
      - [ ] Salvar Sinais capturados
    - [ ] Integração com a UI do Sistema
@@ -102,12 +103,16 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Tela NFC
      - [x] Ler dados da tag NFC
      - [x] Gravar dados na tag NFC
+     - [x] Gravar novas Chaves de acesso na tag NFC
      - [x] Listar arquivos salvos no cartão de memória
      - [x] Salvar dados lidos em arquivo no cartão de memória
      - [x] Ler arquivos salvos no cartão de memória
      - [ ] Clonar Tags.
      - [ ] Bruteforce de Keys.
      - [ ] Definir key para leitura.
+     - [ ] Gerenciador de keys conhecidas.
+       - [ ] Adicionar.
+       - [ ] Remover.
    - [ ] Tela Infra Vermelho
      - [ ] Ler sinais IR
      - [ ] Simular sinais IR
