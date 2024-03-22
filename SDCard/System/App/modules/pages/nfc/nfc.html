@@ -791,19 +791,19 @@
                             var json = JSON.parse(response);
                             json.status == "error" ? json.message = "Erro na Gravação!" : json.message = "Dados Gravados com Sucesso!";
                             logTableAdd(json.status, "Setor: " + sector + " Bloco: " + block, json.message);
-                            resolve(); // Resolvendo a promessa quando a operação é concluída com sucesso
+                            resolve();
                         }
                     }, function (response) {
                         logTableAdd("error", "Setor: " + sector + " Bloco: " + block, "Houve um problema com a comunicação.");
-                        reject(new Error("Houve um problema com a comunicação.")); // Rejeitando a promessa se houver um problema de comunicação
+                        reject(new Error("Houve um problema com a comunicação."));
                     });
                 } else {
                     logTableAdd("warning", "Setor: " + sector + " Bloco: " + block, "A chave de acesso do setor não foi informada.");
-                    reject(new Error("A chave de acesso do setor não foi informada.")); // Rejeitando a promessa se a chave não for informada
+                    reject(new Error("A chave de acesso do setor não foi informada."));
                 }
             } else {
                 logTableAdd("warning", "Setor: " + sector + " Bloco: " + block, "O dado a ser gravado não pode exceder 16 caracteres.");
-                reject(new Error("O dado a ser gravado não pode exceder 16 caracteres.")); // Rejeitando a promessa se o dado exceder 16 caracteres
+                reject(new Error("O dado a ser gravado não pode exceder 16 caracteres."));
             }
         });
     }
@@ -919,10 +919,7 @@
                 }
 
                 notify("success", "Os dados foram processados com sucesso!");
-
-                window.setTimeout(function () {
-                    ONOFF("off");
-                }, 250);
+                ONOFF("off");
             }
 
         } else {

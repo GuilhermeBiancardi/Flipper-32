@@ -388,9 +388,7 @@ void WebServiceSetup() {
             SystemMode = 3;
 
             int block;
-            String key_a = "";
-            String key_b = "";
-            String new_key = "";
+            String key_a, key_b, new_key, response;
 
             if (request->hasParam("block")) {
                 block = request->getParam("block")->value().toInt();
@@ -408,7 +406,11 @@ void WebServiceSetup() {
                 new_key = request->getParam("new_key")->value();
             }
 
-            String response = PN532.StartWriteData(new_key, block, 0, key_a, true);
+            if(key_a != "000000000000") {
+                response = PN532.StartWriteData(new_key, block, 0, key_a, true);
+            } else {
+                response = PN532.StartWriteData(new_key, block, 1, key_b, true);
+            }
 
             request->send_P(200, "text/plain", response.c_str());
         }
