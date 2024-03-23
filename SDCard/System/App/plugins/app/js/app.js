@@ -1,4 +1,5 @@
 function request(url, data, success = "", error = "") {
+
     var request = $.ajax({
         url: url,
         method: "GET",
@@ -21,24 +22,22 @@ function request(url, data, success = "", error = "") {
     request.fail(function (response) {
         error(response);
     });
+
 }
 
 function loadPage(obj) {
-
     var page_load = $(obj).attr("id");
-
     if (page_load) {
-
         request("modules/pages/" + page_load + "/" + page_load + ".html", {}, function(response) {
             $("#modules").html(response);
-            EventsReload();
-            // popover_elements();
+            window.setTimeout(function() {
+                EventsReload();
+                popoverElements();
+            }, 250);
         }, function(response) {
             // console.log(response);
         });
-
     }
-
 }
 
 function EventsReload() {
@@ -119,7 +118,6 @@ function StringToHex(str) {
 }
 
 function remove_accents(str) {
-
     com_acento = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝŔÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿŕ.()[]{}/-";
     sem_acento = "AAAAAAACEEEEIIIIDNOOOOOOUUUUYRsBaaaaaaaceeeeiiiionoooooouuuuybyr_________";
     novastr = "";
@@ -150,7 +148,42 @@ function getDateTime() {
     return dia + "/" + mes + "/" + ano + " " + horas + ":" + minutos + ":" + segundos;
 }
 
-function generateTreeView(id, json, nivel = 0, path = "", callbackFileOpen = "") {
+function menuOpen(obj, id, aIn = "fadeInLeft", aOut = "fadeOutLeft") {
+    animateMenu(obj, id, aIn, aOut);
+}
+
+function animateMenu(obj, targetID, aIn = "fadeInLeft", aOut = "fadeOutLeft") {
+    if ($(obj).hasClass("btn-secondary")) {
+        $(obj).removeClass("btn-secondary").addClass("btn-outline-secondary");
+        $("#" + targetID).removeClass(aIn).addClass(aOut);
+        window.setTimeout(() => {
+            $("#" + targetID).toggleClass("d-none");
+        }, 500);
+    } else {
+        $(obj).removeClass("btn-outline-secondary").addClass("btn-secondary");
+        $("#" + targetID).removeClass(aOut).addClass(aIn);
+        $("#" + targetID).toggleClass("d-none");
+    }
+}
+
+function popoverElements() {
+
+    $(".popover").unbind();
+    $(".popover").each(function() {
+        $(this).popover('hide');
+    });
+
+    $(".pop").popover('dispose');
+    $('.pop').popover({
+        container: 'body',
+        placement: 'top',
+        trigger: 'hover',
+        boundary: 'window'
+    });
+
+}
+
+function generateTreeView(id, json, nivel = 0, pathElement, jsonElement, path = "", callbackFileOpen = "") {
 
     var size = 25.75;
 
@@ -212,7 +245,7 @@ function generateTreeView(id, json, nivel = 0, path = "", callbackFileOpen = "")
     $(".item-add").unbind();
     $(".item-add").click(function (e) {
         var path = $(this).parent().parent().attr("data-path");
-        $("#path-nfc").html(path + "/");
+        $("#" + pathElement).html(path + "/");
         e.stopPropagation();
     });
     
@@ -221,7 +254,7 @@ function generateTreeView(id, json, nivel = 0, path = "", callbackFileOpen = "")
         var path = $(this).parent().parent().attr("data-path");
         var lastIndex = path.lastIndexOf('/');
         var result = path.substring(0, lastIndex);
-        $("#path-nfc").html(result + "/");
+        $("#" + pathElement).html(result + "/");
         e.stopPropagation();
     });
 
@@ -249,7 +282,7 @@ function generateTreeView(id, json, nivel = 0, path = "", callbackFileOpen = "")
     $(".item-save").unbind();
     $(".item-save").click(function () {
         var path = $(this).parent().parent().attr("data-path");
-        request("/FILE_SAVE", {path: path, json: $("#json-nfc").val()}, function (response) {
+        request("/FILE_SAVE", {path: path, json: $("#" + jsonElement).val()}, function (response) {
             if (isJson(response)) {
                 var json = JSON.parse(response);
                 notify(json.status, json.message);
@@ -275,34 +308,9 @@ function generateTreeView(id, json, nivel = 0, path = "", callbackFileOpen = "")
         });
     });
 
-    // popover_elements();
+    popoverElements();
 
 }
-
-// function popover_elements() {
-
-//     $(".popover").unbind();
-//     $(".popover").each(function() {
-//         $(this).popover('hide');
-//     });
-    
-//     $(".pop").popover('dispose');
-//     $('.pop').popover({
-//         container: 'body',
-//         placement: 'bottom',
-//         trigger: 'hover',
-//         boundary: 'window'
-//     });
-
-//     $(".pop").mouseleave(function() {
-//         $(this).popover('hide');
-//     });
-
-//     $(".pop").click(function() {
-//         $(this).popover('hide');
-//     });
-
-// }
 
 var GetUrl = window.location;
 var ws = new WebSocket("ws://" + GetUrl.host + "/socket");
@@ -333,7 +341,7 @@ $(document).ready(function () {
                 $("#" + setid).after(r);
                 $("#" + setid).remove();
                 EventsReload();
-                // popover_elements();
+                popoverElements();
             }, function () {
                 console.log("Erro ao carregar: " + include);
                 // notificar(messages["error"]["load-module"], messages["error"]["load-module-title"], 3000, "error");

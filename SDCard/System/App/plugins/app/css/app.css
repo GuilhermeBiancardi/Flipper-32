@@ -54,6 +54,7 @@ button:not(:disabled) {
 }
 
 body {
+    height: 1;
     background: 0 0;
     letter-spacing: var(--bs-body-letter-spacing);
     position: relative;
@@ -3520,7 +3521,7 @@ textarea.form-control-lg {
 
 .popover {
     background: #2c3d4c;
-    border: 1px solid #798e98;
+    border: 1px solid #42515e;
 }
 
 .popover-arrow::before {
@@ -3529,6 +3530,7 @@ textarea.form-control-lg {
 
 .popover-arrow::after {
     border-bottom-color: #2c3d4c !important;
+    border-top-color: #2c3d4c !important;
 }
 
 .popover-body {
