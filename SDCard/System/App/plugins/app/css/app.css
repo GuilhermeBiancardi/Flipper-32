@@ -44,6 +44,7 @@
 ::before {
     box-sizing: border-box;
     outline: none;
+    box-shadow: 0 0 0 0 !important;
 }
 
 [type=button]:not(:disabled),
@@ -109,6 +110,11 @@ td {
     cursor: pointer;
 }
 
+.row>* {
+    padding-right: calc(var(--bs-gutter-x)* .1);
+    padding-left: calc(var(--bs-gutter-x)* .1);
+}
+
 .row .card {
     padding-right: 0;
     padding-left: 0;
@@ -128,6 +134,7 @@ td {
     border-radius: 0 !important;
     border-bottom: 1px solid rgba(39, 54, 66, 1);
     box-shadow: 0px 0px 3px #1e1e1e;
+    border-bottom: 1px solid rgba(var(--bs-border-color-rgb), .3) !important;
 }
 
 .card-fixed::before, .card-fixed::after {
@@ -388,7 +395,7 @@ td {
 /* Content */
 
 .app-content {
-    padding: 2rem 2rem;
+    padding: 2rem 0.5rem;
     flex: 1;
     margin-left: 16.875rem;
 }
@@ -686,9 +693,9 @@ td {
 }
 
 .btn:hover {
-    color: var(--bs-btn-hover-color);
-    background-color: var(--bs-btn-hover-bg);
-    border-color: var(--bs-btn-hover-border-color);
+    color: var(--bs-btn-hover-color) !important;
+    background-color: var(--bs-btn-hover-bg) !important;
+    border-color: var(--bs-btn-hover-border-color) !important;
 }
 
 .btn-check+.btn:hover {
@@ -1353,7 +1360,7 @@ fieldset:disabled .btn {
 
 .btn-outline-secondary {
     --bs-btn-color: #798e98;
-    --bs-btn-border-color: #798e98;
+    --bs-btn-border-color: #606d78;
     --bs-btn-hover-color: #FFFFFF;
     --bs-btn-hover-bg: #798e98;
     --bs-btn-hover-border-color: #798e98;
@@ -2513,7 +2520,7 @@ navbar-expand {
     color: #798e98
 }
 
-.form-control {
+.form-control, .swal-content__input {
     display: block;
     width: 100%;
     min-width: 170px;
@@ -2773,7 +2780,7 @@ textarea.form-control-lg {
 
 .form-check {
     display: block;
-    min-height: 1.3em;
+    min-height: 2.2em;
     padding-left: 1.8em;
     margin-bottom: .125rem
 }
@@ -2798,7 +2805,7 @@ textarea.form-control-lg {
 .form-check-input {
     --bs-form-check-bg: transparent;
     width: 1.3em;
-    height: 1.3em;
+    height: 2em;
     margin-top: .1em;
     vertical-align: top;
     background-color: var(--bs-form-check-bg);
@@ -2827,7 +2834,7 @@ textarea.form-control-lg {
 }
 
 .form-check-input:focus {
-    border-color: rgba(var(--bs-inverse-rgb),.5);
+    /* border-color: rgba(var(--bs-inverse-rgb),.5); */
     outline: 0;
     box-shadow: 0 0 0 .25rem rgba(var(--bs-inverse-rgb),.25)
 }
@@ -2857,23 +2864,29 @@ textarea.form-control-lg {
     opacity: .5
 }
 
+.form-check-label {
+    padding-left: 0.4em;
+}
+
 .form-check-input:disabled~.form-check-label,.form-check-input[disabled]~.form-check-label {
     cursor: default;
     opacity: .5
 }
 
 .form-switch {
-    padding-left: 2.8em
+    padding-left: 2.8em;
+    display: flex;
+    align-items: center;
 }
 
 .form-switch .form-check-input {
     --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%280, 0, 0, 0.25%29'/%3e%3c/svg%3e");
-    width: 2.3em;
+    width: 3.3em;
     margin-left: -2.8em;
     background-image: var(--bs-form-switch-bg);
     background-position: left center;
     border-radius: 2.3em;
-    transition: background-position .15s ease-in-out
+    transition: background-position .15s ease-in-out;
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -2882,13 +2895,19 @@ textarea.form-control-lg {
     }
 }
 
+.form-switch .form-check-input, 
 .form-switch .form-check-input:focus {
-    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='gray'/%3e%3c/svg%3e")
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='gray'/%3e%3c/svg%3e")
+}
+
+.form-switch .form-check-input:focus {
+    border-color: #606d78;
 }
 
 .form-switch .form-check-input:checked {
     background-position: right center;
-    --bs-form-switch-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23FFFFFF'/%3e%3c/svg%3e")
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23FFFFFF'/%3e%3c/svg%3e");
+    border-color: transparent;
 }
 
 .form-switch.form-check-reverse {
@@ -3520,20 +3539,31 @@ textarea.form-control-lg {
 /* popover */
 
 .popover {
-    background: #2c3d4c;
-    border: 1px solid #42515e;
-}
-
-.popover-arrow::before {
-    border-bottom-color: #798e98 !important;
-}
-
-.popover-arrow::after {
-    border-bottom-color: #2c3d4c !important;
-    border-top-color: #2c3d4c !important;
+    background: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    --bs-popover-bg: var(--bs-body-bg) !important;
 }
 
 .popover-body {
-    color: #ccd0d3;
+    color: var(--bs-body-color);
     padding: 10px;
+}
+
+/* Sweet Alert */
+
+.swal-modal {
+    background-color: var(--bs-body-bg);
+}
+
+.swal-button {
+    padding: 5px 12px;
+}
+
+.swal-text {
+    color: var(--bs-body-color);
+    text-align: center;
+}
+
+.swal-content__input:focus {
+    border: var(--bs-border-width) solid var(--bs-border-color);
 }

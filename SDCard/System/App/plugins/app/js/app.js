@@ -32,7 +32,9 @@ function loadPage(obj) {
             $("#modules").html(response);
             window.setTimeout(function() {
                 EventsReload();
-                popoverElements();
+                if(!isMobile()) {
+                    popoverElements();
+                }
             }, 250);
         }, function(response) {
             // console.log(response);
@@ -61,7 +63,11 @@ function EventsReload() {
 }
 
 function isMobile() {
-    if ($(window).width() < 800) {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function mobileUpdate() {
+    if ($(window).width() < 800 || isMobile()) {
         $('body').addClass('app-mobile');
         $('body').addClass('menu-toggler-on');
     } else {
@@ -172,7 +178,7 @@ function popoverElements() {
     $(".popover").each(function() {
         $(this).popover('hide');
     });
-
+    
     $(".pop").popover('dispose');
     $('.pop').popover({
         container: 'body',
@@ -181,11 +187,88 @@ function popoverElements() {
         boundary: 'window'
     });
 
+    $(".pop").mouseleave(function() {
+        $(this).popover('hide');
+    });
+
+    $(".pop").click(function() {
+        $(this).popover('hide');
+    });
 }
 
-function generateTreeView(id, json, nivel = 0, pathElement, jsonElement, path = "", callbackFileOpen = "") {
+function listDirSDCard(id_tree_view, data, path, success = "", error = "") {
+    request("/LIST_DIR", {path: path}, function (response) {
+        if (isJson(response)) {
+            var json = JSON.parse(response);
+            $("#" + id_tree_view).html("");
+            generateTreeView(id_tree_view, json.root, 0, data, path + "/", (response) => {
+                jsonTagRead(response);
+            });
+            if (success != "") {
+                success();
+            }
+        } else {
+            notify("error", "O modo leitura não pode ser ligado.");
+            if (error != "") {
+                error();
+            }
+        }
+    }, function (response) {
+        notify("error", "Houve um problema com a comunicação.");
+    });
+}
+
+function sdcardPrompt(pathLabel, placeholder, buttonName, callback) {
+    swal("O diretório de criação será: \n'" + pathLabel + "':", {
+        content: {
+            element: "input",
+            attributes: {
+                type: "text",
+                class: "form-control",
+                placeholder: placeholder
+            }
+        },
+        buttons: {
+            cancel: {
+                text: "Cancelar",
+                className: "btn btn-danger",
+                visible: true,
+            }, 
+            confirm: {
+                text: buttonName,
+                className: "btn btn-theme",
+                visible: true,
+                closeModal: true,
+            },
+        },
+    }).then((value) => {
+        if(value) {
+            callback(value);
+        }
+    });
+}
+
+function generateTreeView(id, json, nivel = 0, jsonElement, path = "", callbackFileOpen = "") {
 
     var size = 25.75;
+    var idAux = id;
+
+    if(nivel == 0) {
+        var id_root = remove_accents(path.replaceAll(/\ |\\|\//g, "").toLowerCase());
+        $("#" + id).append('<div role="treeitem" id="item-list_' + id_root + '" class="list-group-node" data-path="' + id_root.toUpperCase() + '" data-bs-toggle="collapse" data-bs-target="#list_' + id_root + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
+        $("#" + id).append('<span role="group" class="list-group collapse" id="list_' + id_root + '"></span>');            
+        
+        $("#" + id + " #item-list_" + id_root).append('<div class="float-start flex"></div>');
+        $("#" + id + " #item-list_" + id_root + " .float-start").append('<i class="state-icon bi bi-folder"></i>');
+        $("#" + id + " #item-list_" + id_root + " .float-start").append(id_root.toUpperCase());
+        
+        $("#" + id + " #item-list_" + id_root).append('<div class="float-end flex"></div>');
+        $("#" + id + " #item-list_" + id_root + " .float-end").append('<i id="add-' + id_root + '" class="bi bi-folder-plus item-add-folder pop" data-bs-content="Nova Pasta"></i>');
+        $("#" + id + " #item-list_" + id_root + " .float-end").append('<i id="remove-' + id_root + '" class="bi bi-file-plus item-add-file pop" data-bs-content="Novo Arquivo"></i>');
+        
+        id = "list_" + id_root;
+        nivel++;
+    }
 
     for (var i = 0; i < json.length; i++) {
         var item = path + json[i].text;
@@ -200,11 +283,11 @@ function generateTreeView(id, json, nivel = 0, pathElement, jsonElement, path = 
                 $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
                 
                 $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add pop" data-bs-content="Adicionar Path"></i>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-folder-minus item-remove pop" data-bs-content="Remover Path"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add-folder pop" data-bs-content="Nova Pasta"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-file-plus item-add-file pop" data-bs-content="Novo Arquivo"></i>');
                 $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Pasta"></i>');
                 
-                generateTreeView(item_id, json[i].nodes, nivel + 1, path + json[i].text + "/");
+                generateTreeView(item_id, json[i].nodes, nivel + 1, jsonElement, path + json[i].text + "/");
             } else {
                 $("#" + id).append('<div role="treeitem" id="item-' + item_id + '" class="list-group-node" data-path="' + path + json[i].text + '" data-bs-toggle="collapse" data-bs-target="#' + item_id + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
                 
@@ -213,8 +296,8 @@ function generateTreeView(id, json, nivel = 0, pathElement, jsonElement, path = 
                 $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
                 
                 $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add pop" data-bs-content="Adicionar Path"></i>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-folder-minus item-remove pop" data-bs-content="Remover Path"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add-folder pop" data-bs-content="Nova Pasta"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-file-plus item-add-file pop" data-bs-content="Novo Arquivo"></i>');
                 $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Pasta"></i>');
             }
         } else {
@@ -242,28 +325,66 @@ function generateTreeView(id, json, nivel = 0, pathElement, jsonElement, path = 
 
     var list_group_id = "";
     
-    $(".item-add").unbind();
-    $(".item-add").click(function (e) {
-        var path = $(this).parent().parent().attr("data-path");
-        $("#" + pathElement).html(path + "/");
+    $(".item-add-folder").unbind();
+    $(".item-add-folder").click(function (e) {
         e.stopPropagation();
+        var pathLabel = $(this).parent().parent().attr("data-path");
+        sdcardPrompt(pathLabel, "Nome da Pasta", "Criar Pasta", (value) => {
+            var path_request = pathLabel + "/" + value;
+            request("/CREATE_FOLDER", { path: path_request }, function (response) {
+                if (response == "ok") {
+                    notify("success", "Pasta criada com sucesso.");
+                    listDirSDCard(idAux, jsonElement, path.replaceAll(/\//g, ""), function () {
+                        var path_dir = pathLabel.split("/");
+                        var dir = "";
+                        $("#list_" + remove_accents(path.replaceAll(/\ |\\|\//g, "").toLowerCase())).collapse("toggle");
+                        for (var j = 1; j < path_dir.length; j++) {
+                            dir += "_" + remove_accents(path_dir[j].replaceAll(/\ |\\/g, "_").toLowerCase());
+                            $("#" + remove_accents(path.replaceAll(/\ |\\|\//g, "").toLowerCase()) + dir).collapse("toggle");
+                        }
+                    });
+                } else {
+                    notify("error", "A pasta não pode ser criada.");
+                }
+            }, function () {
+                notify("error", "Houve um problema com a comunicação.");
+            });
+        });
     });
     
-    $(".item-remove").unbind();
-    $(".item-remove").click(function (e) {
-        var path = $(this).parent().parent().attr("data-path");
-        var lastIndex = path.lastIndexOf('/');
-        var result = path.substring(0, lastIndex);
-        $("#" + pathElement).html(result + "/");
+    $(".item-add-file").unbind();
+    $(".item-add-file").click(function (e) {
         e.stopPropagation();
+        var pathLabel = $(this).parent().parent().attr("data-path");
+        sdcardPrompt(pathLabel, "Nome do Arquivo", "Criar Arquivo", (value) => {
+            var path_request = pathLabel + "/" + value;
+            request("/CREATE_FILE", { path: path_request }, function (response) {
+                if (response == "ok") {
+                    notify("success", "Arquivo criado com sucesso.");
+                    listDirSDCard(idAux, jsonElement, path.replaceAll(/\//g, ""), function () {
+                        var path_dir = pathLabel.split("/");
+                        var dir = "";
+                        $("#list_" + remove_accents(path.replaceAll(/\ |\\|\//g, "").toLowerCase())).collapse("toggle");
+                        for (var j = 1; j < path_dir.length; j++) {
+                            dir += "_" + remove_accents(path_dir[j].replaceAll(/\ |\\/g, "_").toLowerCase());
+                            $("#" + remove_accents(path.replaceAll(/\ |\\|\//g, "").toLowerCase()) + dir).collapse("toggle");
+                        }
+                    });
+                } else {
+                    notify("error", "O arquivo não pode ser criado.");
+                }
+            }, function () {
+                notify("error", "Houve um problema com a comunicação.");
+            });
+        });
     });
 
-    $(".item-add, .item-remove").mouseenter(function () {
+    $(".item-add-file, .item-add-folder").mouseenter(function () {
         list_group_id = $(this).parent().parent().attr("data-bs-target");
         $(this).parent().parent().removeAttr("data-bs-target");
     });
 
-    $(".item-add, .item-remove").mouseleave(function () {
+    $(".item-add-file, .item-add-folder").mouseleave(function () {
         $(this).parent().parent().attr({"data-bs-target": list_group_id});
     });
     
@@ -308,7 +429,9 @@ function generateTreeView(id, json, nivel = 0, pathElement, jsonElement, path = 
         });
     });
 
-    popoverElements();
+    if(!isMobile()) {
+        popoverElements();
+    }
 
 }
 
@@ -318,7 +441,7 @@ var ws = new WebSocket("ws://" + GetUrl.host + "/socket");
 $(document).ready(function () {
 
     $(window).bind("load resize scroll", function () {
-        isMobile();
+        mobileUpdate();
     });
 
     $("div").each(function () {
@@ -341,7 +464,9 @@ $(document).ready(function () {
                 $("#" + setid).after(r);
                 $("#" + setid).remove();
                 EventsReload();
-                popoverElements();
+                if(!isMobile()) {
+                    popoverElements();
+                }
             }, function () {
                 console.log("Erro ao carregar: " + include);
                 // notificar(messages["error"]["load-module"], messages["error"]["load-module-title"], 3000, "error");

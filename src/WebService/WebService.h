@@ -243,9 +243,25 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/FILE_OPEN", HTTP_GET,
+    // --------- SDCard -----------
+
+    server.on("/LIST_DIR", HTTP_GET,
         [](AsyncWebServerRequest* request) {
 
+            String path = "/System/";
+
+            if (request->hasParam("path")) {
+                path += request->getParam("path")->value();
+            }
+
+            String json = SDCard.ListDirectory(path.c_str());
+            request->send_P(200, "text/plain", json.c_str());
+        }
+    );
+
+    server.on("/FILE_OPEN", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            
             String path = "System/";
 
             if (request->hasParam("path")) {
@@ -334,13 +350,6 @@ void WebServiceSetup() {
     );
 
     // ---------- NFC ------------
-
-    server.on("/NFC_LIST_DIR", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            String json = SDCard.ListDirectory("/System/NFC");
-            request->send_P(200, "text/plain", json.c_str());
-        }
-    );
 
     server.on("/NFC_READ_ON", HTTP_GET,
         [](AsyncWebServerRequest* request) {
