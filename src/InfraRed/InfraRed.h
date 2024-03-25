@@ -1,6 +1,8 @@
+// Porta responsável pelo LED.
+#define LED_BUILTIN 4
+
 #include <IRremote.hpp>
 #include <iostream>
-#include <vector>
 
 // DECODER padrão, inclue Apple e Onkyo
 #define DECODE_NEC

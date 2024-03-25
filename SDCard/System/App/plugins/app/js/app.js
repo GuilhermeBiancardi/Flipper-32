@@ -188,11 +188,7 @@ function popoverElements() {
     });
 
     $(".pop").mouseleave(function() {
-        $(this).popover('hide');
-    });
-
-    $(".pop").click(function() {
-        $(this).popover('hide');
+        $(".popover").remove();
     });
 }
 
@@ -202,11 +198,10 @@ function listDirSDCard(id_tree_view, data, path, success = "", error = "") {
             var json = JSON.parse(response);
             $("#" + id_tree_view).html("");
             generateTreeView(id_tree_view, json.root, 0, data, path + "/", (response) => {
-                jsonTagRead(response);
+                if (success != "") {
+                    success(response);
+                }
             });
-            if (success != "") {
-                success();
-            }
         } else {
             notify("error", "O modo leitura não pode ser ligado.");
             if (error != "") {
@@ -440,7 +435,9 @@ var ws = new WebSocket("ws://" + GetUrl.host + "/socket");
 
 $(document).ready(function () {
 
-    $(window).bind("load resize scroll", function () {
+    mobileUpdate();
+
+    $(window).bind("load resize", function () {
         mobileUpdate();
     });
 

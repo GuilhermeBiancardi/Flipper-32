@@ -70,13 +70,25 @@
                 </div>
             </div>
             <div class="card-body">
-                <!-- <div class="input-group mb-1">
-                    <span class="input-group-text">Diretório Atual:</span>
-                    <input id="path-nfc-key" type="text" class="form-control" value="KEYS/" readonly>
-                </div> -->
                 <div id="nfc_key_files_tree" class="treeview p-2">
                     <small>Para ver a lista de arquivos contidos no SDCard clique em " <span class="bi-list-task"></span> " Listar no menú.</small>
                 </div>
+                <br>
+                <label class="form-label" for="json-nfc">Keys List <small>(1 Key por linha)</small></label>
+                <textarea class="form-control text-uppercase" id="data-key" rows="8" placeholder="Nenhum arquivo de Keys carregado."></textarea>
+                <!-- <div id="container_nfc_keys">
+                    <div class="input-group flex-nowrap mb-2">
+                        <span class="input-group-text">Key</span>
+                        <input type="text" class="form-control form-control text-uppercase w-100" style="min-width: 150px;" maxlength="16" placeholder="000000000000">
+                        <buttom class="btn btn-default form-control p-3 bi-trash" style="min-width: 50px;"></buttom>
+                    </div>
+                    <div class="input-group flex-nowrap mb-2">
+                        <span class="input-group-text">Key</span>
+                        <input type="text" class="form-control form-control text-uppercase w-100" style="min-width: 150px;" maxlength="16" placeholder="000000000000">
+                        <buttom class="btn btn-default form-control p-3 bi-trash" style="min-width: 50px;"></buttom>
+                    </div>
+                </div>
+                <buttom id="nfc_add_new_key" class="btn btn-default form-control">Nova Key.</buttom> -->
             </div>
             <div class="card-arrow">
                 <div class="card-arrow-top-left"></div>
@@ -98,10 +110,6 @@
                 </div>
             </div>
             <div class="card-body">
-                <!-- <div class="input-group mb-1">
-                    <span class="input-group-text">Diretório Atual:</span>
-                    <input id="path-nfc-tag" type="text" class="form-control" value="NFC/" readonly>
-                </div> -->
                 <div id="nfc_tag_files_tree" class="treeview p-2">
                     <small>Para ver a lista de arquivos contidos no SDCard clique em " <span class="bi-list-task"></span> " Listar no menú.</small>
                 </div>
@@ -144,7 +152,7 @@
 
 <script>
 
-    var json_empy = '{"type":"NFC_TAG_4K","uid":"","sector_0":{"key_a":"","key_b":"","block_0":{"data":""},"block_1":{"data":""},"block_2":{"data":""},"block_3":{"data":""}},"sector_1":{"key_a":"","key_b":"","block_4":{"data":""},"block_5":{"data":""},"block_6":{"data":""},"block_7":{"data":""}},"sector_2":{"key_a":"","key_b":"","block_8":{"data":""},"block_9":{"data":""},"block_10":{"data":""},"block_11":{"data":""}},"sector_3":{"key_a":"","key_b":"","block_12":{"data":""},"block_13":{"data":""},"block_14":{"data":""},"block_15":{"data":""}},"sector_4":{"key_a":"","key_b":"","block_16":{"data":""},"block_17":{"data":""},"block_18":{"data":""},"block_19":{"data":""}},"sector_5":{"key_a":"","key_b":"","block_20":{"data":""},"block_21":{"data":""},"block_22":{"data":""},"block_23":{"data":""}},"sector_6":{"key_a":"","key_b":"","block_24":{"data":""},"block_25":{"data":""},"block_26":{"data":""},"block_27":{"data":""}},"sector_7":{"key_a":"","key_b":"","block_28":{"data":""},"block_29":{"data":""},"block_30":{"data":""},"block_31":{"data":""}},"sector_8":{"key_a":"","key_b":"","block_32":{"data":""},"block_33":{"data":""},"block_34":{"data":""},"block_35":{"data":""}},"sector_9":{"key_a":"","key_b":"","block_36":{"data":""},"block_37":{"data":""},"block_38":{"data":""},"block_39":{"data":""}},"sector_10":{"key_a":"","key_b":"","block_40":{"data":""},"block_41":{"data":""},"block_42":{"data":""},"block_43":{"data":""}},"sector_11":{"key_a":"","key_b":"","block_44":{"data":""},"block_45":{"data":""},"block_46":{"data":""},"block_47":{"data":""}},"sector_12":{"key_a":"","key_b":"","block_48":{"data":""},"block_49":{"data":""},"block_50":{"data":""},"block_51":{"data":""}},"sector_13":{"key_a":"","key_b":"","block_52":{"data":""},"block_53":{"data":""},"block_54":{"data":""},"block_55":{"data":""}},"sector_14":{"key_a":"","key_b":"","block_56":{"data":""},"block_57":{"data":""},"block_58":{"data":""},"block_59":{"data":""}},"sector_15":{"key_a":"","key_b":"","block_60":{"data":""},"block_61":{"data":""},"block_62":{"data":""},"block_63":{"data":""}}}';
+    var json_empy = '{"type":"NFC_TAG_4K","uid":"e9dad8a2","sector_0":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_0":{"data":""},"block_1":{"data":""},"block_2":{"data":""},"block_3":{"data":""}},"sector_1":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_4":{"data":""},"block_5":{"data":""},"block_6":{"data":""},"block_7":{"data":""}},"sector_2":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_8":{"data":""},"block_9":{"data":""},"block_10":{"data":""},"block_11":{"data":""}},"sector_3":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_12":{"data":""},"block_13":{"data":""},"block_14":{"data":""},"block_15":{"data":""}},"sector_4":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_16":{"data":""},"block_17":{"data":""},"block_18":{"data":""},"block_19":{"data":""}},"sector_5":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_20":{"data":""},"block_21":{"data":""},"block_22":{"data":""},"block_23":{"data":""}},"sector_6":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_24":{"data":""},"block_25":{"data":""},"block_26":{"data":""},"block_27":{"data":""}},"sector_7":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_28":{"data":""},"block_29":{"data":""},"block_30":{"data":""},"block_31":{"data":""}},"sector_8":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_32":{"data":""},"block_33":{"data":""},"block_34":{"data":""},"block_35":{"data":""}},"sector_9":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_36":{"data":""},"block_37":{"data":""},"block_38":{"data":""},"block_39":{"data":""}},"sector_10":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_40":{"data":""},"block_41":{"data":""},"block_42":{"data":""},"block_43":{"data":""}},"sector_11":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_44":{"data":""},"block_45":{"data":""},"block_46":{"data":""},"block_47":{"data":""}},"sector_12":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_48":{"data":""},"block_49":{"data":""},"block_50":{"data":""},"block_51":{"data":""}},"sector_13":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_52":{"data":""},"block_53":{"data":""},"block_54":{"data":""},"block_55":{"data":""}},"sector_14":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_56":{"data":""},"block_57":{"data":""},"block_58":{"data":""},"block_59":{"data":""}},"sector_15":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_60":{"data":""},"block_61":{"data":""},"block_62":{"data":""},"block_63":{"data":""}}}';
     var json_mdfy = json_empy;
     var tag_size = "16"; // 64
 
@@ -662,7 +670,6 @@
             notify("success", "Dados lidos, processando...");
             $("#nfc_menu_read").prop('checked', $(this).is(':checked'));
             var json = JSON.parse(json_str);
-            var sectionRead = false;
 
             if (json.type == "NFC_TAG_4K") {
 
@@ -675,6 +682,8 @@
                 json_mdfy = json_str;
 
                 for (var i = 0; i < tag_size; i++) {
+
+                    var sectionRead = false;
 
                     var key_a = json["sector_" + i]["key_a"];
                     $("#nfc_str_key_a_sector-" + i).val(HexToString(key_a));
@@ -742,11 +751,39 @@
         });
 
         $("#list-files-sd-tag").click(function () {
-            listDirSDCard("nfc_tag_files_tree", "json-nfc", "NFC");
+            listDirSDCard("nfc_tag_files_tree", "json-nfc", "NFC", (data) => {
+                jsonTagRead(data);
+            });
         });
 
         $("#list-files-sd-key").click(function () {
-            listDirSDCard("nfc_key_files_tree", "json-key", "KEYS");
+            listDirSDCard("nfc_key_files_tree", "data-key", "KEYS", (data) => {
+                $("#data-key").val(data);
+            });
+        });
+
+        $("#data-key").on("input", function() {
+            var lines = $(this).val().split('\n');
+            $(this).val("");
+            $(lines).each(function(key, val) {
+                val = val.replace(/[^0-9a-fA-F]/g, '');
+                if(val.length == 12) {
+                    $("#data-key").val($("#data-key").val() + val + '\n');
+                } else if(val.length > 12) {
+                    $("#data-key").val($("#data-key").val() + val.slice(0, 12) + '\n');
+                } else if(val.length < 12) {
+                    if(key == (lines.length -1)) {
+                        $("#data-key").val($("#data-key").val() + val);
+                    } else {
+                        $("#data-key").val($("#data-key").val());
+                    }
+                }
+            });
+            // Define o foco novamente na textarea
+            $(this).focus();
+            // Move o cursor para o final da textarea
+            var textarea = $(this).get(0);
+            textarea.selectionStart = textarea.selectionEnd = $(this).val().length;
         });
 
     });

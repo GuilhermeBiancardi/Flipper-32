@@ -4,11 +4,6 @@
 String ssid = "Flipper32";
 String pass = "123456789";
 
-const char* PARAM_INPUT_1 = "hardware";
-const char* PARAM_INPUT_2 = "wifissid";
-const char* PARAM_INPUT_3 = "password";
-const char* PARAM_INPUT_4 = "passhard";
-
 String hardware = "";
 String wifissid = "";
 String password = "";
@@ -107,6 +102,13 @@ void WebServiceSetup() {
             html = SDCard.FileRead(filename.c_str());
             request->send_P(200, "text/html", html.c_str());
 
+        }
+    );
+
+    server.on("/SYSTEM_OFF", HTTP_GET,
+        [](AsyncWebServerRequest* request) {
+            SystemMode = 0;
+            request->send_P(200, "text/plain", "ok");
         }
     );
 
@@ -231,15 +233,6 @@ void WebServiceSetup() {
 
             request->send_P(200, "text/plain", json.c_str());
 
-        }
-    );
-
-    // --------- GERAL -----------
-
-    server.on("/SYSTEM_OFF", HTTP_GET,
-        [](AsyncWebServerRequest* request) {
-            SystemMode = 0;
-            request->send_P(200, "text/plain", "ok");
         }
     );
 

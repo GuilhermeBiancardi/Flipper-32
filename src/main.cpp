@@ -24,16 +24,12 @@ InfraRedManager IR;
 #include "WebService/WebService.h"
 
 void setup(void) {
-
     Serial.begin(9600);
-
     InternalMemory.Setup();
     PN532.Setup();
     SDCard.Setup();
     IR.Setup();
-
     WebServiceSetup();
-
 }
 
 void loop(void) {
