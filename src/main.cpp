@@ -9,6 +9,9 @@
 */
 int SystemMode = 0;
 
+#include "Utils/Utils.h"
+UtilsManager Utils;
+
 #include "EEPROM/EEPROM.h"
 EEPROMManager InternalMemory;
 
@@ -19,7 +22,7 @@ SDCardManager SDCard(5);
 PN532Manager PN532(21, 22);
 
 #include "InfraRed/InfraRed.h"
-InfraRedManager IR;
+InfraRedManager IR(A4, A7);
 
 #include "WebService/WebService.h"
 

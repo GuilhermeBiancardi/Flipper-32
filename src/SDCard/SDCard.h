@@ -332,21 +332,25 @@ public:
     String ListDirectory(const char* directory) {
 
         // Armazenará o json que conterá a árvore de pastas e arquivos do diretório informado.
-        String json = "{\"status\": \"1\", \"message\": \"Listagem concluída.\", \"root\": [";
+        String json = "{\"status\": \"1\", \"message\": \"Listagem concluída.\", \"root\": ";
 
         // Abre o diretório no cartão SD.
         File ListDirectoryHome;
         ListDirectoryHome = SD.open(directory);
 
         if(ListDirectoryHome) {
-            // Chama a função List para listar o conteúdo do diretório, passando o tamanho da tabulação como parâmetro.
-            json += List(ListDirectoryHome);
-            json.remove(json.length() - 1);
-            json += "]}";
+            // Chama a função List para listar o conteúdo do diretório.
+            String auxJson = List(ListDirectoryHome);
+            if(auxJson != "\"empy\"") {
+                json += "[" + auxJson;
+                json.remove(json.length() - 1);
+                json += "]";
+            }
         } else {
             json = "{\"status\": \"0\", \"message\": \"Erro ao listar a pasta NFC, verifique se ela existe ou se está liberada para leitura.\"}";
         }
 
+        json += "}";
         return json;
 
     }
@@ -470,6 +474,7 @@ private:
         while (true) {
             File entry = directory.openNextFile();
             if (!entry) {
+                json == "" ? json = "\"empy\"," : json;
                 break;
             }
             if (entry.isDirectory()) {

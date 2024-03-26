@@ -5,7 +5,7 @@ class PN532Manager {
 
 public:
 
-    PN532Manager(uint8_t  IRQPin, uint8_t RESET): PN532(IRQPin, RESET) {}
+    PN532Manager(uint8_t NFCPin, uint8_t RESET): PN532(NFCPin, RESET) {}
 
     /**
      * Função de inicialização do programa.
@@ -223,19 +223,19 @@ public:
         uint8_t success = TagConnection();
         if (success) {
             std::vector<String> keys = SDCard.FileReadLineByLine("System/KEYS/keys.list");
-            String json = "{\"type\":\"NFC_TAG_4K\",\"uid\":\"" + byteToHexString(uid, uidLength) + "\",";
+            String json = "{\"type\":\"NFC_TAG_4K\",\"uid\":\"" + Utils.Uint8_tToString(uid, sizeof(uid)) + "\",";
             for (int i = 0; i < 16; i++) {
                 uint8_t key[6], block = (i * 4);
                 std::vector<String> keyData = OrganizeAuthenticateData(keys, i, block);
-                keyData[0] != 0 ? hexToMatriz(keyData[0], key) : void();
-                keyData[1] != 0 ? hexToMatriz(keyData[1], key) : void();
+                keyData[0] != 0 ? Utils.HexStringToUint8_t(keyData[0], key) : void();
+                keyData[1] != 0 ? Utils.HexStringToUint8_t(keyData[1], key) : void();
                 json += keyData[3];
                 for (int j = 0; j < 4; j++) {
                     uint8_t data[16], actualBlock = block + j;
                     success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, actualBlock, keyData[2].toInt(), key);
                     if (success) {
                         success = PN532.mifareclassic_ReadDataBlock(actualBlock, data);
-                        json += "\"block_" + String(actualBlock) + "\":{\"data\":\"" + byteToHexString(data, sizeof(data)) + "\"},";
+                        json += "\"block_" + String(actualBlock) + "\":{\"data\":\"" + Utils.Uint8_tToString(data, sizeof(data)) + "\"},";
                     } else {
                         json += "\"block_" + String(actualBlock) + "\":{\"data\":\"\"},";
                     }
@@ -279,13 +279,12 @@ public:
 
             // Verifico se estou tentando salvar uma chave
             if(keySave) {
-                hexToMatriz(string, newKeySector);
+                Utils.HexStringToUint8_t(string, newKeySector);
             } else {
-                // stringToChar(string, data);
-                hexStringToBytes(string, data);
+                Utils.HexStringToUint8_t(string, data);
             }
 
-            hexToByte(key, keySector);
+            Utils.HexStringToUint8_t(key, keySector);
 
             if (BlockConnection(block, keyType, keySector)) {
                 keySave ? isWrite = WriteTag4Bytes(block, newKeySector) : isWrite = WriteTag4Bytes(block, data);
@@ -322,80 +321,6 @@ private:
 
     // Tamanho do UID da Tag (4 ou 7 bytes dependendo do tipo da Tag ISO14443A)
     uint8_t uidLength = 0;
-
-    /**
-     * Converte os dados da TAG de String para Char
-     */
-    void stringToChar(String string, uint8_t* data) {
-        char charArray[string.length() + 1];
-        string.toCharArray(charArray, string.length() + 1);
-        for (int i = 0; i < string.length(); i++) {
-            data[i] = (uint8_t)charArray[i];
-        }
-    }
-
-    /**
-     * Converte a key do setor de HEX para Byte
-     */ 
-    void hexToByte(String key, uint8_t* KeySector) {
-        for (int i = 0; i < 6; i++) {
-            char c1 = key.charAt(i * 2);
-            char c2 = key.charAt(i * 2 + 1);
-            int n1 = c1 >= 'A' ? c1 - 'A' + 10 : c1 - '0';
-            int n2 = c2 >= 'A' ? c2 - 'A' + 10 : c2 - '0';
-            KeySector[i] = (n1 << 4) | n2;
-        }
-    }
-
-    /**
-     * Converte a key do setor de HEX para Matriz uint8_t 
-     */ 
-    void hexToMatriz(String key, uint8_t* keyMatriz) {
-        // Converte a string em uma matriz de bytes
-        for (int i = 0; i < key.length(); i += 2) {
-            // Extrai cada par de caracteres da string
-            String byteString = key.substring(i, i + 2);
-            // Converte o par de caracteres em um byte hexadecimal
-            keyMatriz[i / 2] = strtoul(byteString.c_str(), NULL, 16);
-        }
-    }
-
-    /**
-     * Função que converte um conjunto bytes para HEX para String
-     */
-    String byteToHexString(uint8_t* data, size_t length) {
-        String result = "";
-        for (size_t i = 0; i < length; i++) {
-            result += String(data[i] < 0x10 ? "0" : "") + String(data[i], HEX);
-        }
-        return result;
-    }
-
-    /**
-     * Converte uma String HEX para Bytes
-    */
-    void hexStringToBytes(const String& hexString, uint8_t* bytes) {
-        // Garante que o comprimento da string hexadecimal seja par
-        if (hexString.length() % 2 != 0) {
-            return; // Saia se o comprimento for ímpar
-        }
-        // Converte cada par de caracteres hexadecimais em um byte
-        for (size_t i = 0; i < hexString.length(); i += 2) {
-            String hexPair = hexString.substring(i, i + 2);
-            bytes[i / 2] = strtol(hexPair.c_str(), NULL, 16);
-        }
-    }
-
-    /**
-     * Coloca os caracteres de uma String em maiúsculo.
-    */
-    String toUpperCase(const String &str) {
-        String upperCase;
-        for (size_t i = 0; i < str.length(); i++) {
-            upperCase += char(toupper(str[i]));
-        }
-        return upperCase;
-    }
 
     /**
      * Estrutura de um JSON de retorno.
@@ -478,15 +403,15 @@ private:
             if (success) {
                 uint8_t tempKey[6];
                 uint8_t tempData[16];
-                hexToMatriz(keys[i], tempKey);
+                Utils.HexStringToUint8_t(keys[i], tempKey);
                 success = PN532.mifareclassic_AuthenticateBlock(uid, uidLength, (block + 3), keyType, tempKey);
                 if (success) {
                     success = PN532.mifareclassic_ReadDataBlock((block + 3), tempData);
                     if (success) {
-                        foundKey[0] = byteToHexString(tempData, sizeof(tempData));
-                        keyType == 0 ? foundKey[1] = keys[i] : foundKey[1] = toUpperCase(foundKey[0].substring(0, 12));
-                        foundKey[2] = toUpperCase(foundKey[0].substring(12, 12 + 8));
-                        foundKey[3] = toUpperCase(foundKey[0].substring(20, 20 + 12));
+                        foundKey[0] = Utils.Uint8_tToString(tempData, sizeof(tempData));
+                        keyType == 0 ? foundKey[1] = keys[i] : foundKey[1] = Utils.toUpperCase(foundKey[0].substring(0, 12));
+                        foundKey[2] = Utils.toUpperCase(foundKey[0].substring(12, 12 + 8));
+                        foundKey[3] = Utils.toUpperCase(foundKey[0].substring(20, 20 + 12));
                         break;
                     }
                 }

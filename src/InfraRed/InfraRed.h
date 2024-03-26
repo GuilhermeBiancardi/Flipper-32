@@ -1,172 +1,460 @@
-// Porta responsável pelo LED.
-#define LED_BUILTIN 4
+#include <IRsend.h>
+#include <IRrecv.h>
+#include <IRremoteESP8266.h>
+#include <IRutils.h>
 
-#include <IRremote.hpp>
-#include <iostream>
-
-// DECODER padrão, inclue Apple e Onkyo
-#define DECODE_NEC
-// Habilita piscar o led do arduino ao receceber um sinal.
-#define ENABLE_LED_FEEDBACK true
-// Pino responsável pela leitura do sinal
-#define IR_RECEIVE_PIN A7
-// Pino responsável pelo envio do sinal
 #define IR_SEND_PIN A4
-
-// Definições Importantes para ESP32
-#if !defined (FLASHEND)
-// Dummy value for platforms where FLASHEND is not defined
-#define FLASHEND 0xFFFF 
-#endif
-#if !defined (RAMEND)
-// Dummy value for platforms where RAMEND is not defined
-#define RAMEND 0xFFFF 
-#endif
-#if !defined (RAMSIZE)
-// Dummy value for platforms where RAMSIZE is not defined
-#define RAMSIZE 0xFFFF 
-#endif
-
-// Definições da Função STR
-#if !defined(STR_HELPER)
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
-#endif
+#define IR_RECEIVE_PIN A7
 
 class InfraRedManager {
 
 public:
 
-    InfraRedManager() {}
+    InfraRedManager(uint8_t IRSendPin, uint8_t  IRReceivePin) : irsend(IRSendPin), irrecv(IRReceivePin) {}
 
     void Setup() {
-
-        // Inicia a classe IR receiver
-        IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
-
-        // Inicia a classe IR sender
-        IrSender.begin(IR_SEND_PIN);
-
-        // Mostra no serial todos os protocolos suportados pelo DECODER escolhido
-        // Serial.print(F("Pronto para receber sinais IR dos seguintes Protocolos: "));
-        // printActiveIRProtocols(&Serial);
-        // Serial.println(F("no pino " STR(IR_RECEIVE_PIN)));
-    }
-
-    /*
-    * Checa se existe um sinal IR, se sim tenta decodifica-lo.
-    * Resultados da decodificação fica armazenado na estrutura IrReceiver.decodedIRData.
-    *
-    * Comando IR fica armazenado em: IrReceiver.decodedIRData.command
-    * Endereço do comando fica armazenado em: IrReceiver.decodedIRData.address
-    * Data: IrReceiver.decodedIRData.decodedRawData
-    * Número de Bits: IrReceiver.decodedIRData.numberOfBits
-    */
-    bool ReceiveSinal() {
-        if (IrReceiver.decode()) {
-
-            // Mostra um pequeno sumário descritivo do sinal IR recebido
-            // IrReceiver.printIRResultShort(&Serial);
-
-            // Escreve um exemplo de código de envio do sinal lido
-            // IrReceiver.printIRSendUsage(&Serial);
-
-            // Se o sinal recebido for desconhecido
-            if (IrReceiver.decodedIRData.protocol == UNKNOWN) {
-                Serial.println(F("Recebido sinal de um protocolo desconhecido ou não habilidatdo."));
-                // Temos um protocolo desconhecido aqui, printo mais detalhes
-                IrReceiver.printIRResultRawFormatted(&Serial, true);
-            } else {
-
-                // Salva o comando recebido pelo sinal infra vermelho
-                // sCommand = IrReceiver.decodedIRData.command;
-
-                // Salva o endereço recebido pelo sinal infra vermelho
-                // sAddress = IrReceiver.decodedIRData.address;
-
-                // Salva o rawData decodificado recebido pelo sinal infra vermelho
-                sRawData = IrReceiver.decodedIRData.decodedRawData;
-
-            }
-
-            // IMPORTANTE isso habilita o leitor a receber outro sinal IR
-            IrReceiver.resume();
-
-            return true;
-
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Função que envia um comando utilizando o formato NEC do protocolo infravermelho.
-     *
-     * @param sRawData O RawData a ser enviado.
-     * @param sRepeats O número de repetições do sinal a ser enviado.
-     */
-    void SendNecRawData(uint32_t sRawData, int_fast8_t sRepeats) {
-        IrSender.sendNECRaw(sRawData, sRepeats);
-        IrReceiver.restartAfterSend();
-    }
-
-    /**
-     * Função para salvar dados em um arquivo no cartão SD.
-     *
-     * @param path Caminho do arquivo a ser criado/sobrescrito no cartão SD.
-     * @return true se o arquivo foi criado/sobrescrito com sucesso, false caso contrário.
-     */
-    bool SaveData(const char* path) {
-        if (SDCard.FileCreate(path)) {
-            // Escreve os dados no arquivo
-            SDCard.FileWrite(path, String(sRawData).c_str());
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    const String GetRawData() {
-        return String(sRawData);
-    }
-
-    int GetStatus() {
-        return StatusIR;
-    }
-
-    void ResetIR() {
-        StatusIR = 0;
-        sRawData = 0;
-        IrReceiver.resume();
-    }
-
-    void EmulateSinal(const char* path) {
-        ReadData(path);
-        SendNecRawData(sRawData, sRepeats);
+        irsend.begin();
+        irrecv.enableIRIn();
     }
 
     void Loop() {
-
-        if (StatusIR == 0) {
-            if (ReceiveSinal()) {
-                StatusIR = 1;
+        if (irrecv.decode(&results)) {
+            uint16_t* raw_array = resultToRawArray(&results);
+            uint16_t length = getCorrectedRawLength(&results);
+            String value = uint64ToString(results.value, HEX);
+            String address = Utils.Uint32_tToString(results.address);
+            String command = Utils.Uint32_tToString(results.command);
+            String bits = Utils.Uint16_tToString(results.bits);
+            String state = Utils.Uint8_tToString(results.state, sizeof(results.state));
+            String rawData = Utils.Uint16_tToString(raw_array, length, ",");
+            String decodeType = decodeTypeToString(results.decode_type);
+            irrecv.resume();
+            // irsend.sendRaw(raw_array, length, irFrequency);
+            delete[] raw_array;
+            if (value != "FFFFFFFFFFFFFFFF") {
+                jsonString = "{\"signal\": \"" + rawData + "\", \"value\": \"" + value + "\",";
+                jsonString += "\"address\": \"" + address + "\", \"command\": \"" + command + "\",";
+                jsonString += "\"decode\": \"" + decodeType + "\", \"bits\": \"" + bits + "\",";
+                jsonString += "\"state\": \"" + state + "\"}";
             }
         }
+        yield();
+    }
 
+    void SetJSON(String json) {
+        jsonString = json;
+    }
+
+    String GetJSON() {
+        return jsonString;
     }
 
 private:
 
-    // uint16_t sAddress;
-    // uint16_t sCommand;
-    
-    int StatusIR = 0;
-    uint32_t sRawData;
-    uint16_t sRepeats = 5;
+    IRsend irsend;
+    IRrecv irrecv;
+    decode_results results;
 
-    void ReadData(const char* path) {
-        String ReadData = SDCard.FileRead(path);
-        sRawData = ReadData.toInt();
+    String jsonString;
+
+    // Buffer do que o esperado para que possamos lidar com mensagens IR muito grandes, ou seja, até 512 bits.
+    uint16_t bufferSize = 1024;
+    // Frequencia 
+    uint16_t irFrequency = 38000;
+    // Tempo limite é o número de milissegundos sem mais dados antes de considerarmos uma mensagem finalizada.
+    uint8_t timeOut = 50;
+
+    String decodeTypeToString(decode_type_t decodeType) {
+        String result;
+        switch (decodeType) {
+            case UNKNOWN:
+                result = "UNKNOWN";
+                break;
+            case UNUSED:
+                result = "UNUSED";
+                break;
+            case RC5:
+                result = "RC5";
+                break;
+            case RC6:
+                result = "RC6";
+                break;
+            case NEC:
+                result = "NEC";
+                break;
+            case SONY:
+                result = "SONY";
+                break;
+            case PANASONIC:
+                result = "PANASONIC";
+                break;
+            case JVC:
+                result = "JVC";
+                break;
+            case SAMSUNG:
+                result = "SAMSUNG";
+                break;
+            case WHYNTER:
+                result = "WHYNTER";
+                break;
+            case AIWA_RC_T501:
+                result = "AIWA_RC_T501";
+                break;
+            case LG:
+                result = "LG";
+                break;
+            case SANYO:
+                result = "SANYO";
+                break;
+            case MITSUBISHI:
+                result = "MITSUBISHI";
+                break;
+            case DISH:
+                result = "DISH";
+                break;
+            case SHARP:
+                result = "SHARP";
+                break;
+            case COOLIX:
+                result = "COOLIX";
+                break;
+            case DAIKIN:
+                result = "DAIKIN";
+                break;
+            case DENON:
+                result = "DENON";
+                break;
+            case KELVINATOR:
+                result = "KELVINATOR";
+                break;
+            case SHERWOOD:
+                result = "SHERWOOD";
+                break;
+            case MITSUBISHI_AC:
+                result = "MITSUBISHI_AC";
+                break;
+            case RCMM:
+                result = "RCMM";
+                break;
+            case SANYO_LC7461:
+                result = "SANYO_LC7461";
+                break;
+            case RC5X:
+                result = "RC5X";
+                break;
+            case GREE:
+                result = "GREE";
+                break;
+            case PRONTO:
+                result = "PRONTO";
+                break;
+            case NEC_LIKE:
+                result = "NEC_LIKE";
+                break;
+            case ARGO:
+                result = "ARGO";
+                break;
+            case TROTEC:
+                result = "TROTEC";
+                break;
+            case NIKAI:
+                result = "NIKAI";
+                break;
+            case RAW:
+                result = "RAW";
+                break;
+            case GLOBALCACHE:
+                result = "GLOBALCACHE";
+                break;
+            case TOSHIBA_AC:
+                result = "TOSHIBA_AC";
+                break;
+            case FUJITSU_AC:
+                result = "FUJITSU_AC";
+                break;
+            case MIDEA:
+                result = "MIDEA";
+                break;
+            case MAGIQUEST:
+                result = "MAGIQUEST";
+                break;
+            case LASERTAG:
+                result = "LASERTAG";
+                break;
+            case CARRIER_AC:
+                result = "CARRIER_AC";
+                break;
+            case HAIER_AC:
+                result = "HAIER_AC";
+                break;
+            case MITSUBISHI2:
+                result = "MITSUBISHI2";
+                break;
+            case HITACHI_AC:
+                result = "HITACHI_AC";
+                break;
+            case HITACHI_AC1:
+                result = "HITACHI_AC1";
+                break;
+            case HITACHI_AC2:
+                result = "HITACHI_AC2";
+                break;
+            case GICABLE:
+                result = "GICABLE";
+                break;
+            case HAIER_AC_YRW02:
+                result = "HAIER_AC_YRW02";
+                break;
+            case WHIRLPOOL_AC:
+                result = "WHIRLPOOL_AC";
+                break;
+            case SAMSUNG_AC:
+                result = "SAMSUNG_AC";
+                break;
+            case LUTRON:
+                result = "LUTRON";
+                break;
+            case ELECTRA_AC:
+                result = "ELECTRA_AC";
+                break;
+            case PANASONIC_AC:
+                result = "PANASONIC_AC";
+                break;
+            case PIONEER:
+                result = "PIONEER";
+                break;
+            case LG2:
+                result = "LG2";
+                break;
+            case MWM:
+                result = "MWM";
+                break;
+            case DAIKIN2:
+                result = "DAIKIN2";
+                break;
+            case VESTEL_AC:
+                result = "VESTEL_AC";
+                break;
+            case TECO:
+                result = "TECO";
+                break;
+            case SAMSUNG36:
+                result = "SAMSUNG36";
+                break;
+            case TCL112AC:
+                result = "TCL112AC";
+                break;
+            case LEGOPF:
+                result = "LEGOPF";
+                break;
+            case MITSUBISHI_HEAVY_88:
+                result = "MITSUBISHI_HEAVY_88";
+                break;
+            case MITSUBISHI_HEAVY_152:
+                result = "MITSUBISHI_HEAVY_152";
+                break;
+            case DAIKIN216:
+                result = "DAIKIN216";
+                break;
+            case SHARP_AC:
+                result = "SHARP_AC";
+                break;
+            case GOODWEATHER:
+                result = "GOODWEATHER";
+                break;
+            case INAX:
+                result = "INAX";
+                break;
+            case DAIKIN160:
+                result = "DAIKIN160";
+                break;
+            case NEOCLIMA:
+                result = "NEOCLIMA";
+                break;
+            case DAIKIN176:
+                result = "DAIKIN176";
+                break;
+            case DAIKIN128:
+                result = "DAIKIN128";
+                break;
+            case AMCOR:
+                result = "AMCOR";
+                break;
+            case DAIKIN152:
+                result = "DAIKIN152";
+                break;
+            case MITSUBISHI136:
+                result = "MITSUBISHI136";
+                break;
+            case MITSUBISHI112:
+                result = "MITSUBISHI112";
+                break;
+            case HITACHI_AC424:
+                result = "HITACHI_AC424";
+                break;
+            case SONY_38K:
+                result = "SONY_38K";
+                break;
+            case EPSON:
+                result = "EPSON";
+                break;
+            case SYMPHONY:
+                result = "SYMPHONY";
+                break;
+            case HITACHI_AC3:
+                result = "HITACHI_AC3";
+                break;
+            case DAIKIN64:
+                result = "DAIKIN64";
+                break;
+            case AIRWELL:
+                result = "AIRWELL";
+                break;
+            case DELONGHI_AC:
+                result = "DELONGHI_AC";
+                break;
+            case DOSHISHA:
+                result = "DOSHISHA";
+                break;
+            case MULTIBRACKETS:
+                result = "MULTIBRACKETS";
+                break;
+            case CARRIER_AC40:
+                result = "CARRIER_AC40";
+                break;
+            case CARRIER_AC64:
+                result = "CARRIER_AC64";
+                break;
+            case HITACHI_AC344:
+                result = "HITACHI_AC344";
+                break;
+            case CORONA_AC:
+                result = "CORONA_AC";
+                break;
+            case MIDEA24:
+                result = "MIDEA24";
+                break;
+            case ZEPEAL:
+                result = "ZEPEAL";
+                break;
+            case SANYO_AC:
+                result = "SANYO_AC";
+                break;
+            case VOLTAS:
+                result = "VOLTAS";
+                break;
+            case METZ:
+                result = "METZ";
+                break;
+            case TRANSCOLD:
+                result = "TRANSCOLD";
+                break;
+            case TECHNIBEL_AC:
+                result = "TECHNIBEL_AC";
+                break;
+            case MIRAGE:
+                result = "MIRAGE";
+                break;
+            case ELITESCREENS:
+                result = "ELITESCREENS";
+                break;
+            case PANASONIC_AC32:
+                result = "PANASONIC_AC32";
+                break;
+            case MILESTAG2:
+                result = "MILESTAG2";
+                break;
+            case ECOCLIM:
+                result = "ECOCLIM";
+                break;
+            case XMP:
+                result = "XMP";
+                break;
+            case TRUMA:
+                result = "TRUMA";
+                break;
+            case HAIER_AC176:
+                result = "HAIER_AC176";
+                break;
+            case TEKNOPOINT:
+                result = "TEKNOPOINT";
+                break;
+            case KELON:
+                result = "KELON";
+                break;
+            case TROTEC_3550:
+                result = "TROTEC_3550";
+                break;
+            case SANYO_AC88:
+                result = "SANYO_AC88";
+                break;
+            case BOSE:
+                result = "BOSE";
+                break;
+            case ARRIS:
+                result = "ARRIS";
+                break;
+            case RHOSS:
+                result = "RHOSS";
+                break;
+            case AIRTON:
+                result = "AIRTON";
+                break;
+            case COOLIX48:
+                result = "COOLIX48";
+                break;
+            case HITACHI_AC264:
+                result = "HITACHI_AC264";
+                break;
+            case KELON168:
+                result = "KELON168";
+                break;
+            case HITACHI_AC296:
+                result = "HITACHI_AC296";
+                break;
+            case DAIKIN200:
+                result = "DAIKIN200";
+                break;
+            case HAIER_AC160:
+                result = "HAIER_AC160";
+                break;
+            case CARRIER_AC128:
+                result = "CARRIER_AC128";
+                break;
+            case TOTO:
+                result = "TOTO";
+                break;
+            case CLIMABUTLER:
+                result = "CLIMABUTLER";
+                break;
+            case TCL96AC:
+                result = "TCL96AC";
+                break;
+            case BOSCH144:
+                result = "BOSCH144";
+                break;
+            case SANYO_AC152:
+                result = "SANYO_AC152";
+                break;
+            case DAIKIN312:
+                result = "DAIKIN312";
+                break;
+            case GORENJE:
+                result = "GORENJE";
+                break;
+            case WOWWEE:
+                result = "WOWWEE";
+                break;
+            case CARRIER_AC84:
+                result = "CARRIER_AC84";
+                break;
+            case YORK:
+                result = "YORK";
+                break;
+            default:
+                result = "INVALID";
+        }
+        return result;
     }
 
 };

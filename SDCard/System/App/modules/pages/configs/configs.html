@@ -91,7 +91,7 @@
 
     $(document).ready(function() {
 
-        request("/CONFIG_GET_DATA", {}, function (response) {
+        request("/CONFIG_GET_DATA", "POST", {}, function (response) {
             if (isJson(response)) {
                 var json = JSON.parse(response);
                 $("#ip-external-wifi").val(json.IP);
@@ -105,7 +105,7 @@
         });
 
         $("#config-save-internal-wifi").click(function() {
-            request("/CONFIG_SAVE_INTERNAL_WIFI", {
+            request("/CONFIG_SAVE_INTERNAL_WIFI", "POST", {
                 HSSID: $("#ssid-internal-wifi").val(), 
                 HPASS: $("#pass-internal-wifi").val()
             }, function (response) {
@@ -119,7 +119,7 @@
         });
 
         $("#config-save-external-wifi").click(function() {
-            request("/CONFIG_SAVE_EXTERNAL_WIFI", {
+            request("/CONFIG_SAVE_EXTERNAL_WIFI", "POST", {
                 SSID: $("#ssid-external-wifi").val(), 
                 PASS: $("#pass-external-wifi").val()
             }, function (response) {
@@ -133,7 +133,7 @@
         });
 
         $("#config-reset").click(function() {
-            request("/CONFIG_RESET", {}, function (response) {
+            request("/CONFIG_RESET", "POST", {}, function (response) {
                 //
             }, function (response) {
                 notify("error", "Houve um problema com a comunicação.");

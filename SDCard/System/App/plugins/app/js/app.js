@@ -1,10 +1,9 @@
-function request(url, data, success = "", error = "") {
+function request(url, method, data, success = "", error = "") {
 
     var request = $.ajax({
         url: url,
-        method: "GET",
+        method: method,
         data: data,
-        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
     });
 
     request.done(function (response) {
@@ -28,7 +27,7 @@ function request(url, data, success = "", error = "") {
 function loadPage(obj) {
     var page_load = $(obj).attr("id");
     if (page_load) {
-        request("modules/pages/" + page_load + "/" + page_load + ".html", {}, function(response) {
+        request("modules/pages/" + page_load + "/" + page_load + ".html", "GET", {}, function(response) {
             $("#modules").html(response);
             window.setTimeout(function() {
                 EventsReload();
@@ -193,7 +192,7 @@ function popoverElements() {
 }
 
 function listDirSDCard(id_tree_view, data, path, success = "", error = "") {
-    request("/LIST_DIR", {path: path}, function (response) {
+    request("/LIST_DIR", "POST", {path: path}, function (response) {
         if (isJson(response)) {
             var json = JSON.parse(response);
             $("#" + id_tree_view).html("");
@@ -243,7 +242,7 @@ function sdcardPrompt(pathLabel, placeholder, buttonName, callback) {
     });
 }
 
-function generateTreeView(id, json, nivel = 0, jsonElement, path = "", callbackFileOpen = "") {
+function generateTreeView(id, json, nivel = 0, idDataElement, path = "", callbackFileOpen = "") {
 
     var size = 25.75;
     var idAux = id;
@@ -265,47 +264,49 @@ function generateTreeView(id, json, nivel = 0, jsonElement, path = "", callbackF
         nivel++;
     }
 
-    for (var i = 0; i < json.length; i++) {
-        var item = path + json[i].text;
-        var item_id = remove_accents(item.replaceAll(/\ |\\/g, "_").toLowerCase());
-        if (json[i].hasOwnProperty("nodes")) {
-            if (json[i].nodes.length > 0) {
-                $("#" + id).append('<div role="treeitem" id="item-' + item_id + '" class="list-group-node" data-path="' + path + json[i].text + '" data-bs-toggle="collapse" data-bs-target="#' + item_id + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
-                $("#" + id).append('<span role="group" class="list-group collapse" id="' + item_id + '"></span>');
-                
-                $("#" + id + " #item-" + item_id).append('<div class="float-start flex"></div>');
-                $("#" + id + " #item-" + item_id + " .float-start").append('<i class="state-icon bi bi-folder"></i>');
-                $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
-                
-                $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add-folder pop" data-bs-content="Nova Pasta"></i>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-file-plus item-add-file pop" data-bs-content="Novo Arquivo"></i>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Pasta"></i>');
-                
-                generateTreeView(item_id, json[i].nodes, nivel + 1, jsonElement, path + json[i].text + "/");
+    if(json != "empy") {
+        for (var i = 0; i < json.length; i++) {
+            var item = path + json[i].text;
+            var item_id = remove_accents(item.replaceAll(/\ |\\/g, "_").toLowerCase());
+            if (json[i].hasOwnProperty("nodes")) {
+                if (json[i].nodes.length > 0) {
+                    $("#" + id).append('<div role="treeitem" id="item-' + item_id + '" class="list-group-node" data-path="' + path + json[i].text + '" data-bs-toggle="collapse" data-bs-target="#' + item_id + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
+                    $("#" + id).append('<span role="group" class="list-group collapse" id="' + item_id + '"></span>');
+                    
+                    $("#" + id + " #item-" + item_id).append('<div class="float-start flex"></div>');
+                    $("#" + id + " #item-" + item_id + " .float-start").append('<i class="state-icon bi bi-folder"></i>');
+                    $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
+                    
+                    $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
+                    $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add-folder pop" data-bs-content="Nova Pasta"></i>');
+                    $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-file-plus item-add-file pop" data-bs-content="Novo Arquivo"></i>');
+                    $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Pasta"></i>');
+                    
+                    generateTreeView(item_id, json[i].nodes, nivel + 1, idDataElement, path + json[i].text + "/");
+                } else {
+                    $("#" + id).append('<div role="treeitem" id="item-' + item_id + '" class="list-group-node" data-path="' + path + json[i].text + '" data-bs-toggle="collapse" data-bs-target="#' + item_id + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
+                    
+                    $("#" + id + " #item-" + item_id).append('<div class="float-start flex"></div>');
+                    $("#" + id + " #item-" + item_id + " .float-start").append('<i class="bi bi-folder-x"></i>');
+                    $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
+                    
+                    $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
+                    $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add-folder pop" data-bs-content="Nova Pasta"></i>');
+                    $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-file-plus item-add-file pop" data-bs-content="Novo Arquivo"></i>');
+                    $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Pasta"></i>');
+                }
             } else {
-                $("#" + id).append('<div role="treeitem" id="item-' + item_id + '" class="list-group-node" data-path="' + path + json[i].text + '" data-bs-toggle="collapse" data-bs-target="#' + item_id + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
+                $("#" + id).prepend('<div role="treeitem" id="item-' + item_id + '" class="list-group-node" data-path="' + path + json[i].text + '" data-bs-toggle="collapse" data-bs-target="#' + item_id + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
                 
                 $("#" + id + " #item-" + item_id).append('<div class="float-start flex"></div>');
-                $("#" + id + " #item-" + item_id + " .float-start").append('<i class="bi bi-folder-x"></i>');
+                $("#" + id + " #item-" + item_id + " .float-start").append('<i class="bi bi-filetype-json"></i>');
                 $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
-                
-                $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="add-' + item_id + '" class="bi bi-folder-plus item-add-folder pop" data-bs-content="Nova Pasta"></i>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="remove-' + item_id + '" class="bi bi-file-plus item-add-file pop" data-bs-content="Novo Arquivo"></i>');
-                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Pasta"></i>');
-            }
-        } else {
-            $("#" + id).prepend('<div role="treeitem" id="item-' + item_id + '" class="list-group-node" data-path="' + path + json[i].text + '" data-bs-toggle="collapse" data-bs-target="#' + item_id + '" style="padding-left: ' + ((size * nivel) + 5) + 'px"></div>');
-            
-            $("#" + id + " #item-" + item_id).append('<div class="float-start flex"></div>');
-            $("#" + id + " #item-" + item_id + " .float-start").append('<i class="bi bi-filetype-json"></i>');
-            $("#" + id + " #item-" + item_id + " .float-start").append(json[i].text);
 
-            $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
-            $("#" + id + " #item-" + item_id + " .float-end").append('<i id="save-' + item_id + '" class="bi bi-floppy item-save pop" data-bs-content="Salvar Dados"></i>');
-            $("#" + id + " #item-" + item_id + " .float-end").append('<i id="open-' + item_id + '" class="bi bi-download item-open pop" data-bs-content="Carregar Dados"></i>');
-            $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Arquivo"></i>');
+                $("#" + id + " #item-" + item_id).append('<div class="float-end flex"></div>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="save-' + item_id + '" class="bi bi-floppy item-save pop" data-bs-content="Salvar Dados"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="open-' + item_id + '" class="bi bi-download item-open pop" data-bs-content="Carregar Dados"></i>');
+                $("#" + id + " #item-" + item_id + " .float-end").append('<i id="delete-' + item_id + '" class="bi bi-trash2 item-delete pop" data-bs-content="Excluir Arquivo"></i>');
+            }
         }
     }
 
@@ -326,10 +327,10 @@ function generateTreeView(id, json, nivel = 0, jsonElement, path = "", callbackF
         var pathLabel = $(this).parent().parent().attr("data-path");
         sdcardPrompt(pathLabel, "Nome da Pasta", "Criar Pasta", (value) => {
             var path_request = pathLabel + "/" + value;
-            request("/CREATE_FOLDER", { path: path_request }, function (response) {
+            request("/CREATE_FOLDER", "POST", { path: path_request }, function (response) {
                 if (response == "ok") {
                     notify("success", "Pasta criada com sucesso.");
-                    listDirSDCard(idAux, jsonElement, path.replaceAll(/\//g, ""), function () {
+                    listDirSDCard(idAux, idDataElement, path.replaceAll(/\//g, ""), function () {
                         var path_dir = pathLabel.split("/");
                         var dir = "";
                         $("#list_" + remove_accents(path.replaceAll(/\ |\\|\//g, "").toLowerCase())).collapse("toggle");
@@ -353,10 +354,10 @@ function generateTreeView(id, json, nivel = 0, jsonElement, path = "", callbackF
         var pathLabel = $(this).parent().parent().attr("data-path");
         sdcardPrompt(pathLabel, "Nome do Arquivo", "Criar Arquivo", (value) => {
             var path_request = pathLabel + "/" + value;
-            request("/CREATE_FILE", { path: path_request }, function (response) {
+            request("/CREATE_FILE", "POST", { path: path_request }, function (response) {
                 if (response == "ok") {
                     notify("success", "Arquivo criado com sucesso.");
-                    listDirSDCard(idAux, jsonElement, path.replaceAll(/\//g, ""), function () {
+                    listDirSDCard(idAux, idDataElement, path.replaceAll(/\//g, ""), function () {
                         var path_dir = pathLabel.split("/");
                         var dir = "";
                         $("#list_" + remove_accents(path.replaceAll(/\ |\\|\//g, "").toLowerCase())).collapse("toggle");
@@ -386,11 +387,11 @@ function generateTreeView(id, json, nivel = 0, jsonElement, path = "", callbackF
     $(".item-open").unbind();
     $(".item-open").click(function () {
         var path = $(this).parent().parent().attr("data-path");
-        request("/FILE_OPEN", {path: path}, function (response) {
+        request("/FILE_OPEN", "POST", {path: path}, function (response) {
             if(callbackFileOpen != "") {
                 callbackFileOpen(response);
             }
-        }, function (response) {
+        }, function () {
             notify("error", "Houve um problema com a comunicação.");
         });
     });
@@ -398,12 +399,12 @@ function generateTreeView(id, json, nivel = 0, jsonElement, path = "", callbackF
     $(".item-save").unbind();
     $(".item-save").click(function () {
         var path = $(this).parent().parent().attr("data-path");
-        request("/FILE_SAVE", {path: path, json: $("#" + jsonElement).val()}, function (response) {
+        request("/FILE_SAVE", "POST", {path: path, data: $("#" + idDataElement).val()}, function (response) {
             if (isJson(response)) {
                 var json = JSON.parse(response);
                 notify(json.status, json.message);
             }
-        }, function (response) {
+        }, function () {
             notify("error", "Houve um problema com a comunicação.");
         });
     });
@@ -412,14 +413,14 @@ function generateTreeView(id, json, nivel = 0, jsonElement, path = "", callbackF
     $(".item-delete").click(function () {
         var id = $(this).attr("id").split("-");
         var path = $(this).parent().parent().attr("data-path");
-        request("/DELETE_FILE", {path: path}, function (response) {
+        request("/DELETE_FILE", "POST", {path: path}, function (response) {
             if (response == "ok") {
                 $("#item-" + id[1]).remove();
                 notify("success", "Arquivo removido com sucesso.");
             } else {
                 notify("error", "O arquivo não pode ser excluído.");
             }
-        }, function (response) {
+        }, function () {
             notify("error", "Houve um problema com a comunicação.");
         });
     });
@@ -457,7 +458,7 @@ $(document).ready(function () {
 
             $(this).removeAttr("include-html").attr({ "id": setid });
 
-            request(include, {}, function (r) {
+            request(include, "GET", {}, function (r) {
                 $("#" + setid).after(r);
                 $("#" + setid).remove();
                 EventsReload();

@@ -105,7 +105,7 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/SYSTEM_OFF", HTTP_GET,
+    server.on("/SYSTEM_OFF", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             SystemMode = 0;
             request->send_P(200, "text/plain", "ok");
@@ -113,6 +113,14 @@ void WebServiceSetup() {
     );
 
     // // --------- IR -----------
+
+    server.on("/IR_READ_ON", HTTP_POST,
+        [](AsyncWebServerRequest* request) {
+            SystemMode = 1;
+            IR.SetJSON("");
+            request->send_P(200, "text/plain", "ok");
+        }
+    );
 
     // server.on("/IR", HTTP_GET,
     //     [](AsyncWebServerRequest* request) {
@@ -170,7 +178,7 @@ void WebServiceSetup() {
 
     // --------- CONFIG -----------
 
-    server.on("/CONFIG_GET_DATA", HTTP_GET,
+    server.on("/CONFIG_GET_DATA", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             String IP = WiFi.localIP().toString();
             String json = "{\"IP\": \"" + IP + "\", \"SSID\": \"" + String(wifissid.c_str()) + "\", \"PASS\": \"" + String(password.c_str()) + "\",";
@@ -179,26 +187,26 @@ void WebServiceSetup() {
         }
     );
     
-    server.on("/CONFIG_RESET", HTTP_GET,
+    server.on("/CONFIG_RESET", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             ESP.restart();
             request->send_P(200, "text/plain", "ok");
         }
     );
 
-    server.on("/CONFIG_SAVE_INTERNAL_WIFI", HTTP_GET,
+    server.on("/CONFIG_SAVE_INTERNAL_WIFI", HTTP_POST,
         [](AsyncWebServerRequest* request) {
 
             String ssid = "";
             String pass = "";
             String json = "{\"status\": \"success\", \"message\": \"Os dados foram atualizados.\"}";
 
-            if (request->hasParam("HSSID")) {
-                ssid = request->getParam("HSSID")->value().c_str();
+            if (request->hasParam("HSSID", true)) {
+                ssid = request->getParam("HSSID", true)->value();
             }
 
-            if (request->hasParam("HPASS")) {
-                pass = request->getParam("HPASS")->value().c_str();
+            if (request->hasParam("HPASS", true)) {
+                pass = request->getParam("HPASS", true)->value();
             }
 
             hardware = ssid;
@@ -211,19 +219,19 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/CONFIG_SAVE_EXTERNAL_WIFI", HTTP_GET,
+    server.on("/CONFIG_SAVE_EXTERNAL_WIFI", HTTP_POST,
         [](AsyncWebServerRequest* request) {
 
             String ssid = "";
             String pass = "";
             String json = "{\"status\": \"success\", \"message\": \"Os dados foram atualizados.\"}";
 
-            if (request->hasParam("SSID")) {
-                ssid = request->getParam("SSID")->value();
+            if (request->hasParam("SSID", true)) {
+                ssid = request->getParam("SSID", true)->value();
             }
 
-            if (request->hasParam("PASS")) {
-                pass = request->getParam("PASS")->value();
+            if (request->hasParam("PASS", true)) {
+                pass = request->getParam("PASS", true)->value();
             }
 
             wifissid = ssid;
@@ -238,13 +246,13 @@ void WebServiceSetup() {
 
     // --------- SDCard -----------
 
-    server.on("/LIST_DIR", HTTP_GET,
+    server.on("/LIST_DIR", HTTP_POST,
         [](AsyncWebServerRequest* request) {
 
             String path = "/System/";
 
-            if (request->hasParam("path")) {
-                path += request->getParam("path")->value();
+            if (request->hasParam("path", true)) {
+                path += request->getParam("path", true)->value();
             }
 
             String json = SDCard.ListDirectory(path.c_str());
@@ -252,35 +260,35 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/FILE_OPEN", HTTP_GET,
+    server.on("/FILE_OPEN", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             
             String path = "System/";
 
-            if (request->hasParam("path")) {
-                path += request->getParam("path")->value();
+            if (request->hasParam("path", true)) {
+                path += request->getParam("path", true)->value();
             }
 
-            String json = SDCard.FileRead(path.c_str());
-            request->send_P(200, "text/plain", json.c_str());
+            String data = SDCard.FileRead(path.c_str());
+            request->send_P(200, "text/plain", data.c_str());
         }
     );
 
-    server.on("/FILE_SAVE", HTTP_GET,
+    server.on("/FILE_SAVE", HTTP_POST,
         [](AsyncWebServerRequest* request) {
 
             String path = "System/";
-            String json = "";
+            String data = "";
 
-            if (request->hasParam("path")) {
-                path += request->getParam("path")->value();
+            if (request->hasParam("path", true)) {
+                path += request->getParam("path", true)->value();
             }
 
-            if (request->hasParam("json")) {
-                json = request->getParam("json")->value();
+            if (request->hasParam("data", true)) {
+                data = request->getParam("data", true)->value();
             }
 
-            if(SDCard.FileWrite(path.c_str(), json.c_str())) {
+            if(SDCard.FileWrite(path.c_str(), data.c_str())) {
                 request->send_P(200, "text/plain", "{\"status\": \"success\", \"message\": \"Dados salvos com sucesso.\"}");
             } else {
                 request->send_P(200, "text/plain", "{\"status\": \"error\", \"message\": \"Os dados não foram salvos.\"}");
@@ -289,12 +297,12 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/DELETE_FILE", HTTP_GET,
+    server.on("/DELETE_FILE", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             
             String path = "System/";
-            if (request->hasParam("path")) {
-                path += request->getParam("path")->value();
+            if (request->hasParam("path", true)) {
+                path += request->getParam("path", true)->value();
             }
 
             if(SDCard.Delete(path.c_str())) {
@@ -306,13 +314,13 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/CREATE_FILE", HTTP_GET,
+    server.on("/CREATE_FILE", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             
             String path = "System/";
 
-            if (request->hasParam("path")) {
-                path += request->getParam("path")->value() + ".json";
+            if (request->hasParam("path", true)) {
+                path += request->getParam("path", true)->value() + ".json";
             }
 
             if(SDCard.FileCreate(path.c_str())) {
@@ -324,13 +332,13 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/CREATE_FOLDER", HTTP_GET,
+    server.on("/CREATE_FOLDER", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             
             String path = "System/";
 
-            if (request->hasParam("path")) {
-                path += request->getParam("path")->value();
+            if (request->hasParam("path", true)) {
+                path += request->getParam("path", true)->value();
             }
 
             if(SDCard.FolderCreate(path.c_str())) {
@@ -344,7 +352,7 @@ void WebServiceSetup() {
 
     // ---------- NFC ------------
 
-    server.on("/NFC_READ_ON", HTTP_GET,
+    server.on("/NFC_READ_ON", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             SystemMode = 2;
             PN532.SetJSON("");
@@ -352,7 +360,7 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/NFC_WRITE_ON", HTTP_GET,
+    server.on("/NFC_WRITE_ON", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             
             SystemMode = 3;
@@ -362,20 +370,20 @@ void WebServiceSetup() {
             String key = "";
             String data = "";
 
-            if (request->hasParam("block")) {
-                block = request->getParam("block")->value().toInt();
+            if (request->hasParam("block", true)) {
+                block = request->getParam("block", true)->value().toInt();
             }
 
-            if (request->hasParam("type")) {
-                type = request->getParam("type")->value().toInt();
+            if (request->hasParam("type", true)) {
+                type = request->getParam("type", true)->value().toInt();
             }
 
-            if (request->hasParam("key")) {
-                key = request->getParam("key")->value();
+            if (request->hasParam("key", true)) {
+                key = request->getParam("key", true)->value();
             }
 
-            if (request->hasParam("data")) {
-                data = request->getParam("data")->value();
+            if (request->hasParam("data", true)) {
+                data = request->getParam("data", true)->value();
             }
 
             String response = PN532.StartWriteData(data, block, type, key);
@@ -384,7 +392,7 @@ void WebServiceSetup() {
         }
     );
 
-    server.on("/NFC_WRITE_KEY_ON", HTTP_GET,
+    server.on("/NFC_WRITE_KEY_ON", HTTP_POST,
         [](AsyncWebServerRequest* request) {
             
             SystemMode = 3;
@@ -392,20 +400,20 @@ void WebServiceSetup() {
             int block;
             String key_a, key_b, new_key, response;
 
-            if (request->hasParam("block")) {
-                block = request->getParam("block")->value().toInt();
+            if (request->hasParam("block", true)) {
+                block = request->getParam("block", true)->value().toInt();
             }
 
-            if (request->hasParam("key_a")) {
-                key_a = request->getParam("key_a")->value();
+            if (request->hasParam("key_a", true)) {
+                key_a = request->getParam("key_a", true)->value();
             }
 
-            if (request->hasParam("key_b")) {
-                key_b = request->getParam("key_b")->value();
+            if (request->hasParam("key_b", true)) {
+                key_b = request->getParam("key_b", true)->value();
             }
 
-            if (request->hasParam("new_key")) {
-                new_key = request->getParam("new_key")->value();
+            if (request->hasParam("new_key", true)) {
+                new_key = request->getParam("new_key", true)->value();
             }
 
             if(key_a != "000000000000") {
@@ -425,6 +433,14 @@ void WebServiceSetup() {
 }
 
 void WebServiceLoop() {
+
+    if(SystemMode == 1) {
+        String json = IR.GetJSON();
+        if(json != "") {
+            ws.textAll(json);
+            IR.SetJSON("");
+        }
+    }
 
     if(SystemMode == 2) {
         String json = PN532.GetJSON();
@@ -458,3 +474,16 @@ boolean connectWifi() {
     return state;
 
 }
+
+// JSON Exemple
+// server.on("/state", HTTP_GET, []() {
+// DynamicJsonDocument root(1024);
+// root["mode"] = acState.operation;
+// root["fan"] = acState.fan;
+// root["temp"] = acState.temperature;
+// root["power"] = acState.powerStatus;
+// String output;
+// serializeJson(root, output);
+// server.send(200, "text/plain", output);
+// });
+// DeserializationError error = deserializeJson(root, server.arg("plain"));

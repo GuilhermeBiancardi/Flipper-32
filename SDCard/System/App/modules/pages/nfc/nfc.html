@@ -432,7 +432,7 @@
                         "data": StringToHex(dados)
                     };
 
-                    request("/NFC_WRITE_ON", data, function (response) {
+                    request("/NFC_WRITE_ON", "POST", data, function (response) {
                         if (isJson(response)) {
                             var json = JSON.parse(response);
                             notify(json.status, json.message);
@@ -520,7 +520,7 @@
                                 "key_b": $("#nfc_hex_key_b_sector-" + id[1]).val(),
                                 "new_key": new_key_a + key_acs + new_key_b,
                             };
-                            request("/NFC_WRITE_KEY_ON", data, function (response) {
+                            request("/NFC_WRITE_KEY_ON", "POST", data, function (response) {
                                 if (isJson(response)) {
                                     var json = JSON.parse(response);
                                     json.status == "success" ? json.menssage = "KeyA e KeyB foram alteradas com sucesso!" : json.menssage;
@@ -597,7 +597,7 @@
                         "key": key,
                         "data": StringToHex(data)
                     };
-                    request("/NFC_WRITE_ON", requestData, function (response) {
+                    request("/NFC_WRITE_ON", "POST", requestData, function (response) {
                         if (isJson(response)) {
                             var json = JSON.parse(response);
                             json.status == "error" ? json.message = "Erro na Gravação!" : json.message = "Dados Gravados com Sucesso!";
@@ -641,7 +641,7 @@
             url = "/NFC_READ_ON";
         }
 
-        request(url, {}, function (response) {
+        request(url, "POST", {}, function (response) {
             if (response == "ok") {
                 if (type == "on") {
                     $("#nfc_on_off").removeClass("text-danger").addClass("text-success");

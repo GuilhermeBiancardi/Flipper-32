@@ -2,27 +2,17 @@
     <div class="card-body">
         <div class="btn-toolbar" role="toolbar">
             <div class="d-flex align-items-center me-2 ms-1">
-                <!-- <i id="nfc_on_off" class="bi bi-circle-fill fs-6px text-danger me-2"></i> -->
                 <div class="form-check form-switch pop" data-bs-content="Ligar/Desligar leitura Infra Vermelho">
                     <input type="checkbox" class="form-check-input" id="ir_menu_read" style="width: 4.5em; height: 2.8em;">
                     <!-- <label class="form-check-label" for="nfc_menu_read"></label> -->
                 </div>
             </div>
-            <!-- <div class="btn-group me-2" role="group">
-                <button type="button" class="btn btn-outline-secondary pop me-2 rounded-2" data-bs-content="Menú Tags SDCard" onclick="menuOpen(this, 'block-sd-card-tags')">
+            <div class="btn-group me-2" role="group">
+                <button type="button" class="btn btn-outline-secondary pop me-2 rounded-2" data-bs-content="Menú Tags SDCard" onclick="menuOpen(this, 'block-sd-card-ir')">
                     <i class="bi bi-sd-card"></i>
                 </button>
-                <button type="button" class="btn btn-outline-secondary pop me-2 rounded-2" data-bs-content="Menú Keys SDCard" onclick="menuOpen(this, 'block-sd-card-keys')">
-                    <i class="bi bi-key"></i>
-                </button>
-                <button type="button" class="btn btn-outline-secondary pop me-2 rounded-2" data-bs-content="Log de Gravação Múltipla" onclick="menuOpen(this, 'block-log')">
-                    <i class="bi bi-file-earmark-text"></i>
-                </button>
-                <button type="button" class="btn btn-outline-secondary pop rounded-2" data-bs-content="Gravar Tag Completa" onclick="menuOpen(this, 'block-tag')">
-                    <i class="bi bi-fire"></i>
-                </button>
             </div>
-            <div class="input-group flex-nowrap w-100">
+            <!-- <div class="input-group flex-nowrap w-100">
                 <span class="input-group-text">TAG UID</span>
                 <input type="text" id="card_uid" class="form-control form-control text-uppercase" style="min-width: 150px;" placeholder="00000000" readonly>
             </div> -->
@@ -32,47 +22,22 @@
 
 <div class="mt-5"></div>
 
-<!-- <div id="block-log" class="animated-05 fadeInLeft d-none row m-0">
-    <div class="col-12 mb-3">
-        <div class="card">
-            <div class="card-header fw-bold small text-uppercase">
-                Log de Gravação Multipla:
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table id="nfc_table_log" class="table table-striped table-borderless mb-2px small text-nowrap">
-                        <tbody>
-                            
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="card-arrow">
-                <div class="card-arrow-top-left"></div>
-                <div class="card-arrow-top-right"></div>
-                <div class="card-arrow-bottom-left"></div>
-                <div class="card-arrow-bottom-right"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="block-sd-card-keys" class="animated-05 fadeInLeft d-none row m-0">
+<div id="block-sd-card-ir" class="animated-05 fadeInLeft d-none row m-0">
     <div class="col-12 mb-3">
         <div class="card">
             <div class="card-header fw-bold small text-uppercase p-0 ps-2 pe-2">
-                Keys SDCard
+                Infra Vermelho SDCard
                 <div class="d-flex flex-row">
-                    <a id="list-files-sd-key" class="float-end fs-6 bi-list-task p-2 m-1 text-inverse rounded-circle pop" data-bs-content="Listar" role="button"></a>
+                    <a id="list-files-sd-ir" class="float-end fs-6 bi-list-task p-2 m-1 text-inverse rounded-circle pop" data-bs-content="Listar" role="button"></a>
                 </div>
             </div>
             <div class="card-body">
-                <div id="nfc_key_files_tree" class="treeview p-2">
+                <div id="ir_files_tree" class="treeview p-2">
                     <small>Para ver a lista de arquivos contidos no SDCard clique em " <span class="bi-list-task"></span> " Listar no menú.</small>
                 </div>
                 <br>
-                <label class="form-label" for="json-nfc">Keys List <small>(1 Key por linha)</small></label>
-                <textarea class="form-control text-uppercase" id="data-key" rows="8" placeholder="Nenhum arquivo de Keys carregado."></textarea>
+                <label class="form-label" for="json-ir">IR JSON</label>
+                <textarea class="form-control" id="json-ir" rows="8" placeholder="Nenhuma Tag Lida ou Carregada." readonly></textarea>
             </div>
             <div class="card-arrow">
                 <div class="card-arrow-top-left"></div>
@@ -84,41 +49,85 @@
     </div>
 </div>
 
-<div id="block-sd-card-tags" class="animated-05 fadeInLeft d-none row m-0">
-    <div class="col-12 mb-3">
-        <div class="card">
-            <div class="card-header fw-bold small text-uppercase p-0 ps-2 pe-2">
-                TAGs SDCard
-                <div class="d-flex flex-row">
-                    <a id="list-files-sd-tag" class="float-end fs-6 bi-list-task p-2 m-1 text-inverse rounded-circle pop" data-bs-content="Listar" role="button"></a>
-                </div>
-            </div>
-            <div class="card-body">
-                <div id="nfc_tag_files_tree" class="treeview p-2">
-                    <small>Para ver a lista de arquivos contidos no SDCard clique em " <span class="bi-list-task"></span> " Listar no menú.</small>
-                </div>
-                <br>
-                <label class="form-label" for="json-nfc">Tag JSON</label>
-                <textarea class="form-control" id="json-nfc" rows="8" placeholder="Nenhuma Tag Lida ou Carregada." readonly></textarea>
-            </div>
-            <div class="card-arrow">
-                <div class="card-arrow-top-left"></div>
-                <div class="card-arrow-top-right"></div>
-                <div class="card-arrow-bottom-left"></div>
-                <div class="card-arrow-bottom-right"></div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="block-tag" class="animated-05 fadeInLeft d-none row m-0">
+<div id="block-ir" class="animated-05 fadeInLeft row m-0">
     <div class="col-12 mb-3">
         <div class="card">
             <div class="card-header fw-bold small text-uppercase">
-                Dados completos da TAG
+                Infra Vermelho
             </div>
             <div class="card-body">
-                <buttom id="nfc_tag_save" class="btn btn-default form-control">Gravar dados atuais na Tag.</buttom>
+                <div class="row">
+                    <div class="col-12 col-lg-4">
+
+                        <div id="block-ir" class="animated-05 fadeInLeft row m-0">
+                            <div class="col-12 mb-3">
+                                <div class="card">
+                                    <div class="card-header fw-bold small text-uppercase">
+                                        Informações do Sinal
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="input-group flex-nowrap w-100 mb-2">
+                                            <span class="input-group-text">Endereço</span>
+                                            <input type="text" class="form-control" id="ir-address" readonly></input>
+                                        </div>
+                                        <div class="input-group flex-nowrap w-100 mb-2">
+                                            <span class="input-group-text">Comando</span>
+                                            <input type="text" class="form-control" id="ir-command" readonly></input>
+                                        </div>
+                                        <div class="input-group flex-nowrap w-100 mb-2">
+                                            <span class="input-group-text">Decoder</span>
+                                            <input type="text" class="form-control" id="ir-decode" readonly></input>
+                                        </div>
+                                        <div class="input-group flex-nowrap w-100 mb-2">
+                                            <span class="input-group-text">Bits</span>
+                                            <input type="text" class="form-control" id="ir-bits" readonly></input>
+                                        </div>
+                                        <div class="input-group flex-nowrap w-100 mb-2">
+                                            <span class="input-group-text">Value</span>
+                                            <input type="text" class="form-control" id="ir-value" readonly></input>
+                                        </div>
+                                        <div class="input-group flex-nowrap w-100 mb-2">
+                                            <span class="input-group-text">Repetir</span>
+                                            <input type="number" class="form-control" id="ir-repeat" value="5" readonly></input>
+                                            <span class="input-group-text">Vezes</span>
+                                        </div>
+                                        <buttom id="ir_emulate" class="btn btn-default form-control mt-2">Emular dados lidos.</buttom>
+                                    </div>
+                                    <div class="card-arrow">
+                                        <div class="card-arrow-top-left"></div>
+                                        <div class="card-arrow-top-right"></div>
+                                        <div class="card-arrow-bottom-left"></div>
+                                        <div class="card-arrow-bottom-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-12 col-lg-8">
+
+                        <div id="block-ir" class="animated-05 fadeInLeft row m-0">
+                            <div class="col-12 mb-3">
+                                <div class="card">
+                                    <div class="card-header fw-bold small text-uppercase">
+                                        Sinal
+                                    </div>
+                                    <div class="card-body">
+                                        <label class="form-label" for="ir-raw-data">Raw Sinal Data</label>
+                                        <textarea class="form-control" id="ir-raw-data" rows="12" placeholder="Nenhuma sinal lido." readonly></textarea>
+                                    </div>
+                                    <div class="card-arrow">
+                                        <div class="card-arrow-top-left"></div>
+                                        <div class="card-arrow-top-right"></div>
+                                        <div class="card-arrow-bottom-left"></div>
+                                        <div class="card-arrow-bottom-right"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
             <div class="card-arrow">
                 <div class="card-arrow-top-left"></div>
@@ -130,646 +139,90 @@
     </div>
 </div>
 
-<div id="sectors" class="row m-0">
+<!-- <div id="ir-data" class="row m-0">
 
 </div> -->
 
 <script>
 
-    // var json_empy = '{"type":"NFC_TAG_4K","uid":"e9dad8a2","sector_0":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_0":{"data":""},"block_1":{"data":""},"block_2":{"data":""},"block_3":{"data":""}},"sector_1":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_4":{"data":""},"block_5":{"data":""},"block_6":{"data":""},"block_7":{"data":""}},"sector_2":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_8":{"data":""},"block_9":{"data":""},"block_10":{"data":""},"block_11":{"data":""}},"sector_3":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_12":{"data":""},"block_13":{"data":""},"block_14":{"data":""},"block_15":{"data":""}},"sector_4":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_16":{"data":""},"block_17":{"data":""},"block_18":{"data":""},"block_19":{"data":""}},"sector_5":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_20":{"data":""},"block_21":{"data":""},"block_22":{"data":""},"block_23":{"data":""}},"sector_6":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_24":{"data":""},"block_25":{"data":""},"block_26":{"data":""},"block_27":{"data":""}},"sector_7":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_28":{"data":""},"block_29":{"data":""},"block_30":{"data":""},"block_31":{"data":""}},"sector_8":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_32":{"data":""},"block_33":{"data":""},"block_34":{"data":""},"block_35":{"data":""}},"sector_9":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_36":{"data":""},"block_37":{"data":""},"block_38":{"data":""},"block_39":{"data":""}},"sector_10":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_40":{"data":""},"block_41":{"data":""},"block_42":{"data":""},"block_43":{"data":""}},"sector_11":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_44":{"data":""},"block_45":{"data":""},"block_46":{"data":""},"block_47":{"data":""}},"sector_12":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_48":{"data":""},"block_49":{"data":""},"block_50":{"data":""},"block_51":{"data":""}},"sector_13":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_52":{"data":""},"block_53":{"data":""},"block_54":{"data":""},"block_55":{"data":""}},"sector_14":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_56":{"data":""},"block_57":{"data":""},"block_58":{"data":""},"block_59":{"data":""}},"sector_15":{"found_key":"","key_a":"","key_b":"","key_acs":"","block_60":{"data":""},"block_61":{"data":""},"block_62":{"data":""},"block_63":{"data":""}}}';
-    // var json_mdfy = json_empy;
-    // var tag_size = "16"; // 64
+    function ONOFF(type, success = "", error = "") {
 
-    // function EmpyTableCardData() {
+        $("#ir_menu_read").addClass("text-danger").removeClass("text-success");
 
-    //     var table_start = '\
-    //     <div class="col-12 col-lg-6 mb-1">\
-    //         <div id="nfc_card-[ID_SECTOR]" class="card">\
-    //             <div class="card-header fw-bold text-uppercase p-1 px-2">\
-    //                 Setor [ID_SECTOR]\
-    //                 <small id="nfc_sector_info-[ID_SECTOR]"></small>\
-    //                 <div class="d-flex flex-row">\
-    //                     <a id="nfc_key_menu-[ID_SECTOR]" class="nfc_key_menu float-end fs-6 bi-key p-2 m-1 text-inverse rounded-circle pop" data-bs-content="Keys do Setor [ID_SECTOR]" role="button" data-bs-toggle="collapse" data-bs-target="#nfc_key_panel-[ID_SECTOR]" aria-expanded="true">\</a>\
-    //                     <a id="nfc_burn_menu-[ID_SECTOR]" class="nfc_burn_menu float-end fs-6 bi-fire p-2 m-1 text-inverse rounded-circle pop" data-bs-content="Gravar Setor [ID_SECTOR]" role="button" data-bs-toggle="collapse" data-bs-target="#nfc_burn_panel-[ID_SECTOR]" aria-expanded="true"></a>\
-    //                 </div>\
-    //             </div>\
-    //             <div class="card-body">\
-    //                 <div id="card_sector-[ID_SECTOR]">\
-    //                     <div class="table-responsive">\
-    //                         <table class="table mb-2px small text-nowrap m-0">\
-    //                             <thead>\
-    //                                 <tr style="background: var(--bs-table-striped-bg);">\
-    //                                     <th scope="col">Bloco</th>\
-    //                                     <th scope="col" class="w-100">Dados</th>\
-    //                                     <th scope="col">Ações</th>\
-    //                                 </tr>\
-    //                             </thead>\
-    //                             <tbody id="card_table_data_[ID_SECTOR]">\
-    //     ';
+        var url = "/SYSTEM_OFF";
 
-    //     var table_data = '\
-    //     <tr>\
-    //         <td class="text-center">[BLOCKS]</td>\
-    //         <td>\
-    //             <span class="d-flex align-items-center">\
-    //                 [DOT]\
-    //                 <input type="text" id="block_data-[ID_BLOCK]" class="block_data form-control border-0 p-0" maxlength="16" value="[DATA]" />\
-    //             </span>\
-    //         </td>\
-    //         <td class="text-center">\
-    //             [ACTIONS]\
-    //         </td>\
-    //     </tr>';
+        if (type == "on") {
+            url = "/IR_READ_ON";
+        }
 
-    //     var table_data_action_delete = '\
-    //     <a id="block_data_delete-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_delete">\
-    //         <i class="bi bi-trash2 me-2 pop" data-bs-content="Apagar Bloco [BLOCKS]"></i>\
-    //     </a>\
-    //     ';
+        request(url, "POST", {}, function (response) {
+            if (response == "ok") {
+                if (type == "on") {
+                    $("#ir_menu_read").removeClass("text-danger").addClass("text-success");
+                    notify("success", "Modo leitura ligado, aguardando Sinal...");
+                }
+                if (success != "") {
+                    success(response);
+                }
+            } else {
+                notify("error", "O modo leitura não pode ser ligado.");
+                $("#ir_menu_read").prop('checked', $(this).is(':checked'));
+            }
+        }, function (response) {
+            notify("error", "Houve um problema com a comunicação.");
+            $("#ir_menu_read").prop('checked', $(this).is(':checked'));
+            if (error != "") {
+                error(response);
+            }
+        });
 
-    //     var table_data_action_write = '\
-    //     <a id="block_data_write-[ID_BLOCK]" class="text-decoration-none text-inverse block_data_write">\
-    //         <i class="bi bi-pen me-2 pop" data-bs-content="Gravar no Bloco [BLOCKS]"></i>\
-    //     </a>\
-    //     ';
+    }
 
-    //     var table_data_action_nothing = '\
-    //     <a class="text-decoration-none text-inverse">\
-    //         <i class="bi bi-slash-circle me-2"></i>\
-    //     </a>\
-    //     <a class="text-decoration-none text-inverse">\
-    //         <i class="bi bi-slash-circle me-2"></i>\
-    //     </a>\
-    //     ';
+    function jsonIrRead(json_str) {
+        if (isJson(json_str)) {
 
-    //     var table_end = '\
-    //                                 </tbody>\
-    //                             </table>\
-    //                         </div>\
-    //                         <div id="nfc_burn_panel-[ID_SECTOR]" class="accordion-collapse collapse mt-3">\
-    //                             <div class="input-group flex-nowrap">\
-    //                                 <span class="input-group-text">USAR CHAVE:</span>\
-    //                                 <select id="nfc_type_key_sector-[ID_SECTOR]" class="form-select" style="min-width: 110px;">\
-    //                                     <option value="0">A</option>\
-    //                                     <option value="1">B</option>\
-    //                                 </select>\
-    //                                 <buttom id="nfc_sector_save-[ID_SECTOR]" class="btn btn-default form-control save_sector">Gravar Setor</buttom>\
-    //                             </div>\
-    //                         </div>\
-    //                         <div id="nfc_key_panel-[ID_SECTOR]" class="accordion-collapse collapse">\
-    //                             <div class="card mb-3 mt-3">\
-    //                                 <div class="card-header fw-bold small text-uppercase">\
-    //                                     Chave Atual\
-    //                                 </div>\
-    //                                 <div class="card-body">\
-    //                                     <div class="input-group flex-nowrap">\
-    //                                         <span class="input-group-text">CHAVE A</span>\
-    //                                         <span class="input-group-text">STR</span>\
-    //                                         <input type="text" id="nfc_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
-    //                                         <span class="input-group-text">HEX</span>\
-    //                                         <input type="text" id="nfc_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
-    //                                     </div>\
-    //                                     <div class="p-1"></div>\
-    //                                     <div class="input-group flex-nowrap">\
-    //                                         <span class="input-group-text">KEY ACS</span>\
-    //                                         <span class="input-group-text">STR</span>\
-    //                                         <input type="text" id="nfc_str_key_acs_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="4" placeholder="XXXX" style="min-width: 75px;">\
-    //                                         <span class="input-group-text">HEX</span>\
-    //                                         <input type="text" id="nfc_hex_key_acs_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="8" placeholder="XXXXXXXX" style="min-width: 120px;">\
-    //                                     </div>\
-    //                                     <div class="p-1"></div>\
-    //                                     <div class="input-group flex-nowrap">\
-    //                                         <span class="input-group-text">CHAVE B</span>\
-    //                                         <span class="input-group-text">STR</span>\
-    //                                         <input type="text" id="nfc_str_key_b_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
-    //                                         <span class="input-group-text">HEX</span>\
-    //                                         <input type="text" id="nfc_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
-    //                                     </div>\
-    //                                 </div>\
-    //                                 <div class="card-arrow">\
-    //                                     <div class="card-arrow-top-left"></div>\
-    //                                     <div class="card-arrow-top-right"></div>\
-    //                                     <div class="card-arrow-bottom-left"></div>\
-    //                                     <div class="card-arrow-bottom-right"></div>\
-    //                                 </div>\
-    //                             </div>\
-    //                             <div class="card">\
-    //                                 <div class="card-header fw-bold small text-uppercase">\
-    //                                     Nova Chave\
-    //                                 </div>\
-    //                                 <div class="card-body">\
-    //                                     <div class="input-group flex-nowrap">\
-    //                                         <span class="input-group-text">CHAVE A</span>\
-    //                                         <span class="input-group-text">STR</span>\
-    //                                         <input type="text" id="nfc_new_str_key_a_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
-    //                                         <span class="input-group-text">HEX</span>\
-    //                                         <input type="text" id="nfc_new_hex_key_a_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
-    //                                     </div>\
-    //                                     <div class="p-1"></div>\
-    //                                     <div class="input-group flex-nowrap">\
-    //                                         <span class="input-group-text">KEY ACS</span>\
-    //                                         <span class="input-group-text">STR</span>\
-    //                                         <input type="text" id="nfc_new_str_key_acs_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="4" placeholder="XXXX" style="min-width: 75px;">\
-    //                                         <span class="input-group-text">HEX</span>\
-    //                                         <input type="text" id="nfc_new_hex_key_acs_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="8" placeholder="XXXXXXXX" style="min-width: 120px;">\
-    //                                     </div>\
-    //                                     <div class="p-1"></div>\
-    //                                     <div class="input-group flex-nowrap">\
-    //                                         <span class="input-group-text">CHAVE B</span>\
-    //                                         <span class="input-group-text">STR</span>\
-    //                                         <input type="text" id="nfc_new_str_key_b_sector-[ID_SECTOR]" class="form-control w-100 key_sector" maxlength="6" placeholder="XXXXXX" style="min-width: 75px;">\
-    //                                         <span class="input-group-text">HEX</span>\
-    //                                         <input type="text" id="nfc_new_hex_key_b_sector-[ID_SECTOR]" class="form-control w-100 text-uppercase key_sector" maxlength="12" placeholder="XXXXXXXXXXXX" style="min-width: 120px;">\
-    //                                     </div>\
-    //                                     <div class="p-1"></div>\
-    //                                     <buttom id="nfc_key_save-[ID_SECTOR]" class="btn btn-default form-control save_sector_keys">Gravar Chaves</buttom>\
-    //                                 </div>\
-    //                                 <div class="card-arrow">\
-    //                                     <div class="card-arrow-top-left"></div>\
-    //                                     <div class="card-arrow-top-right"></div>\
-    //                                     <div class="card-arrow-bottom-left"></div>\
-    //                                     <div class="card-arrow-bottom-right"></div>\
-    //                                 </div>\
-    //                             </div>\
-    //                         </div>\
-    //                     </div>\
-    //             </div>\
-    //             <div class="card-arrow">\
-    //                 <div class="card-arrow-top-left"></div>\
-    //                 <div class="card-arrow-top-right"></div>\
-    //                 <div class="card-arrow-bottom-left"></div>\
-    //                 <div class="card-arrow-bottom-right"></div>\
-    //             </div>\
-    //         </div>\
-    //     </div>\
-    //     ';
+            $("#ir_menu_read").prop('checked', $(this).is(':checked'));
+            var json = JSON.parse(json_str);
 
-    //     var dot = "<i class='bi bi-square-fill fs-6px text-[COLOR] me-2'></i>";
+            if (json.signal) {
 
-    //     var key_blocks = [0, 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, 63];
+                $("#json-ir").val(json_str);
+                $("#ir-raw-data").val(json.signal);
+                $("#ir-address").val(json.address);
+                $("#ir-command").val(json.command);
+                $("#ir-decode").val(json.decode);
+                $("#ir-bits").val(json.bits);
+                $("#ir-value").val(json.value);
 
-    //     var blocks = 0;
+                notify("success", "Os dados foram processados com sucesso!");
+                ONOFF("off");
+            }
 
-    //     for (var i = 0; i < tag_size; i++) {
+        } else {
+            notify("error", "Os dados lidos foram corrompidos, tente novamente.");
+        }
+    }
 
-    //         var table = table_start;
-
-    //         for (var j = 0; j < 4; j++) {
-
-    //             var replace_table_data = "";
-    //             var replace_dot = "";
-    //             var block = ((i * 4) + j);
-
-    //             if (i == 0 && j == 0) {
-    //                 replace_dot = dot.replace(/\[COLOR\]/, "warning");
-    //                 replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
-    //                 replace_table_data = replace_table_data.replace(/\[DATA\]/, "Dados do Fabricante");
-    //                 replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_nothing);
-    //             } else {
-    //                 if (key_blocks.find(element => element == blocks)) {
-    //                     replace_dot = dot.replace(/\[COLOR\]/, "danger");
-    //                     replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
-    //                     replace_table_data = replace_table_data.replace(/\[DATA\]/, "Chave do Setor");
-    //                     replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_nothing);
-    //                 } else {
-    //                     replace_dot = dot.replace(/\[COLOR\]/, "success");
-    //                     replace_table_data = table_data.replace(/\[DOT\]/, replace_dot);
-    //                     replace_table_data = replace_table_data.replace(/\[DATA\]/, "Vazio");
-    //                     replace_table_data = replace_table_data.replace(/\[ACTIONS\]/, table_data_action_write + table_data_action_delete);
-    //                 }
-    //             }
-
-    //             replace_table_data = replace_table_data.replaceAll(/\[ID_BLOCK\]/g, i + "_" + block);
-    //             replace_table_data = replace_table_data.replaceAll(/\[BLOCKS\]/g, blocks);
-    //             table += replace_table_data;
-    //             blocks++;
-
-    //         }
-
-    //         table += table_end;
-    //         table = table.replaceAll(/\[ID_SECTOR\]/g, i);
-
-    //         $("#sectors").append(table);
-
-    //     }
-
-    //     SectorEvents();
-    // }
-
-    // function SectorEvents() {
-
-    //     $(".block_data").keyup(function(event) {
-    //         var text = $(this).val();
-    //         var id = $(this).attr("id").split("-");
-    //         var sb = id[1].split("_");
-    //         var auxJson = JSON.parse(json_mdfy);
-    //         auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = StringToHex(text);
-    //         json_mdfy = JSON.stringify(auxJson);
-    //         $("#json-nfc").val(json_mdfy);
-    //     });
-
-    //     $(".block_data").on('focus', function() {
-    //         if ($(this).val() === 'Vazio') {
-    //             $(this).val('');
-    //         }
-    //     });
-
-    //     $(".block_data").on('blur', function() {
-    //         if ($(this).val() === '') {
-    //             $(this).val('Vazio');
-    //         }
-    //     });
-
-    //     $(".nfc_key_menu").click(function() {
-    //         $(this).toggleClass("bg-light bg-opacity-25");
-    //     });
+    $(document).ready(function () {
         
-    //     $(".nfc_burn_menu").click(function() {
-    //         $(this).toggleClass("bg-light bg-opacity-25");
-    //     });
+        ws.onmessage = function (event) {
+            jsonIrRead(event.data);
+        };
 
-    //     $(".block_data_write").unbind();
-    //     $(".block_data_write").click(function () {
+        $("#ir_menu_read").click(function() {
+            if($("#ir_menu_read").is(":checked")) {
+                ONOFF("on");
+            } else {
+                ONOFF("off");
+            }
+        });
 
-    //         var id = $(this).attr("id").split("-");
-    //         var sector_block = id[1].split("_");
-    //         var sector = sector_block[0];
-    //         var block = sector_block[1];
-    //         var type = $("#nfc_type_key_sector-" + sector).val();
-    //         var key = $("#nfc_hex_key_a_sector-" + sector).val();
-    //         if(type == 1) {
-    //             key = $("#nfc_hex_key_b_sector-" + sector).val();
-    //         }
-    //         var dados = $("#block_data-" + id[1]).val();
+        $("#list-files-sd-ir").click(function () {
+            listDirSDCard("ir_files_tree", "json-ir", "INFRARED", (data) => {
+                jsonIrRead(data);
+            });
+        });
 
-    //         if (dados == "Vazio") {
-    //             dados = "";
-    //         }
-
-    //         if (dados.length <= 16) {
-    //             if (key != "") {
-
-    //                 var data = {
-    //                     "block": block,
-    //                     "type": type,
-    //                     "key": key,
-    //                     "data": StringToHex(dados)
-    //                 };
-
-    //                 request("/NFC_WRITE_ON", data, function (response) {
-    //                     if (isJson(response)) {
-    //                         var json = JSON.parse(response);
-    //                         notify(json.status, json.message);
-    //                         ONOFF("off");
-    //                     }
-    //                 }, function (response) {
-    //                     notify("error", "Houve um problema com a comunicação.");
-    //                 });
-
-    //             } else {
-    //                 notify("warning", "A chave de acesso do setor não foi informada.");
-    //             }
-    //         } else {
-    //             notify("warning", "O dado a ser gravado não pode exceder 16 caracteres.");
-    //         }
-
-    //     });
-
-    //     $(".block_data_delete").unbind();
-    //     $(".block_data_delete").click(function () {
-    //         var id = $(this).attr("id").split("-");
-    //         var sb = id[1].split("_");
-    //         var auxJson = JSON.parse(json_mdfy);
-    //         auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = "";
-    //         json_mdfy = JSON.stringify(auxJson);
-    //         $("#json-nfc").val(json_mdfy);
-    //         $("#block_data-" + id[1]).val("Vazio");
-    //     });
-
-    //     $(".key_sector").unbind();
-    //     $(".key_sector").on('input', function () {
-    //         var id = $(this).attr("id").split("-");
-    //         var value = $(this).val();
-    //         var auxJson = JSON.parse(json_mdfy);
-    //         if (id[0].indexOf("str_key_a_sector") != -1 || id[0].indexOf("str_key_b_sector") != -1) {
-    //             var hex = StringToHex(value);
-    //             $("#" + id[0].replaceAll(/\_str\_/g, "_hex_") + "-" + id[1]).val(hex);
-    //             if(id[0].indexOf("a") != -1) {
-    //                 auxJson["sector_" + id[1]]["key_a"] = hex;
-    //             } else {
-    //                 auxJson["sector_" + id[1]]["key_b"] = hex;
-    //             }
-    //         } else {
-    //             if(id[0].indexOf("a") != -1) {
-    //                 auxJson["sector_" + id[1]]["key_a"] = value;
-    //             } else {
-    //                 auxJson["sector_" + id[1]]["key_b"] = value;
-    //             }
-    //             if (value.length % 2 == 1) {
-    //                 value = value.slice(0, (value.length - 1));
-    //             }
-    //             var str = HexToString(value);
-    //             $("#" + id[0].replaceAll(/\_hex\_/g, "_str_") + "-" + id[1]).val(str);
-    //         }
-    //         json_mdfy = JSON.stringify(auxJson);
-    //         $("#json-nfc").val(json_mdfy);
-    //     });
-
-    //     $(".save_sector").unbind();
-    //     $(".save_sector").click(function() {
-    //         var id = $(this).attr("id").split("-");
-    //         asyncSectorSave(id).then(() => {
-    //             notify("success", "Comando concluído, consulte o log de gravação para obter mais detalhes.");
-    //             ONOFF("off");
-    //         }).catch((error) => {
-    //             notify("error", "Ocorreu um erro durante o processamento: " + error);
-    //         });
-    //     });
-
-    //     $(".save_sector_keys").unbind();
-    //     $(".save_sector_keys").click(function() {
-    //         var id = $(this).attr("id").split("-");
-    //         var block = ((parseInt(id[1]) * 4) + 3);
-    //         var new_key_a = $("#nfc_new_hex_key_a_sector-" + id[1]).val();
-    //         var key_acs = $("#nfc_new_hex_key_acs_sector-" + id[1]).val();
-    //         var new_key_b = $("#nfc_new_hex_key_b_sector-" + id[1]).val();
-    //         if(new_key_a != "" && new_key_b != "") {
-    //             if(new_key_a.length == 12 && new_key_b.length == 12) {
-    //                 if(isHex(new_key_a) && isHex(new_key_b)) {
-    //                     if(key_acs == $("#nfc_hex_key_acs_sector-" + id[1]).val()) {
-    //                         logTableAdd("reset");
-    //                         var data = {
-    //                             "block": block,
-    //                             "key_a": $("#nfc_hex_key_a_sector-" + id[1]).val(),
-    //                             "key_b": $("#nfc_hex_key_b_sector-" + id[1]).val(),
-    //                             "new_key": new_key_a + key_acs + new_key_b,
-    //                         };
-    //                         request("/NFC_WRITE_KEY_ON", data, function (response) {
-    //                             if (isJson(response)) {
-    //                                 var json = JSON.parse(response);
-    //                                 json.status == "success" ? json.menssage = "KeyA e KeyB foram alteradas com sucesso!" : json.menssage;
-    //                                 notify(json.status, json.menssage);
-    //                                 ONOFF("off");
-    //                             }
-    //                         }, function (response) {
-    //                             notify("warning", "Houve um problema com a comunicação.");
-    //                         });
-    //                     } else {
-    //                         notify("warning", "A KEY ACS está diferente do padrão do cartão, se continuar os dados do setor poderão ser perdidos.");
-    //                     }
-    //                 } else {
-    //                     notify("warning", "Chave A ou Chave B não são um HEX válido.");
-    //                 }
-    //             } else {
-    //                 notify("warning", "Chave A ou Chave B não contém 6 caracteres STR ou 12 caracteres HEX.");
-    //             }
-    //         } else {
-    //             notify("warning", "Chave A e Chave B são necessárias para gravação, certifique-se que ambas foram informadas.");
-    //         }
-    //     });
-
-    // }
-
-    // async function asyncSectorSave(id) {
-    //     logTableAdd("reset");
-    //     var start = (parseInt(id[1]) * 4);
-    //     var type = $("#nfc_type_key_sector-" + id[1]).val();
-    //     var key = $("#nfc_hex_key_a_sector-" + id[1]).val();
-    //     type == 1 ? key = $("#nfc_hex_key_b_sector-" + id[1]).val() : key;
-    //     for (var block = start; block < (start + 3); block++) {
-    //         if (block != 0) {
-    //             var data = $("#block_data-" + id[1] + "_" + block).val();
-    //             data == "Vazio" ? data = "" : data;
-    //             await saveSectorData(id[1], block, type, key, data);
-    //         }
-    //     }
-    // }
-
-    // async function asyncTagSave() {
-    //     logTableAdd("reset");
-    //     for (var sector = 0; sector < 16; sector++) {
-    //         var start = (sector * 4);
-    //         var type = $("#nfc_type_key_sector-" + sector).val();
-    //         var key = $("#nfc_hex_key_a_sector-" + sector).val();
-    //         type == 1 ? key = $("#nfc_hex_key_b_sector-" + sector).val() : key;
-    //         for (var block = start; block < (start + 3); block++) {
-    //             if (block != 0) {
-    //                 var data = $("#block_data-" + sector + "_" + block).val();
-    //                 data == "Vazio" ? data = "" : data;
-    //                 await saveSectorData(sector, block, type, key, data);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // $("#nfc_tag_save").click(function() {
-    //     asyncTagSave().then(() => {
-    //         notify("success", "Comando concluído, consulte o log de gravação para obter mais detalhes.");
-    //         ONOFF("off");
-    //     }).catch((error) => {
-    //         notify("error", "Ocorreu um erro durante o processamento: " + error);
-    //     });
-    // });
-
-    // function saveSectorData(sector, block, type, key, data) {
-    //     return new Promise((resolve, reject) => {
-    //         if (data.length <= 16) {
-    //             if (key != "") {
-    //                 var requestData = {
-    //                     "block": block,
-    //                     "type": type,
-    //                     "key": key,
-    //                     "data": StringToHex(data)
-    //                 };
-    //                 request("/NFC_WRITE_ON", requestData, function (response) {
-    //                     if (isJson(response)) {
-    //                         var json = JSON.parse(response);
-    //                         json.status == "error" ? json.message = "Erro na Gravação!" : json.message = "Dados Gravados com Sucesso!";
-    //                         logTableAdd(json.status, "Setor: " + sector + " Bloco: " + block, json.message);
-    //                         resolve();
-    //                     }
-    //                 }, function (response) {
-    //                     logTableAdd("error", "Setor: " + sector + " Bloco: " + block, "Houve um problema com a comunicação.");
-    //                     resolve();
-    //                 });
-    //             } else {
-    //                 logTableAdd("warning", "Setor: " + sector + " Bloco: " + block, "A chave de acesso do setor não foi informada.");
-    //                 resolve();
-    //             }
-    //         } else {
-    //             logTableAdd("warning", "Setor: " + sector + " Bloco: " + block, "O dado a ser gravado não pode exceder 16 caracteres.");
-    //             resolve();
-    //         }
-    //     });
-    // }
-
-    // function logTableAdd(status, title, menssage) {
-    //     if(status == "reset") {
-    //         $("#nfc_table_log tbody").html("");
-    //     } else if(status == "error") {
-    //         $("#nfc_table_log tbody").append('<tr class="table-danger"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-danger me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
-    //     } else if(status == "success") {
-    //         $("#nfc_table_log tbody").append('<tr class="table-success"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-success me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
-    //     } else {
-    //         $("#nfc_table_log tbody").append('<tr class="table-warning"><td width="10%"><span class="d-flex align-items-center"><i class="bi bi-circle-fill fs-6px text-warning me-2"></i>' + title + '</span></td><td width="10%"><small>' + menssage + '</small></td><td width="80%" class="text-end"><small>' + getDateTime() + '</small></td></tr>');
-    //     }
-    // }
-
-    // function ONOFF(type, success = "", error = "") {
-
-    //     $("#nfc_on_off").addClass("text-danger").removeClass("text-success");
-
-    //     var url = "/SYSTEM_OFF";
-
-    //     if (type == "on") {
-    //         url = "/NFC_READ_ON";
-    //     }
-
-    //     request(url, {}, function (response) {
-    //         if (response == "ok") {
-    //             if (type == "on") {
-    //                 $("#nfc_on_off").removeClass("text-danger").addClass("text-success");
-    //                 notify("success", "Modo leitura ligado, aguardando TAG...");
-    //             }
-    //             if (success != "") {
-    //                 success(response);
-    //             }
-    //         } else {
-    //             notify("error", "O modo leitura não pode ser ligado.");
-    //             $("#nfc_menu_read").prop('checked', $(this).is(':checked'));
-    //         }
-    //     }, function (response) {
-    //         notify("error", "Houve um problema com a comunicação.");
-    //         $("#nfc_menu_read").prop('checked', $(this).is(':checked'));
-    //         if (error != "") {
-    //             error(response);
-    //         }
-    //     });
-
-    // }
-
-    // function jsonTagRead(json_str) {
-    //     if (isJson(json_str)) {
-
-    //         notify("success", "Dados lidos, processando...");
-    //         $("#nfc_menu_read").prop('checked', $(this).is(':checked'));
-    //         var json = JSON.parse(json_str);
-
-    //         if (json.type == "NFC_TAG_4K") {
-
-    //             tag_size = 16;
-                
-    //             var ignore = [ 0, 3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47, 51, 55, 59, 63 ];
-
-    //             $("#card_uid").val(json.uid);
-    //             $("#json-nfc").val(json_str);
-    //             json_mdfy = json_str;
-
-    //             for (var i = 0; i < tag_size; i++) {
-
-    //                 var sectionRead = false;
-
-    //                 var key_a = json["sector_" + i]["key_a"];
-    //                 $("#nfc_str_key_a_sector-" + i).val(HexToString(key_a));
-    //                 $("#nfc_hex_key_a_sector-" + i).val(key_a);
-    //                 key_a != "" ? sectionRead = true : sectionRead;
-                    
-    //                 var key_acs = json["sector_" + i]["key_acs"];
-    //                 $("#nfc_str_key_acs_sector-" + i).val(HexToString(key_acs));
-    //                 $("#nfc_hex_key_acs_sector-" + i).val(key_acs);
-    //                 $("#nfc_new_str_key_acs_sector-" + i).val(HexToString(key_acs));
-    //                 $("#nfc_new_hex_key_acs_sector-" + i).val(key_acs);
-                    
-    //                 var key_b = json["sector_" + i]["key_b"];
-    //                 $("#nfc_str_key_b_sector-" + i).val(HexToString(key_b));
-    //                 $("#nfc_hex_key_b_sector-" + i).val(key_b);
-    //                 key_b != "" ? sectionRead = true : sectionRead;
-
-    //                 if(sectionRead) {
-    //                     $("#nfc_card-" + i).removeClass("bg-danger bg-opacity-25");
-    //                     $("#nfc_sector_info-" + i).html("");
-    //                 } else {
-    //                     $("#nfc_card-" + i).addClass("bg-danger bg-opacity-25");
-    //                     $("#nfc_sector_info-" + i).html("Acesso Negado");
-    //                 }
-
-    //                 for (var j = 0; j < 4; j++) {
-    //                     var block = ((i * 4) + j);
-    //                     var data = json["sector_" + i]["block_" + block]["data"];
-    //                     if (!ignore.includes(block)) {
-    //                         var text = HexToString(data);
-    //                         if(text != "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" && text != "") {
-    //                             $("#block_data-" + i + "_" + block).val(text);
-    //                         } else {
-    //                             $("#block_data-" + i + "_" + block).val("Vazio");
-    //                         }
-    //                     }
-    //                 }
-    //             }
-
-    //             notify("success", "Os dados foram processados com sucesso!");
-    //             ONOFF("off");
-    //         }
-
-    //     } else {
-    //         notify("error", "Os dados lidos foram corrompidos, tente novamente.");
-    //     }
-    // }
-
-    // $(document).ready(function () {
-
-    //     $("#json-nfc").val(json_empy);
-
-    //     ws.onmessage = function (event) {
-    //         jsonTagRead(event.data);
-    //     };
-
-    //     EmpyTableCardData();
-
-    //     $("#nfc_menu_read").click(function() {
-    //         if($("#nfc_menu_read").is(":checked")) {
-    //             ONOFF("on");
-    //         } else {
-    //             ONOFF("off");
-    //         }
-    //     });
-
-    //     $("#list-files-sd-tag").click(function () {
-    //         listDirSDCard("nfc_tag_files_tree", "json-nfc", "NFC", (data) => {
-    //             jsonTagRead(data);
-    //         });
-    //     });
-
-    //     $("#list-files-sd-key").click(function () {
-    //         listDirSDCard("nfc_key_files_tree", "data-key", "KEYS", (data) => {
-    //             $("#data-key").val(data);
-    //         });
-    //     });
-
-    //     $("#data-key").on("input", function() {
-    //         var lines = $(this).val().split('\n');
-    //         $(this).val("");
-    //         $(lines).each(function(key, val) {
-    //             val = val.replace(/[^0-9a-fA-F]/g, '');
-    //             if(val.length == 12) {
-    //                 $("#data-key").val($("#data-key").val() + val + '\n');
-    //             } else if(val.length > 12) {
-    //                 $("#data-key").val($("#data-key").val() + val.slice(0, 12) + '\n');
-    //             } else if(val.length < 12) {
-    //                 if(key == (lines.length -1)) {
-    //                     $("#data-key").val($("#data-key").val() + val);
-    //                 } else {
-    //                     $("#data-key").val($("#data-key").val());
-    //                 }
-    //             }
-    //         });
-    //         // Define o foco novamente na textarea
-    //         $(this).focus();
-    //         // Move o cursor para o final da textarea
-    //         var textarea = $(this).get(0);
-    //         textarea.selectionStart = textarea.selectionEnd = $(this).val().length;
-    //     });
-
-    // });
+    });
 
 </script>
