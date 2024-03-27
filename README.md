@@ -80,9 +80,9 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Captar Sinais
    - [x] Emitir Sinais
    - [x] Clonar Sinais
-   - [ ] Integração como o módulo SDCard
-     - [ ] Salvar Sinais capturados
-   - [ ] Integração com a UI do Sistema
+   - [x] Integração como o módulo SDCard
+     - [x] Salvar Sinais capturados
+   - [x] Integração com a UI do Sistema
    - [x] Disponibilizar funções em forma de Classe
   
   
@@ -110,13 +110,13 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
      - [ ] Clonar Tags.
      - [ ] Bruteforce de Keys.
      - [ ] Definir key para leitura.
-     - [ ] Gerenciador de keys conhecidas.
-       - [ ] Adicionar.
-       - [ ] Remover.
-   - [ ] Tela Infra Vermelho
-     - [ ] Ler sinais IR
+     - [x] Gerenciador de keys conhecidas.
+       - [x] Adicionar.
+       - [x] Remover.
+   - [x] Tela Infra Vermelho
+     - [x] Ler sinais IR
      - [ ] Simular sinais IR
-     - [ ] Listar arquivos salvos no cartão de memória
-     - [ ] Salvar dados lidos em arquivo no cartão de memória
-     - [ ] Ler arquivos salvos no cartão de memória
+     - [x] Listar arquivos salvos no cartão de memória
+     - [x] Salvar dados lidos em arquivo no cartão de memória
+     - [x] Ler arquivos salvos no cartão de memória
    - [x] Migrar UI integrada para o SDCard. (Isso vai possibilitar desenvolver interfaces melhores sem comprometer o armazenamento limitado da memória interna da ESP32, porém vai exigir que o dispositivo montado tenha um cartão Micro SD).
