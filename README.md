@@ -17,7 +17,7 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
 
 2. **Tarefas Gerais**
    
-   - [ ] Criar esquemático com as ligações.
+   - [x] Criar esquemático com as ligações.
    - [ ] Desenvolver GERBER da placa de circuito impresso
    - [ ] Desenvolver modelo 3D da case do Projeto
 
@@ -30,7 +30,6 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Criar SoftAP para conexão direta via WiFi
    - [x] Salvar dados customizaveis do SoftAP
    - [x] Salvar dados customizaveis do WiFi
-   - [ ] Disponibilizar funções em forma de Classe
    - [x] Obter as Telas diretamente do SDCard
    -  - [x] Resolver problema que reinicia a ESP ao carregar muitos arquivos.
    - [x] Criar websocket para comunicação em tempo real com o webservice.
@@ -48,11 +47,10 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
    - [x] Emulação de Tag (Verificar viabilidade)
      - [x] PN532 não suporta emulação de Tags
    - [x] Integração com o módulo SDCard
-     - [ ] Salvar uma lista de Keys conhecidas
+     - [x] Salvar uma lista de Keys conhecidas
      - [x] Leitura da Tag usando uma lista de Keys conhecidas.
      - [x] Salvar Tags lidas
    - [x] Integração com a UI do Sistema
-   - [ ] Bruteforce de Keys (Viável?)
    - [x] Importar dados da Tag em JSON
 
 5. **Tarefas relacionadas ao SDCard**
@@ -107,15 +105,14 @@ Flipper 32 é um projeto com o objetivo de copiar parcialmente as funcionalidade
      - [x] Listar arquivos salvos no cartão de memória
      - [x] Salvar dados lidos em arquivo no cartão de memória
      - [x] Ler arquivos salvos no cartão de memória
-     - [ ] Clonar Tags.
-     - [ ] Bruteforce de Keys.
-     - [ ] Definir key para leitura.
+     - [x] Clonar Tags.
+     - [x] Definir key para leitura.
      - [x] Gerenciador de keys conhecidas.
        - [x] Adicionar.
        - [x] Remover.
    - [x] Tela Infra Vermelho
      - [x] Ler sinais IR
-     - [ ] Simular sinais IR
+     - [x] Simular sinais IR
      - [x] Listar arquivos salvos no cartão de memória
      - [x] Salvar dados lidos em arquivo no cartão de memória
      - [x] Ler arquivos salvos no cartão de memória

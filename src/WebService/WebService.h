@@ -122,6 +122,30 @@ void WebServiceSetup() {
         }
     );
 
+    server.on("/IR_EMULATE", HTTP_POST,
+        [](AsyncWebServerRequest* request) {
+            
+            String rawData = "", size = "", times = "";
+
+            if (request->hasParam("rawData", true)) {
+                rawData = request->getParam("rawData", true)->value();
+            }
+
+            if (request->hasParam("size", true)) {
+                size = request->getParam("size", true)->value();
+            }
+
+            if (request->hasParam("times", true)) {
+                times = request->getParam("times", true)->value();
+            }
+
+            IR.SendSignal(rawData, size, times);
+
+            request->send_P(200, "text/plain", "ok");
+
+        }
+    );
+
     // server.on("/IR", HTTP_GET,
     //     [](AsyncWebServerRequest* request) {
     //         request->send_P(200, "text/html", ir_html);

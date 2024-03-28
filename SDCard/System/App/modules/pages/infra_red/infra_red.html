@@ -87,8 +87,12 @@
                                             <input type="text" class="form-control" id="ir-value" readonly></input>
                                         </div>
                                         <div class="input-group flex-nowrap w-100 mb-2">
+                                            <span class="input-group-text">Tamanho Raw</span>
+                                            <input type="text" class="form-control" id="ir-length" readonly></input>
+                                        </div>
+                                        <div class="input-group flex-nowrap w-100 mb-2">
                                             <span class="input-group-text">Repetir</span>
-                                            <input type="number" class="form-control" id="ir-repeat" value="5" readonly></input>
+                                            <input type="number" class="form-control" id="ir-repeat" value="10"></input>
                                             <span class="input-group-text">Vezes</span>
                                         </div>
                                         <buttom id="ir_emulate" class="btn btn-default form-control mt-2">Emular dados lidos.</buttom>
@@ -114,7 +118,7 @@
                                     </div>
                                     <div class="card-body">
                                         <label class="form-label" for="ir-raw-data">Raw Sinal Data</label>
-                                        <textarea class="form-control" id="ir-raw-data" rows="12" placeholder="Nenhuma sinal lido." readonly></textarea>
+                                        <textarea class="form-control" id="ir-raw-data" rows="14" placeholder="Nenhuma sinal lido." readonly></textarea>
                                     </div>
                                     <div class="card-arrow">
                                         <div class="card-arrow-top-left"></div>
@@ -193,6 +197,7 @@
                 $("#ir-decode").val(json.decode);
                 $("#ir-bits").val(json.bits);
                 $("#ir-value").val(json.value);
+                $("#ir-length").val(json.length);
 
                 notify("success", "Os dados foram processados com sucesso!");
                 ONOFF("off");
@@ -220,6 +225,24 @@
         $("#list-files-sd-ir").click(function () {
             listDirSDCard("ir_files_tree", "json-ir", "INFRARED", (data) => {
                 jsonIrRead(data);
+            });
+        });
+
+        $("#ir_emulate").click(function() {
+            request("/IR_EMULATE", "POST", {
+                rawData: $("#ir-raw-data").val(), 
+                size: $("#ir-length").val(),
+                times: $("#ir-repeat").val()
+            }, function (response) {
+                if(response == "ok") {
+                    notify("success", "Sinal Emulado com sucesso.");
+                }
+                // if (isJson(response)) {
+                //     var json = JSON.parse(response);
+                //     notify(json.status, json.menssage);
+                // }
+            }, function (response) {
+                notify("error", "Houve um problema com a comunicação.");
             });
         });
 

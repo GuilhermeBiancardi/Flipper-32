@@ -374,7 +374,7 @@
 
     function SectorEvents() {
 
-        $(".block_data").keyup(function(event) {
+        $(".block_data").off("input focus blur").on("input", function() {
             var text = $(this).val();
             var id = $(this).attr("id").split("-");
             var sb = id[1].split("_");
@@ -382,24 +382,22 @@
             auxJson["sector_" + sb[0]]["block_" + sb[1]]["data"] = StringToHex(text);
             json_mdfy = JSON.stringify(auxJson);
             $("#json-nfc").val(json_mdfy);
-        });
-
-        $(".block_data").on('focus', function() {
+        }).on("focus", function() {
             if ($(this).val() === 'Vazio') {
                 $(this).val('');
             }
-        });
-
-        $(".block_data").on('blur', function() {
+        }).on("blur", function() {
             if ($(this).val() === '') {
                 $(this).val('Vazio');
             }
         });
 
+        $(".nfc_key_menu").unbind();
         $(".nfc_key_menu").click(function() {
             $(this).toggleClass("bg-light bg-opacity-25");
         });
         
+        $(".nfc_burn_menu").unbind();
         $(".nfc_burn_menu").click(function() {
             $(this).toggleClass("bg-light bg-opacity-25");
         });
@@ -463,7 +461,7 @@
         });
 
         $(".key_sector").unbind();
-        $(".key_sector").on('input', function () {
+        $(".key_sector").on("input", function () {
             var id = $(this).attr("id").split("-");
             var value = $(this).val();
             var auxJson = JSON.parse(json_mdfy);

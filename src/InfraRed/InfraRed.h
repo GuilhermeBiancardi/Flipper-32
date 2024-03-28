@@ -26,19 +26,28 @@ public:
             String command = Utils.Uint32_tToString(results.command);
             String bits = Utils.Uint16_tToString(results.bits);
             String state = Utils.Uint8_tToString(results.state, sizeof(results.state));
-            String rawData = Utils.Uint16_tToString(raw_array, length, ",");
+            String rawData = Utils.Uint16_tArrayToString(raw_array, length);
             String decodeType = decodeTypeToString(results.decode_type);
             irrecv.resume();
-            // irsend.sendRaw(raw_array, length, irFrequency);
             delete[] raw_array;
             if (value != "FFFFFFFFFFFFFFFF") {
                 jsonString = "{\"signal\": \"" + rawData + "\", \"value\": \"" + value + "\",";
                 jsonString += "\"address\": \"" + address + "\", \"command\": \"" + command + "\",";
                 jsonString += "\"decode\": \"" + decodeType + "\", \"bits\": \"" + bits + "\",";
-                jsonString += "\"state\": \"" + state + "\"}";
+                jsonString += "\"state\": \"" + state + "\", \"length\": \"" + length + "\"}";
             }
         }
         yield();
+    }
+
+    void SendSignal(String rawData, String size, String times) {
+        uint16_t* raw_array = Utils.StringToUint16_tArray(rawData, size.toInt());
+        uint16_t length = Utils.StringToUint16_t(size);
+        for(size_t i = 0; i < times.toInt(); i++) {
+            irsend.sendRaw(raw_array, length, irFrequency);
+            delay(timeOut);
+        }
+        delete[] raw_array;
     }
 
     void SetJSON(String json) {
